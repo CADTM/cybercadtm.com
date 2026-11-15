@@ -24,7 +24,7 @@ button{font:inherit;color:inherit}
 nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,4vw,48px);background:linear-gradient(180deg,rgba(4,5,12,.9),rgba(4,5,12,.4));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,240,255,.08)}
 .logo{font-weight:700;letter-spacing:.14em;font-size:15px;text-decoration:none;display:flex;align-items:center;gap:10px}
 .logo i{width:10px;height:10px;background:var(--cy);box-shadow:0 0 12px var(--cy);transform:rotate(45deg);display:inline-block;animation:pulse 2s infinite}
-.logo span{color:var(--mg)}
+.logo .lg{background:linear-gradient(90deg,var(--tx) 0 60%,var(--mg));-webkit-background-clip:text;background-clip:text;color:transparent;text-transform:lowercase;letter-spacing:.12em}
 .nav-r{display:flex;gap:22px;align-items:center;font-size:13px;letter-spacing:.12em;text-transform:uppercase}
 .nav-r a{text-decoration:none;color:var(--mu);transition:color .2s}
 .nav-r a:hover{color:var(--cy)}
@@ -315,7 +315,7 @@ footer b{color:var(--cy)}
 <body>
 
 <nav>
-  <a href="#top" class="logo"><i></i>CYBERCAD<span>//TM</span></a>
+  <a href="#top" class="logo"><i></i><span class="lg">cybercadtm</span></a>
   <div class="nav-r">
     <a href="#lab">Laboratorio</a>
     <a href="#contacto">Contacto</a>
