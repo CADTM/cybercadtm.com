@@ -145,6 +145,13 @@ section.lab{position:relative;z-index:2;padding:110px clamp(16px,4vw,48px) 60px;
 .dl{font-size:10px;letter-spacing:.16em;color:var(--mu);text-align:center}
 .dl b{color:var(--tx);font-weight:600}
 .dj canvas{width:100%;height:110px}
+.beats{position:absolute;left:50%;transform:translateX(-50%);bottom:56px;display:flex;gap:3px;align-items:center}
+.beats .bl{font-size:9px;letter-spacing:.2em;color:var(--mu);margin-right:6px}
+.beats i{width:13px;height:13px;border-radius:3px;border:1px solid rgba(255,43,214,.35);cursor:pointer;transition:background .1s}
+.beats i:nth-child(4n+2){margin-left:4px}
+.beats i.on{background:rgba(255,43,214,.55)}
+.beats i.cur{box-shadow:0 0 10px #00f0ff;border-color:#00f0ff}
+.beats i.on.cur{background:#ff2bd6}
 .djc{position:absolute;left:0;right:0;bottom:14px;display:flex;align-items:center;justify-content:center;gap:16px;font-size:11px}
 .xfl{display:flex;align-items:center;gap:8px;color:var(--mu);letter-spacing:.14em}
 input[type=range]{-webkit-appearance:none;appearance:none;width:140px;height:4px;background:linear-gradient(90deg,var(--cy),var(--mg));border-radius:2px;outline:none}
@@ -478,18 +485,21 @@ function demoDJ(st,card){
     <canvas></canvas>
     <div class="deck"><div class="vinyl" style="--lab:#ff2bd6"></div><div class="dl">DECK B<br><b>SYNTH ARP</b></div></div>
   </div>
+  <div class="beats" title="Toca un paso para prenderlo o apagarlo"><span class="bl mono">BEATS</span>${Array.from({length:16},(_,i)=>`<i class="${[0,4,8,12,6,14].includes(i)?'on':''}"></i>`).join('')}</div>
   <div class="djc"><button class="btn pl">▶ PLAY</button><label class="xfl mono">A<input type="range" min="0" max="100" value="50">B</label><span class="mono bpm">124 BPM</span></div>`;
-  const [va,vb]=$$('.vinyl',st),cv=$('canvas',st),xf=$('input',st),pl=$('.pl',st);
+  const [va,vb]=$$('.vinyl',st),cv=$('canvas',st),xf=$('input',st),pl=$('.pl',st),pads=$$('.beats i',st);
+  pads.forEach(p=>p.onclick=()=>p.classList.toggle('on'));
   let ac,gA,gB,on=false,step=0,iv,lvA=0,lvB=0,nt=0;
   const arp=[220,261.6,329.6,392,329.6,261.6,196,246.9],SD=60/124/2;
   function mix(){const v=xf.value/100;va.style.filter=`brightness(${.5+(1-v)*.7})`;vb.style.filter=`brightness(${.5+v*.7})`;if(gA){gA.gain.value=Math.cos(v*Math.PI/2)*.8;gB.gain.value=Math.sin(v*Math.PI/2)*.35}}
   function env(g,t,a,d){g.gain.setValueAtTime(a,t);g.gain.exponentialRampToValueAtTime(.001,t+d)}
   function kick(t){const o=ac.createOscillator(),g=ac.createGain();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(40,t+.15);env(g,t,1,.3);o.connect(g).connect(gA);o.start(t);o.stop(t+.32)}
+  function clap(t){const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();o.type='square';o.frequency.value=1800;f.type='bandpass';f.frequency.value=1500;env(g,t,.18,.12);o.connect(f).connect(g).connect(gA);o.start(t);o.stop(t+.14)}
   function hat(t){const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();o.type='square';o.frequency.value=8800;f.type='highpass';f.frequency.value=7000;env(g,t,.12,.05);o.connect(f).connect(g).connect(gA);o.start(t);o.stop(t+.06)}
   function syn(t,fr){const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();o.type='sawtooth';o.frequency.value=fr;f.type='lowpass';f.frequency.setValueAtTime(2600,t);f.frequency.exponentialRampToValueAtTime(300,t+.2);env(g,t,.25,.22);o.connect(f).connect(g).connect(gB);o.start(t);o.stop(t+.25)}
   function play(){
     try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();ac.resume();if(!gA){gA=ac.createGain();gB=ac.createGain();gA.connect(ac.destination);gB.connect(ac.destination)}mix();nt=ac.currentTime+.05;
-      iv=setInterval(()=>{if(!card._vis){stop();return}while(nt<ac.currentTime+.2){if(step%2==0)kick(nt);else hat(nt);syn(nt,arp[step%8]*(step%16>=8?1.5:1));step++;nt+=SD}},40)}catch(e){}
+      iv=setInterval(()=>{if(!card._vis){stop();return}while(nt<ac.currentTime+.2){const s16=step%16;if(pads[s16]&&pads[s16].classList.contains('on'))clap(nt);if(step%2==0)kick(nt);else hat(nt);syn(nt,arp[step%8]*(step%16>=8?1.5:1));step++;nt+=SD}},40)}catch(e){}
     on=true;pl.textContent='■ STOP';va.classList.add('spin');vb.classList.add('spin')}
   function stop(){clearInterval(iv);on=false;pl.textContent='▶ PLAY';va.classList.remove('spin');vb.classList.remove('spin')}
   pl.onclick=()=>on?stop():play();xf.oninput=mix;mix();
@@ -497,7 +507,7 @@ function demoDJ(st,card){
   addLoop(card,(dt,t)=>{
     const {x,w,h}=fit(cv);x.clearRect(0,0,w,h);
     if(on){bt+=dt;if(bt>=SD){bt-=SD;lvB=1;if(Math.round(t/SD)%2==0)lvA=1}}
-    lvA*=.9;lvB*=.92;const v=xf.value/100,n=40,bw=w/n;
+    lvA*=.9;lvB*=.92;{const cur=on?Math.floor(t/SD)%16:-1;pads.forEach((p,i)=>p.classList.toggle('cur',i===cur))}const v=xf.value/100,n=40,bw=w/n;
     for(let i=0;i<n;i++){
       const side=i/n,ampA=(1-v)*(on?(.25+lvA*.75):.12),ampB=v*(on?(.25+lvB*.6):.12);
       const a=(Math.sin(i*.7+t*(on?9:2))*.5+.5)*ampA*(1-side)+(Math.sin(i*1.3-t*(on?7:1.5))*.5+.5)*ampB*side*1.6;
@@ -832,10 +842,10 @@ function demoCanal(st,card){
 /* ============ CATÁLOGO ============ */
 // Para enlazar cada app, pon su dirección en "url" (ej. 'https://tarima.cybercadtm.com').
 const APPS=[
-  {id:'cabina',n:'Cabina',s:'Consola de DJ',cat:'lab',ac:'#ff2bd6',wide:1,url:'https://cabina.cybercadtm.com',d:'Dos tornamesas y mezcladora para cargar mi repertorio. Dale PLAY y mueve el crossfader: el audio se sintetiza en vivo.',t:['Web Audio','Mezcla'],f:demoDJ},
-  {id:'orbita',n:'Órbita Júpiter',s:'Bubble shooter 3D',cat:'juegos',ac:'#ffb36b',url:'https://orbita.cybercadtm.com',d:'Dispara planetas desde la órbita de Júpiter. Junta 3 del mismo color para hacerlos estallar.',t:['Canvas','Física'],f:demoOrbita},
+  {id:'cabina',n:'Cabina',s:'Consola de DJ',cat:'lab',ac:'#ff2bd6',wide:1,url:'https://cabina.cybercadtm.com',d:'Consola de DJ, karaoke y reproductor. NUEVO: sección Beats, una caja de ritmos que se sincroniza con los decks. Dale PLAY, mueve el crossfader y prende pasos del beat.',t:['Beats','Karaoke','Web Audio'],f:demoDJ},
+  {id:'orbita',n:'Órbita Júpiter',s:'Bubble shooter 3D',cat:'juegos',ac:'#ffb36b',url:'https://orbita.cybercadtm.com',d:'Dispara planetas desde la órbita de Júpiter y junta 3 del mismo color. Ahora con personajes como Fel, probador de apariencia y profesiones.',t:['Personajes','Física'],f:demoOrbita},
   {id:'monitor',n:'Monitor de Contenedores',s:'Patio de andenes',cat:'almacen',ac:'#00f0ff',wide:1,url:'',d:'Procesos e inventario de contenedores en tiempo real: andenes D1–D14, patio, racks y zona de surtido.',t:['Tiempo real','Logística'],f:demoMonitor},
-  {id:'tarima',n:'Tarima Perfecta',s:'Tetris de paletizado',cat:'juegos',ac:'#ffb020',url:'',d:'Acomoda cajas sobre la tarima sin dejar huecos, en un ambiente de almacén. Haz clic para soltar más rápido.',t:['Isométrico','Puzzle'],f:demoTarima},
+  {id:'tarima',n:'Tarima Perfecta',s:'Arcade 3D de paletizado',cat:'juegos',ac:'#ffb020',url:'https://tarima-perfecta.cybercadtm.com',d:'Acomoda cajas en una tarima de 48×40 con gravedad real, patrones de estiba y etiquetas hacia afuera. Haz clic para soltar más rápido.',t:['3D','Gravedad real'],f:demoTarima},
   {id:'dojo',n:'Dojo de Entrenamiento',s:'Pelea 1 vs 1',cat:'juegos',ac:'#00f0ff',url:'',d:'Fel entrena contra el saco en el almacén. Usa J · K · L o los botones para armar combos.',t:['Combos','Animación'],f:demoDojo},
   {id:'cripta',n:'La Cripta Flotante',s:'Arena isométrica online',cat:'juegos',ac:'#a66bff',url:'',d:'Peleas en una arena flotante que mezcla 2D y 3D, entre Smash Bros y Ragnarok. Haz clic para moverte y atrapa al espectro.',t:['Isométrico','Online'],f:demoCripta},
   {id:'montacargas',n:'Panel de Montacargas',s:'Control y checklist',cat:'almacen',ac:'#ffb020',url:'',d:'Status de montacargas y cargadores, baterías, insumos y el checklist diario de seguridad.',t:['Baterías','Checklist'],f:demoMonta},
