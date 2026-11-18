@@ -459,6 +459,52 @@ footer b{color:var(--cy)}
  .mp-ctl{grid-column:1/-1;order:3}
  .mp-right .vol{display:none}
 }
+/* música compacta */
+.music{max-width:1040px;padding-top:70px}
+.music h2{font-size:clamp(1.6rem,3vw,2.4rem);margin:8px 0 18px}
+.mp{grid-template-columns:1fr;grid-template-rows:auto 1fr auto;height:auto;border-radius:16px;box-shadow:0 20px 50px -30px rgba(255,43,214,.4);transition:box-shadow .4s}
+.mp:hover{box-shadow:0 20px 60px -20px rgba(255,43,214,.55)}
+.mp-side{flex-direction:row;align-items:center;gap:10px;padding:10px 12px;border-right:0;border-bottom:1px solid rgba(255,255,255,.05);overflow-x:auto}
+.mp-brand{flex:none;font-size:13px;padding:0 6px 0 2px}
+.mp-brand i{width:24px;height:24px;font-size:11px;animation:spin 6s linear infinite}
+.mp-nav,.mp-lib small{display:none}
+.mp-lib{display:flex;gap:6px}
+.mp-rel{margin:0;flex:none;padding:5px 12px 5px 5px;border-radius:999px;background:rgba(255,255,255,.04);gap:8px;transition:.25s}
+.mp-rel img{width:30px;height:30px;border-radius:50%}
+.mp-rel b{font-size:12px}.mp-rel em{display:none}
+.mp-rel:hover{transform:translateY(-2px)}
+.mp-rel.on{background:linear-gradient(90deg,rgba(255,43,214,.22),rgba(0,240,255,.12));box-shadow:0 0 0 1px rgba(255,43,214,.5)}
+.mp-main{max-height:300px;background:linear-gradient(180deg,var(--rg,#1f4f7a) 0,#07080f 200px);transition:background .6s}
+.mp-head{gap:18px;align-items:center;padding:18px 20px 12px}
+.cvw{position:relative;width:96px;height:96px;flex:none;margin-right:26px}
+.cvw img{position:relative;z-index:2;width:96px!important;height:96px!important;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.cvw .disc{position:absolute;top:4px;left:4px;width:88px;height:88px;border-radius:50%;background:radial-gradient(circle,#000 0 6%,transparent 7%),var(--dc) center/32% no-repeat,repeating-radial-gradient(circle,#0b0b10 0 2px,#1b1b28 2px 3px);background-size:auto,32% 32%,auto;background-position:center;transition:transform .7s cubic-bezier(.2,.9,.2,1)}
+.cvw.on .disc{transform:translateX(30px) rotate(0);animation:spin 2.2s linear infinite;left:34px;transform:none}
+.mp-head .ty{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#d0d7e8}
+.mp-head h3{font-size:clamp(1.3rem,2.6vw,1.9rem);margin:4px 0 6px}
+.mp-head .meta{font-size:12px}
+.mp-head .meta .av{width:18px;height:18px;font-size:9px}
+.mp-act{padding:4px 20px 10px;gap:16px;background:none}
+.mp-big{width:44px;height:44px;font-size:15px}
+.mp-big:hover{transform:scale(1.1) rotate(-6deg)}
+.mp-ic{font-size:17px}
+.mp-tbl{padding:0 12px 14px}
+.mp-row{grid-template-columns:30px 1fr 30px 50px;padding:6px 8px;font-size:13px;transition:background .2s,transform .2s}
+.mp-row:not(.hd):hover{transform:translateX(4px)}
+.mp-row .gn,.mp-row.hd .gn{display:none}
+.mp-row .tt em{font-size:11px}
+.mp-row.hd{display:none}
+.mp-foot{display:none}
+.mp-ly{padding:22px 26px}
+.mp-ly p{font-size:clamp(1rem,2vw,1.35rem);margin-bottom:8px}
+.mp-bar{position:relative;grid-template-columns:1fr 1.3fr 1fr;padding:8px 14px;background:#020308;overflow:hidden}
+.mp-bar>*{position:relative;z-index:1}
+#mpViz{position:absolute!important;inset:0;width:100%;height:100%;z-index:0;opacity:.55;pointer-events:none}
+.mp-now img{width:42px;height:42px;border-radius:50%;animation:spin 5s linear infinite;animation-play-state:var(--ps,paused)}
+.mp-now b{font-size:13px}.mp-now em{font-size:11px}
+.mp-pl{width:32px;height:32px;font-size:12px}
+.mp-btns{gap:14px}
+@media(max-width:820px){.mp-main{max-height:340px}.mp-bar{grid-template-columns:1fr auto}.cvw{width:76px;height:76px;margin-right:20px}.cvw img{width:76px!important;height:76px!important}.cvw .disc{width:68px;height:68px}.cvw.on .disc{left:26px}.mp-head{flex-direction:row;padding:14px}}
 /* nav buttons */
 .nbtn{border:1px solid rgba(0,240,255,.25);background:transparent;color:var(--mu);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;padding:6px 10px;border-radius:6px;cursor:pointer;transition:.2s;text-transform:uppercase}
 .nbtn:hover,.nbtn.on{color:#001014;background:var(--cy);border-color:var(--cy);box-shadow:0 0 14px rgba(0,240,255,.5)}
@@ -589,7 +635,7 @@ a.soc:hover{border-color:var(--sc);box-shadow:0 0 20px -4px var(--sc);transform:
 <section class="music" id="musica">
   <div class="reveal">
     <div class="k mono">// 03 — MÚSICA</div>
-    <h2>Mi música,<br><em>en mi propio streaming.</em></h2>
+    <h2>Mi <em>música</em></h2>
   </div>
   <div class="mp" id="mp">
     <aside class="mp-side">
@@ -601,7 +647,7 @@ a.soc:hover{border-color:var(--sc);box-shadow:0 0 20px -4px var(--sc);transform:
       <div id="mpView"></div>
       <div class="mp-ly" id="mpLy"></div>
     </div>
-    <div class="mp-bar">
+    <div class="mp-bar"><canvas id="mpViz"></canvas>
       <div class="mp-now"><img id="mpNowC" alt=""><div style="min-width:0"><b id="mpNowT">Elige una canción</b><em id="mpNowA">cybercadtm</em></div><button class="mp-ic mp-sm" id="mpNowH">♡</button></div>
       <div class="mp-ctl">
         <div class="mp-btns"><button class="mp-ic mp-sm" id="mpShuf" title="Aleatorio">⤮</button><button class="mp-ic" id="mpPrev" title="Anterior">⏮</button><button class="mp-pl" id="mpPlay">▶</button><button class="mp-ic" id="mpNext" title="Siguiente">⏭</button><button class="mp-ic mp-sm" id="mpRep" title="Repetir">↻</button></div>
@@ -1179,7 +1225,7 @@ addEventListener('touchmove',()=>{if(ARC.on)arcStop()},{passive:true});
     $$('.mp-rel').forEach((e,i)=>e.classList.toggle('on',REL[i]===rel));
     main.style.setProperty('--rg',rel.grad);
     const c=cur(),mins=Math.round(total(rel)/60);
-    view.innerHTML=`<div class="mp-head"><img src="${rel.cover}" alt=""><div><div class="ty">${rel.type}</div><h3>${rel.title}</h3><div class="meta"><span class="av">c</span><b>cybercadtm</b> · ${rel.year} · ${rel.tracks.length} ${rel.tracks.length>1?'canciones':'canción'}, ${mins} min</div></div></div>
+    view.innerHTML=`<div class="mp-head"><div class="cvw ${c&&c.rel===rel&&!A.paused?'on':''}"><div class="disc" style="--dc:url(${rel.cover})"></div><img src="${rel.cover}" alt=""></div><div style="flex:1;min-width:0"><div class="ty">${rel.type}</div><h3>${rel.title}</h3><div class="meta"><span class="av">c</span><b>cybercadtm</b> · ${rel.year} · ${rel.tracks.length} ${rel.tracks.length>1?'canciones':'canción'}, ${mins} min</div></div></div>
     <div class="mp-act"><button class="mp-big" id="mpBig">${c&&c.rel===rel&&!A.paused?'❚❚':'▶'}</button><button class="mp-ic ${shuf?'on':''}" id="mpShuf2" title="Aleatorio">⤮</button><button class="mp-ic" title="Me gusta" id="mpRelH">♡</button><span class="mono" style="font-size:11px;color:var(--mu);letter-spacing:.14em">${rel.genre.toUpperCase()}</span></div>
     <div class="mp-tbl"><div class="mp-row hd"><span class="n">#</span><span>Título</span><span class="gn">Género</span><span></span><span class="du">⏱</span></div>
     ${rel.tracks.map((t,i)=>{const on=c&&c.t===t;return `<div class="mp-row ${on?'cur':''}" data-i="${i}"><span class="n">${on?`<span class="eq ${A.paused?'pz':''}"><i></i><i></i><i></i></span>`:i+1}</span><span class="tt"><b>${t.t}</b><em>cybercadtm${t.ly?'<span class="lyb">LETRA</span>':''}</em></span><span class="gn">${rel.genre}</span><span class="hr ${liked.has(t.src)?'on':''}" data-h="${i}">${liked.has(t.src)?'♥':'♡'}</span><span class="du">${fmt(t.d)}</span></div>`}).join('')}
@@ -1192,8 +1238,9 @@ addEventListener('touchmove',()=>{if(ARC.on)arcStop()},{passive:true});
   function playRel(r,i){q=r.tracks.map(t=>({t,rel:r}));qi=i;load(true)}
   function load(play){const c=cur();if(!c)return;A.src=c.t.src;$('#mpNowC').src=c.rel.cover;$('#mpNowT').textContent=c.t.t;$('#mpNowA').textContent='cybercadtm · '+c.rel.title;$('#mpDur').textContent=fmt(c.t.d);if(play){const p=A.play();if(p&&p.catch)p.catch(()=>{})}render();sync()}
   function next(d=1){if(!q.length){playRel(rel,0);return}if(shuf&&d>0)qi=Math.random()*q.length|0;else qi=(qi+d+q.length)%q.length;load(true)}
-  function sync(){const c=cur();$('#mpPlay').textContent=A.paused?'▶':'❚❚';$('#mpShuf').classList.toggle('on',shuf);$('#mpRep').classList.toggle('on',rep);$('#mpLyB').classList.toggle('on',showLy);
+  function sync(){const c=cur();$('#mpPlay').textContent=A.paused?'▶':'❚❚';$('#mp').style.setProperty('--ps',A.paused?'paused':'running');$('#mpShuf').classList.toggle('on',shuf);$('#mpRep').classList.toggle('on',rep);$('#mpLyB').classList.toggle('on',showLy);
     $('#mpNowH').textContent=c&&liked.has(c.t.src)?'♥':'♡';$('#mpNowH').classList.toggle('on',!!(c&&liked.has(c.t.src)));
+    const cw=$('.cvw',view);if(cw)cw.classList.toggle('on',!!(c&&c.rel===rel&&!A.paused));
     const b=$('#mpBig');if(b)b.textContent=c&&c.rel===rel&&!A.paused?'❚❚':'▶';$$('.eq',view).forEach(e=>e.classList.toggle('pz',A.paused))}
   function renderLy(){const c=cur();ly.classList.toggle('on',showLy);main.classList.toggle('lyon',showLy);if(showLy)main.scrollTop=0;if(!showLy)return;
     if(!c||!c.t.ly){ly.innerHTML='<div class="lyh">LETRA</div><p>Todavía no hay letra para esta canción.</p><p style="font-size:1rem">Pon “Fábrica de Babitas” para verla sincronizada ✨</p>';return}
@@ -1214,6 +1261,12 @@ addEventListener('touchmove',()=>{if(ARC.on)arcStop()},{passive:true});
   A.addEventListener('ended',()=>{if(rep){A.currentTime=0;A.play()}else next(1)});
   const pop=$('#pop');if(pop)pop.addEventListener('play',()=>A.pause());
   window.mpPause=()=>A.pause();
+  let vctx,van,vd;const vcv=$('#mpViz');
+  A.addEventListener('play',()=>{if(vctx){try{vctx.resume()}catch(e){}return}try{vctx=new(window.AudioContext||window.webkitAudioContext)();const sn=vctx.createMediaElementSource(A);van=vctx.createAnalyser();van.fftSize=128;van.smoothingTimeConstant=.82;sn.connect(van);van.connect(vctx.destination);vd=new Uint8Array(van.frequencyBinCount)}catch(e){}});
+  const mpCard=$('#mp');io.observe(mpCard);
+  addLoop(mpCard,(dt,t)=>{const {x,w,h}=fit(vcv);x.clearRect(0,0,w,h);const n=64,bw=w/n;
+    for(let i=0;i<n;i++){let v;if(van&&!A.paused){van.getByteFrequencyData(vd);v=vd[Math.floor(i/n*48)]/255}else v=.06+.04*Math.sin(t*2+i*.4);
+      const bh=v*h;const g=x.createLinearGradient(0,h,0,h-bh);g.addColorStop(0,'rgba(0,240,255,.0)');g.addColorStop(1,i%2?'rgba(0,240,255,.55)':'rgba(255,43,214,.55)');x.fillStyle=g;x.fillRect(i*bw+1,h-bh,bw-2,bh)}});
   render();sync();
 })();
 
