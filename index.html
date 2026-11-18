@@ -362,6 +362,103 @@ footer b{color:var(--cy)}
 #player .px{background:none;border:0;color:var(--mu);cursor:pointer;font-size:14px;padding:4px}
 #player .px:hover{color:var(--tx)}
 @media(max-width:560px){#player canvas{display:none}#player .pi b{max-width:130px}#player .pp{min-width:100px}}
+/* MÚSICA */
+.music{position:relative;z-index:2;max-width:1440px;margin:0 auto;padding:90px clamp(16px,4vw,48px) 20px}
+.music .k{font-size:12px;letter-spacing:.3em;color:var(--mg)}
+.music h2{font-size:clamp(2rem,4.4vw,3.6rem);line-height:1;text-transform:uppercase;margin:10px 0 30px}
+.music h2 em{font-style:normal;color:var(--mg);text-shadow:0 0 24px rgba(255,43,214,.4)}
+.mp{display:grid;grid-template-columns:240px 1fr;grid-template-rows:1fr auto;height:640px;border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden;background:#07080f;box-shadow:0 30px 80px -30px rgba(255,43,214,.35)}
+.mp-side{background:#05060b;border-right:1px solid rgba(255,255,255,.05);padding:18px 12px;display:flex;flex-direction:column;gap:18px;overflow:auto}
+.mp-brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.06em;padding:0 8px}
+.mp-brand i{width:28px;height:28px;border-radius:50%;background:conic-gradient(from 0deg,var(--cy),var(--mg),var(--cy));display:flex;align-items:center;justify-content:center;font-style:normal;font-size:13px;color:#000}
+.mp-brand small{display:block;font-size:9px;letter-spacing:.24em;color:var(--mu);font-weight:500}
+.mp-nav{display:flex;flex-direction:column;gap:2px}
+.mp-nav span{padding:8px 10px;border-radius:8px;color:var(--mu);font-size:14px;display:flex;gap:12px;align-items:center}
+.mp-nav span.on{color:var(--tx);background:rgba(255,255,255,.05)}
+.mp-lib small{font-size:10px;letter-spacing:.2em;color:var(--mu);padding:0 10px}
+.mp-rel{display:flex;gap:10px;align-items:center;padding:7px 8px;border-radius:8px;cursor:pointer;transition:.15s;margin-top:4px}
+.mp-rel:hover{background:rgba(255,255,255,.05)}
+.mp-rel.on{background:rgba(255,43,214,.1)}
+.mp-rel img{width:44px;height:44px;border-radius:6px;object-fit:cover}
+.mp-rel b{display:block;font-size:13px;font-weight:600}
+.mp-rel em{font-style:normal;font-size:11px;color:var(--mu)}
+.mp-rel.on b{color:var(--mg)}
+.mp-main{overflow:auto;position:relative;background:linear-gradient(180deg,var(--rg,#1f4f7a) 0,#07080f 360px)}
+.mp-main::-webkit-scrollbar,.mp-side::-webkit-scrollbar{width:8px}.mp-main::-webkit-scrollbar-thumb,.mp-side::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:4px}
+.mp-head{display:flex;gap:24px;align-items:flex-end;padding:30px 28px 22px}
+.mp-head img{width:200px;height:200px;border-radius:8px;box-shadow:0 20px 50px rgba(0,0,0,.6);object-fit:cover;flex:none}
+.mp-head .ty{font-size:12px;font-weight:600}
+.mp-head h3{font-size:clamp(2rem,4.6vw,4.4rem);line-height:.95;font-weight:700;margin:8px 0 14px;letter-spacing:-.02em}
+.mp-head .meta{font-size:13px;color:#d0d7e8;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.mp-head .meta b{color:#fff}
+.mp-head .meta .av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--cy),var(--mg));display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#000;font-weight:700}
+.mp-act{display:flex;align-items:center;gap:22px;padding:6px 28px 16px;background:rgba(0,0,0,.18)}
+.mp-big{flex:none;width:56px;height:56px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--cy),var(--mg));color:#000;font-size:20px;cursor:pointer;box-shadow:0 8px 24px rgba(255,43,214,.4);transition:transform .15s;display:flex;align-items:center;justify-content:center}
+.mp-big:hover{transform:scale(1.06)}
+.mp-ic{background:none;border:0;color:var(--mu);cursor:pointer;font-size:20px;transition:.15s;padding:4px}
+.mp-ic:hover{color:var(--tx)}.mp-ic.on{color:var(--mg)}
+.mp-tbl{padding:0 20px 24px}
+.mp-row{display:grid;grid-template-columns:36px 1fr 120px 40px 56px;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;font-size:14px;color:#c9d2e6;cursor:pointer;user-select:none}
+.mp-row.hd{cursor:default;font-size:11px;letter-spacing:.14em;color:var(--mu);border-bottom:1px solid rgba(255,255,255,.08);border-radius:0;margin-bottom:6px;text-transform:uppercase}
+.mp-row:not(.hd):hover{background:rgba(255,255,255,.06)}
+.mp-row .n{text-align:center;color:var(--mu);font-family:'JetBrains Mono',monospace;font-size:13px}
+.mp-row .tt b{display:block;color:var(--tx);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-row .tt em{font-style:normal;font-size:12px;color:var(--mu)}
+.mp-row .tt .lyb{font-size:9px;letter-spacing:.12em;border:1px solid var(--mu);color:var(--mu);border-radius:3px;padding:0 4px;margin-left:6px;vertical-align:2px}
+.mp-row .gn{font-size:12px;color:var(--mu)}
+.mp-row .hr{opacity:0;color:var(--mu);text-align:center}
+.mp-row:hover .hr,.mp-row .hr.on{opacity:1}.mp-row .hr.on{color:var(--mg)}
+.mp-row .du{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--mu);text-align:right}
+.mp-row.cur .tt b{color:var(--mg)}
+.eq{display:inline-flex;gap:2px;height:14px;align-items:flex-end}
+.eq i{width:3px;background:var(--mg);animation:eqb .8s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:-.3s}.eq i:nth-child(3){animation-delay:-.55s}
+.eq.pz i{animation-play-state:paused}
+@keyframes eqb{0%,100%{height:3px}50%{height:14px}}
+.mp-foot{padding:4px 30px 30px;font-size:12px;color:var(--mu);line-height:1.7}
+.mp-ly{position:absolute;inset:0;background:linear-gradient(180deg,#5a1450,#170618);padding:40px clamp(20px,5vw,60px);overflow:auto;display:none;scroll-behavior:smooth}
+.mp-ly.on{display:block}
+.mp-main.lyon{overflow:hidden}
+.mp-ly p{font-size:clamp(1.3rem,2.6vw,2rem);font-weight:700;color:rgba(255,255,255,.35);margin:0 0 14px;transition:color .3s,transform .3s;transform-origin:left;cursor:pointer}
+.mp-ly p.on{color:#fff;transform:scale(1.03)}
+.mp-ly p.past{color:rgba(255,255,255,.6)}
+.mp-ly .lyh{font-size:11px;letter-spacing:.24em;color:#ffb6ef;margin-bottom:22px;font-family:'JetBrains Mono',monospace}
+.mp-bar{grid-column:1/-1;display:grid;grid-template-columns:1fr 1.4fr 1fr;align-items:center;gap:16px;padding:12px 18px;background:#000;border-top:1px solid rgba(255,255,255,.06)}
+.mp-now{display:flex;align-items:center;gap:12px;min-width:0}
+.mp-now img{width:54px;height:54px;border-radius:6px;object-fit:cover}
+.mp-now b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-now em{font-style:normal;font-size:12px;color:var(--mu)}
+.mp-ctl{display:flex;flex-direction:column;align-items:center;gap:6px}
+.mp-btns{display:flex;align-items:center;gap:18px}
+.mp-pl{width:36px;height:36px;border-radius:50%;border:0;background:#fff;color:#000;cursor:pointer;font-size:14px;transition:transform .15s;display:flex;align-items:center;justify-content:center}
+.mp-pl:hover{transform:scale(1.07)}
+.mp-prog{display:flex;align-items:center;gap:10px;width:100%;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mu)}
+.mp-track{flex:1;height:4px;background:rgba(255,255,255,.18);border-radius:2px;position:relative;cursor:pointer}
+.mp-track i{position:absolute;left:0;top:0;bottom:0;background:#fff;border-radius:2px}
+.mp-track:hover i{background:linear-gradient(90deg,var(--cy),var(--mg))}
+.mp-track i::after{content:"";position:absolute;right:-6px;top:-4px;width:12px;height:12px;border-radius:50%;background:#fff;opacity:0;transition:opacity .15s}
+.mp-track:hover i::after{opacity:1}
+.mp-right{display:flex;align-items:center;justify-content:flex-end;gap:12px}
+.mp-right input[type=range]{width:100px;height:4px;background:linear-gradient(90deg,#fff var(--v,80%),rgba(255,255,255,.2) var(--v,80%))}
+.mp-right input[type=range]::-webkit-slider-thumb{width:12px;height:12px;border-radius:50%;box-shadow:none}
+.mp-right input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%}
+.mp-sm{font-size:11px!important}
+@media(max-width:820px){
+ .mp{grid-template-columns:1fr;height:auto}
+ .mp-side{flex-direction:row;overflow-x:auto;padding:12px;gap:8px;border-right:0;border-bottom:1px solid rgba(255,255,255,.05)}
+ .mp-brand,.mp-nav,.mp-lib small{display:none}
+ .mp-lib{display:flex;gap:8px}
+ .mp-rel{margin:0;flex:none;padding:6px 10px 6px 6px;background:rgba(255,255,255,.04)}
+ .mp-rel img{width:36px;height:36px}
+ .mp-main{max-height:560px}
+ .mp-head{flex-direction:column;align-items:flex-start;padding:22px 18px 16px}
+ .mp-head img{width:160px;height:160px;align-self:center}
+ .mp-row{grid-template-columns:28px 1fr 30px 50px}
+ .mp-row .gn{display:none}
+ .mp-bar{grid-template-columns:1fr auto;gap:10px}
+ .mp-ctl{grid-column:1/-1;order:3}
+ .mp-right .vol{display:none}
+}
 /* nav buttons */
 .nbtn{border:1px solid rgba(0,240,255,.25);background:transparent;color:var(--mu);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;padding:6px 10px;border-radius:6px;cursor:pointer;transition:.2s;text-transform:uppercase}
 .nbtn:hover,.nbtn.on{color:#001014;background:var(--cy);border-color:var(--cy);box-shadow:0 0 14px rgba(0,240,255,.5)}
@@ -431,6 +528,7 @@ a.soc:hover{border-color:var(--sc);box-shadow:0 0 20px -4px var(--sc);transform:
   <div class="nav-r">
     <a href="#lab">Laboratorio</a>
     <a href="#sobre-mi">Sobre mí</a>
+    <a href="#musica">Música</a>
     <a href="#contacto">Contacto</a>
     <button class="nbtn arc" id="arcBtn" title="Recorrido automático por las demos">▶ <span class="tx">Arcade</span></button>
     <button class="nbtn" id="sndBtn" title="Efectos de sonido">♪ <span class="tx">Sonido</span></button>
@@ -488,11 +586,38 @@ a.soc:hover{border-color:var(--sc);box-shadow:0 0 20px -4px var(--sc);transform:
   </div>
 </section>
 
+<section class="music" id="musica">
+  <div class="reveal">
+    <div class="k mono">// 03 — MÚSICA</div>
+    <h2>Mi música,<br><em>en mi propio streaming.</em></h2>
+  </div>
+  <div class="mp" id="mp">
+    <aside class="mp-side">
+      <div class="mp-brand"><i>♪</i><div>cybercadtm<small>MUSIC</small></div></div>
+      <div class="mp-nav"><span class="on">⌂ Inicio</span><span>⌕ Buscar</span><span>▤ Tu biblioteca</span></div>
+      <div class="mp-lib"><small class="mono">LANZAMIENTOS</small><div id="mpRels" style="display:contents"></div></div>
+    </aside>
+    <div class="mp-main" id="mpMain">
+      <div id="mpView"></div>
+      <div class="mp-ly" id="mpLy"></div>
+    </div>
+    <div class="mp-bar">
+      <div class="mp-now"><img id="mpNowC" alt=""><div style="min-width:0"><b id="mpNowT">Elige una canción</b><em id="mpNowA">cybercadtm</em></div><button class="mp-ic mp-sm" id="mpNowH">♡</button></div>
+      <div class="mp-ctl">
+        <div class="mp-btns"><button class="mp-ic mp-sm" id="mpShuf" title="Aleatorio">⤮</button><button class="mp-ic" id="mpPrev" title="Anterior">⏮</button><button class="mp-pl" id="mpPlay">▶</button><button class="mp-ic" id="mpNext" title="Siguiente">⏭</button><button class="mp-ic mp-sm" id="mpRep" title="Repetir">↻</button></div>
+        <div class="mp-prog"><span id="mpCur">0:00</span><div class="mp-track" id="mpTrack"><i></i></div><span id="mpDur">0:00</span></div>
+      </div>
+      <div class="mp-right"><button class="mp-ic mp-sm" id="mpLyB" title="Letra">🎤</button><span class="vol mp-ic mp-sm">🔊</span><input class="vol" type="range" id="mpVol" min="0" max="100" value="80"></div>
+    </div>
+  </div>
+  <audio id="mpA" preload="none"></audio>
+</section>
+
 <section class="outro reveal" id="contacto">
   <div class="term-box">
     <div class="bar"><i></i><i></i><i></i><span class="mono">cybercadtm@lab:~/siguiente-proyecto</span></div>
     <div class="bd">
-      <div class="k mono" style="font-size:12px;letter-spacing:.3em;color:var(--cy);margin-bottom:12px">// 03 — LO QUE SIGUE</div>
+      <div class="k mono" style="font-size:12px;letter-spacing:.3em;color:var(--cy);margin-bottom:12px">// 04 — LO QUE SIGUE</div>
       <h2>¿Tienes una idea?<br><em>Vamos a construirla.</em></h2>
       <p>Cada proyecto empieza como una necesidad real: el almacén, la familia, la música, aprender idiomas. Si algo te sirve o quieres algo parecido, búscame como <b style="color:var(--tx)">@cybercadtm</b>.</p>
       <div class="cta">
@@ -548,7 +673,7 @@ function demoDJ(st,card){
   function hat(t){const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();o.type='square';o.frequency.value=8800;f.type='highpass';f.frequency.value=7000;env(g,t,.12,.05);o.connect(f).connect(g).connect(gA);o.start(t);o.stop(t+.06)}
   function syn(t,fr){const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();o.type='sawtooth';o.frequency.value=fr;f.type='lowpass';f.frequency.setValueAtTime(2600,t);f.frequency.exponentialRampToValueAtTime(300,t+.2);env(g,t,.25,.22);o.connect(f).connect(g).connect(gB);o.start(t);o.stop(t+.25)}
   function play(){
-    if(window.popPause)window.popPause();
+    if(window.popPause)window.popPause();if(window.mpPause)window.mpPause();
     try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();ac.resume();if(!gA){gA=ac.createGain();gB=ac.createGain();gA.connect(ac.destination);gB.connect(ac.destination)}mix();nt=ac.currentTime+.05;
       iv=setInterval(()=>{if(!card._vis){stop();return}while(nt<ac.currentTime+.2){const s16=step%16;if(pads[s16]&&pads[s16].classList.contains('on'))clap(nt);if(step%2==0)kick(nt);else hat(nt);syn(nt,arp[step%8]*(step%16>=8?1.5:1));step++;nt+=SD}},40)}catch(e){}
     on=true;pl.textContent='■ STOP';va.classList.add('spin');vb.classList.add('spin')}
@@ -1035,6 +1160,61 @@ addEventListener('touchmove',()=>{if(ARC.on)arcStop()},{passive:true});
     if(pl.classList.contains('on')&&pcv.offsetParent){const {x,w,h}=fit(pcv);x.clearRect(0,0,w,h);const n=12,bw=w/n;for(let i=0;i<n;i++){const v=au.paused?.08:d[i*4+2]/255;const bh=Math.max(2,v*h);const g=x.createLinearGradient(0,h,0,0);g.addColorStop(0,'#00f0ff');g.addColorStop(1,'#ff2bd6');x.fillStyle=g;x.fillRect(i*bw+1,h-bh,bw-2,bh)}}
     requestAnimationFrame(frame)}
   requestAnimationFrame(frame);
+})();
+
+
+/* ============ cybercadtm MUSIC ============ */
+(function(){
+  const REL=[{"id": "fabrica", "type": "Álbum", "title": "Fábrica de Babitas", "year": 2026, "cover": "media/fabrica-de-babitas.jpg", "grad": "#1f4f7a", "genre": "Alternative Latin Pop", "tracks": [{"t": "Fábrica de Babitas", "src": "media/musica/fabrica.mp3", "d": 180.0, "ly": true}, {"t": "Mi Chica Cocodrilo", "src": "media/musica/cocodrilo.mp3", "d": 175.0, "ly": false}, {"t": "Café en Pasillo Dos", "src": "media/musica/cafe.mp3", "d": 164.2, "ly": false}, {"t": "Babitas (Versión Desamor)", "src": "media/musica/desamor.mp3", "d": 180.0, "ly": false}, {"t": "La Reata del Envíos", "src": "media/musica/reata.mp3", "d": 178.8, "ly": false}, {"t": "Te Fuiste, Mi Chica Cocodrilo", "src": "media/musica/tefuiste.mp3", "d": 170.0, "ly": false}, {"t": "Mi Chica Cocodrilo (Cui Cui)", "src": "media/musica/cuicui.mp3", "d": 168.7, "ly": false}]}, {"id": "versiones", "type": "EP", "title": "Versiones y Remixes", "year": 2026, "cover": "media/musica/portada-versiones.jpg", "grad": "#7a1f63", "genre": "Remixes", "tracks": [{"t": "Fábrica de Babitas (Multiestilo)", "src": "media/musica/fabrica-multiestilo.mp3", "d": 188.5, "ly": false}, {"t": "Fábrica de Babitas (Remix)", "src": "media/musica/fabrica-remix.mp3", "d": 193.2, "ly": false}, {"t": "Mi Chica Cocodrilo (Versión 2)", "src": "media/musica/cocodrilo-v2.mp3", "d": 184.9, "ly": false}, {"t": "Mi Chica Cocodrilo (Versión 3)", "src": "media/musica/cocodrilo-v3.mp3", "d": 167.5, "ly": false}, {"t": "La Reata del Envíos (Versión 3)", "src": "media/musica/reata-v3.mp3", "d": 167.2, "ly": false}, {"t": "Babitas (Versión Desamor · Instrumental)", "src": "media/musica/desamor-instrumental.mp3", "d": 180.0, "ly": false}]}, {"id": "popurri", "type": "Sencillo", "title": "Popurrí Babitas", "year": 2026, "cover": "media/musica/portada-popurri.jpg", "grad": "#0f5a66", "genre": "Mix", "tracks": [{"t": "Popurrí Babitas (Mix)", "src": "media/popurri-babitas.mp3", "d": 188.0, "ly": false}]}], LY=[{"t": 0.0, "l": "Dos aviones nos separan en el mapa mi amor!"}, {"t": 4.0, "l": "Bebiendo vino pensando en tu olor!"}, {"t": 8.0, "l": "Recordando tu risa con tanto clamor!"}, {"t": 12.0, "l": "Nadie como ella me sabe hacer cafe!"}, {"t": 16.0, "l": "Con ese toque que me quita el estrés!"}, {"t": 24.0, "l": "Mirando la pantalla perdiendo la fe!"}, {"t": 32.0, "l": "Dime cuando vuelves bésame otra vez!"}, {"t": 40.0, "l": "Shugita!"}, {"t": 48.0, "l": "Eres mi dulce mi pequeña joyita!"}, {"t": 50.0, "l": "Cocodrilito!"}, {"t": 52.0, "l": "Que me muerde con su amor infinito!"}, {"t": 54.0, "l": "Fábrica de lagrimitas!"}, {"t": 56.0, "l": "Cuando te extraño mi alma se me quita!"}, {"t": 58.0, "l": "Jabibi!"}, {"t": 60.0, "l": "You know you are the only one for me!"}, {"t": 62.0, "l": "Babitas! Mirtili! Pomodorita cui!"}, {"t": 64.0, "l": "Mi vida entera te la entrego solo a ti!"}, {"t": 68.0, "l": "Cuidado con las cui cui! Mua mua mua mua mua!"}, {"t": 72.0, "l": "Que nuestro amor nadie lo va a terminar!"}, {"t": 76.0, "l": "Babitas! Mirtili! Pomodorita cui!"}, {"t": 80.0, "l": "Eres el sueño que siempre yo quise aquí!"}, {"t": 84.0, "l": "Cuidado con las cui cui! Mua mua mua mua mua!"}, {"t": 88.0, "l": "Nadie en el mundo nos va a separar!"}, {"t": 92.0, "l": "Tumbado el corrido pero no nuestro amor!"}, {"t": 96.0, "l": "Envidia de todos por nuestro gran valor!"}, {"t": 100.0, "l": "Celosita dices pero yo sé la verdad!"}, {"t": 104.0, "l": "Que me cuidas tanto de tanta maldad!"}, {"t": 108.0, "l": "Fábrica de babitas me dices al reír!"}, {"t": 112.0, "l": "Y yo por tus besos me dejo hasta morir!"}, {"t": 116.0, "l": "Saranghae te digo con todo el corazón!"}, {"t": 120.0, "l": "Esta es nuestra historia nuestra gran canción!"}, {"t": 124.0, "l": "Babitas! Mirtili! Pomodorita cui!"}, {"t": 128.0, "l": "Mi vida entera te la entrego solo a ti!"}, {"t": 132.0, "l": "Cuidado con las cui cui! Mua mua mua mua mua!"}, {"t": 136.0, "l": "Que nuestro amor nadie lo va a terminar!"}, {"t": 140.0, "l": "Babitas! Mirtili! Pomodorita cui!"}, {"t": 144.0, "l": "Eres el sueño que siempre yo quise aquí!"}, {"t": 148.0, "l": "Cuidado con las cui cui! Mua mua mua mua mua!"}, {"t": 152.0, "l": "Nadie en el mundo nos va a separar!"}, {"t": 156.0, "l": "Dos aviones de distancia no son nada al final!"}, {"t": 160.0, "l": "Porque nuestro amor es un lazo inmortal!"}, {"t": 163.333, "l": "Te amo mi vida mi dulce mirtili!"}, {"t": 166.667, "l": "Por siempre y para siempre seremos así!"}, {"t": 170.0, "l": "Mua mua mua mua mua!"}, {"t": 173.333, "l": "Nos vemos pronto mi amor!"}];
+  const A=$('#mpA'),view=$('#mpView'),ly=$('#mpLy'),main=$('#mpMain');
+  const fmt=s=>{s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+pad(s%60)};
+  let rel=REL[0],q=[],qi=-1,shuf=false,rep=false,showLy=false;
+  const liked=new Set();try{JSON.parse(localStorage.getItem('cyb-likes')||'[]').forEach(x=>liked.add(x))}catch(e){}
+  const saveLikes=()=>{try{localStorage.setItem('cyb-likes',JSON.stringify([...liked]))}catch(e){}};
+  const total=r=>r.tracks.reduce((a,t)=>a+t.d,0);
+  $('#mpRels').innerHTML=REL.map((r,i)=>`<div class="mp-rel" data-i="${i}"><img src="${r.cover}" alt=""><div><b>${r.title}</b><em>${r.type} · cybercadtm</em></div></div>`).join('');
+  $$('.mp-rel').forEach(e=>e.onclick=()=>{rel=REL[+e.dataset.i];showLy=false;render();main.scrollTop=0});
+  function cur(){return qi>=0?q[qi]:null}
+  function render(){
+    $$('.mp-rel').forEach((e,i)=>e.classList.toggle('on',REL[i]===rel));
+    main.style.setProperty('--rg',rel.grad);
+    const c=cur(),mins=Math.round(total(rel)/60);
+    view.innerHTML=`<div class="mp-head"><img src="${rel.cover}" alt=""><div><div class="ty">${rel.type}</div><h3>${rel.title}</h3><div class="meta"><span class="av">c</span><b>cybercadtm</b> · ${rel.year} · ${rel.tracks.length} ${rel.tracks.length>1?'canciones':'canción'}, ${mins} min</div></div></div>
+    <div class="mp-act"><button class="mp-big" id="mpBig">${c&&c.rel===rel&&!A.paused?'❚❚':'▶'}</button><button class="mp-ic ${shuf?'on':''}" id="mpShuf2" title="Aleatorio">⤮</button><button class="mp-ic" title="Me gusta" id="mpRelH">♡</button><span class="mono" style="font-size:11px;color:var(--mu);letter-spacing:.14em">${rel.genre.toUpperCase()}</span></div>
+    <div class="mp-tbl"><div class="mp-row hd"><span class="n">#</span><span>Título</span><span class="gn">Género</span><span></span><span class="du">⏱</span></div>
+    ${rel.tracks.map((t,i)=>{const on=c&&c.t===t;return `<div class="mp-row ${on?'cur':''}" data-i="${i}"><span class="n">${on?`<span class="eq ${A.paused?'pz':''}"><i></i><i></i><i></i></span>`:i+1}</span><span class="tt"><b>${t.t}</b><em>cybercadtm${t.ly?'<span class="lyb">LETRA</span>':''}</em></span><span class="gn">${rel.genre}</span><span class="hr ${liked.has(t.src)?'on':''}" data-h="${i}">${liked.has(t.src)?'♥':'♡'}</span><span class="du">${fmt(t.d)}</span></div>`}).join('')}
+    </div><div class="mp-foot">${new Date().getFullYear()} · ${rel.title}<br>℗ cybercadtm · Hecho en Tijuana</div>`;
+    $$('.mp-row:not(.hd)',view).forEach(r=>r.onclick=e=>{const i=+r.dataset.i;if(e.target.dataset.h!==undefined){const t=rel.tracks[i];liked.has(t.src)?liked.delete(t.src):liked.add(t.src);saveLikes();render();return}playRel(rel,i)});
+    $('#mpBig').onclick=()=>{const c=cur();if(c&&c.rel===rel){A.paused?A.play():A.pause()}else playRel(rel,shuf?Math.random()*rel.tracks.length|0:0)};
+    $('#mpShuf2').onclick=()=>{shuf=!shuf;sync();render()};
+    renderLy();
+  }
+  function playRel(r,i){q=r.tracks.map(t=>({t,rel:r}));qi=i;load(true)}
+  function load(play){const c=cur();if(!c)return;A.src=c.t.src;$('#mpNowC').src=c.rel.cover;$('#mpNowT').textContent=c.t.t;$('#mpNowA').textContent='cybercadtm · '+c.rel.title;$('#mpDur').textContent=fmt(c.t.d);if(play){const p=A.play();if(p&&p.catch)p.catch(()=>{})}render();sync()}
+  function next(d=1){if(!q.length){playRel(rel,0);return}if(shuf&&d>0)qi=Math.random()*q.length|0;else qi=(qi+d+q.length)%q.length;load(true)}
+  function sync(){const c=cur();$('#mpPlay').textContent=A.paused?'▶':'❚❚';$('#mpShuf').classList.toggle('on',shuf);$('#mpRep').classList.toggle('on',rep);$('#mpLyB').classList.toggle('on',showLy);
+    $('#mpNowH').textContent=c&&liked.has(c.t.src)?'♥':'♡';$('#mpNowH').classList.toggle('on',!!(c&&liked.has(c.t.src)));
+    const b=$('#mpBig');if(b)b.textContent=c&&c.rel===rel&&!A.paused?'❚❚':'▶';$$('.eq',view).forEach(e=>e.classList.toggle('pz',A.paused))}
+  function renderLy(){const c=cur();ly.classList.toggle('on',showLy);main.classList.toggle('lyon',showLy);if(showLy)main.scrollTop=0;if(!showLy)return;
+    if(!c||!c.t.ly){ly.innerHTML='<div class="lyh">LETRA</div><p>Todavía no hay letra para esta canción.</p><p style="font-size:1rem">Pon “Fábrica de Babitas” para verla sincronizada ✨</p>';return}
+    ly.innerHTML='<div class="lyh">LETRA · '+c.t.t.toUpperCase()+'</div>'+LY.map((l,i)=>`<p data-i="${i}">${l.l}</p>`).join('');
+    $$('p',ly).forEach(p=>p.onclick=()=>{A.currentTime=LY[+p.dataset.i].t});lastLy=-1}
+  let lastLy=-1;
+  function tickLy(){const c=cur();if(!showLy||!c||!c.t.ly)return;let k=-1;for(let i=0;i<LY.length;i++)if(A.currentTime>=LY[i].t)k=i;if(k===lastLy)return;lastLy=k;$$('p',ly).forEach((p,i)=>{p.classList.toggle('on',i===k);p.classList.toggle('past',i<k)});const el=$(`p[data-i="${k}"]`,ly);if(el)ly.scrollTop=el.offsetTop-ly.clientHeight/2+40}
+  $('#mpPlay').onclick=()=>{if(!cur()){playRel(rel,0);return}A.paused?A.play():A.pause()};
+  $('#mpNext').onclick=()=>next(1);$('#mpPrev').onclick=()=>{if(A.currentTime>3)A.currentTime=0;else next(-1)};
+  $('#mpShuf').onclick=()=>{shuf=!shuf;sync();render()};$('#mpRep').onclick=()=>{rep=!rep;sync()};
+  $('#mpLyB').onclick=()=>{showLy=!showLy;sync();renderLy();tickLy()};
+  $('#mpNowH').onclick=()=>{const c=cur();if(!c)return;liked.has(c.t.src)?liked.delete(c.t.src):liked.add(c.t.src);saveLikes();sync();render()};
+  $('#mpTrack').onclick=e=>{const r=e.currentTarget.getBoundingClientRect();A.currentTime=(e.clientX-r.left)/r.width*(A.duration||0)};
+  const vol=$('#mpVol');vol.oninput=()=>{A.volume=vol.value/100;vol.style.setProperty('--v',vol.value+'%')};A.volume=.8;
+  A.addEventListener('timeupdate',()=>{$('#mpCur').textContent=fmt(A.currentTime);$('#mpTrack i').style.width=(A.currentTime/(A.duration||1)*100)+'%';tickLy()});
+  A.addEventListener('loadedmetadata',()=>$('#mpDur').textContent=fmt(A.duration));
+  A.addEventListener('play',()=>{if(window.popPause)window.popPause();sync()});A.addEventListener('pause',sync);
+  A.addEventListener('ended',()=>{if(rep){A.currentTime=0;A.play()}else next(1)});
+  const pop=$('#pop');if(pop)pop.addEventListener('play',()=>A.pause());
+  window.mpPause=()=>A.pause();
+  render();sync();
 })();
 
 // reloj Tijuana
