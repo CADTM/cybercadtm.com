@@ -1064,7 +1064,7 @@ function demoCanal(st,card){
 
 // 13 AJEDREZ 3D — partida automática con golpe al comer
 function demoAjedrez(st,card){
-  st.innerHTML=`<canvas></canvas><div class="hud tl mono">AJEDREZ 3D · EN LÍNEA</div><div class="hud tr mono ajst">blancas juegan</div>`;
+  st.innerHTML=`<canvas></canvas><div class="hud tl mono">🪐 JUPIJEDREZ</div><div class="hud tr mono ajst">blancas juegan</div>`;
   const cv=$('canvas',st),msg=$('.ajst',st),G={k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
   const SEQ=['e2e4','e7e5','f1c4','b8c6','d1h5','g8f6','h5f7'];
   let B,step,anim,timer,parts=[],fly=null,shk=0;
@@ -1113,7 +1113,7 @@ function demoAjedrez(st,card){
 // Para enlazar cada app, pon su dirección en "url" (ej. 'https://tarima.cybercadtm.com').
 const APPS=[
   {id:'cabina',n:'Cabina',s:'Consola de DJ',cat:'lab',ac:'#ff2bd6',wide:1,url:'https://cabina.cybercadtm.com',d:'Consola de DJ, karaoke y reproductor. NUEVO: sección Beats, una caja de ritmos que se sincroniza con los decks. Dale PLAY, mueve el crossfader y prende pasos del beat.',t:['Beats','Karaoke','Web Audio'],f:demoDJ},
-  {id:'ajedrez',n:'Ajedrez 3D',s:'Animado · en línea',cat:'juegos',ac:'#ffcc4d',wide:1,url:'https://cybercadtm.com/ajedrez/',d:'Ajedrez 3D en primera persona con avatares, piezas tuneables y juego en línea con reloj y reacciones. Las piezas se golpean al comer y tiemblan cuando están en peligro.',t:['3D','En línea','Avatares'],f:demoAjedrez},
+  {id:'jupijedrez',n:'Jupijedrez',s:'Ajedrez 3D · en línea',cat:'juegos',ac:'#ff9a4d',wide:1,url:'https://cybercadtm.com/jupijedrez/',d:'Ajedrez 3D en primera persona frente a Júpiter: avatares, escenarios, piezas tuneables, retos de mate, pistas, récords y juego en línea con reloj y reacciones. Las piezas se golpean al comer.',t:['3D','En línea','Retos'],f:demoAjedrez},
   {id:'orbita',n:'Órbita Júpiter',s:'Bubble shooter 3D',cat:'juegos',ac:'#ffb36b',url:'https://orbita.cybercadtm.com',d:'Dispara planetas desde la órbita de Júpiter y junta 3 del mismo color. Ahora con personajes como Fel, probador de apariencia y profesiones.',t:['Personajes','Física'],f:demoOrbita},
   {id:'monitor',n:'Monitor de Contenedores',s:'Patio de andenes',cat:'almacen',ac:'#00f0ff',wide:1,url:'',d:'Procesos e inventario de contenedores en tiempo real: andenes D1–D14, patio, racks y zona de surtido.',t:['Tiempo real','Logística'],f:demoMonitor},
   {id:'tarima',n:'Tarima Perfecta',s:'Arcade 3D de paletizado',cat:'juegos',ac:'#ffb020',url:'https://tarima-perfecta.cybercadtm.com',d:'Acomoda cajas en una tarima de 48×40 con gravedad real, patrones de estiba y etiquetas hacia afuera. Haz clic para soltar más rápido.',t:['3D','Gravedad real'],f:demoTarima},
