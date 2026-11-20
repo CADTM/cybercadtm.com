@@ -1061,10 +1061,59 @@ function demoCanal(st,card){
   every(card,600,()=>{views+=Math.random()*14|0;if(Math.random()<.4)likes++;if(Math.random()<.15&&subs<1000)subs++;$('.vw',st).textContent=views.toLocaleString('es-MX');$('.lk',st).textContent=likes;$('.sb',st).textContent=subs;$('.goal i b',st).style.width=subs/10+'%'});
 }
 
+
+// 13 AJEDREZ 3D — partida automática con golpe al comer
+function demoAjedrez(st,card){
+  st.innerHTML=`<canvas></canvas><div class="hud tl mono">AJEDREZ 3D · EN LÍNEA</div><div class="hud tr mono ajst">blancas juegan</div>`;
+  const cv=$('canvas',st),msg=$('.ajst',st),G={k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
+  const SEQ=['e2e4','e7e5','f1c4','b8c6','d1h5','g8f6','h5f7'];
+  let B,step,anim,timer,parts=[],fly=null,shk=0;
+  const xy=s=>[s.charCodeAt(0)-97,8-+s[1]];
+  function reset(){B={};const bk='rnbqkbnr';for(let c=0;c<8;c++){B[c+',0']=['b',bk[c]];B[c+',1']=['b','p'];B[c+',6']=['w','p'];B[c+',7']=['w',bk[c]]}step=0;anim=null;timer=1;fly=null;msg.textContent='blancas juegan'}
+  reset();
+  card.addEventListener('click',()=>{if(step>=SEQ.length)reset()});
+  addLoop(card,(dt,t)=>{
+    const f=fit(cv),x=f.x,W=f.w,H=f.h;x.fillStyle='#0b1020';x.fillRect(0,0,W,H);
+    const ty=.6,s=Math.min(W*.84/8,(H-40)/(8*ty+.75)),ox=(W-8*s)/2,oy=Math.max(34+s*.7,(H-8*s*ty)/2+s*.35);
+    const P=(c,r)=>[ox+(c+.5)*s,oy+(r+.5)*s*ty];
+    x.save();if(shk>0){x.translate((Math.random()-.5)*shk*8,(Math.random()-.5)*shk*8);shk-=dt*2.5}
+    x.fillStyle='#3b2414';x.fillRect(ox-6,oy-6,8*s+12,8*s*ty+16);
+    for(let r=0;r<8;r++)for(let c=0;c<8;c++){x.fillStyle=(r+c)%2?'#8f5d37':'#ead2a6';x.fillRect(ox+c*s,oy+r*s*ty,s+.5,s*ty+.5)}
+    // siguiente jugada
+    timer-=dt;
+    if(!anim&&timer<=0){if(step>=SEQ.length){reset()}else{const m=SEQ[step],[fc,fr]=xy(m.slice(0,2)),[tc,tr]=xy(m.slice(2));anim={fc,fr,tc,tr,k:0,cap:!!B[tc+','+tr],hit:false}}}
+    let moving=null,mx=0,my=0;
+    if(anim){const a=anim;a.k+=dt*(a.cap?1.1:1.8);const k=Math.min(1,a.k);
+      let e=a.cap?(k<.55?k/.55*.75:k<.7?.75-(k-.55)/.15*.08:.67+(k-.7)/.3*.33):k*k*(3-2*k);
+      const [x0,y0]=P(a.fc,a.fr),[x1,y1]=P(a.tc,a.tr);mx=x0+(x1-x0)*e;my=y0+(y1-y0)*e-Math.sin(Math.PI*Math.min(1,e))*s*.35;moving=a.fc+','+a.fr;
+      if(a.cap&&!a.hit&&k>.82){a.hit=true;shk=1;const v=B[a.tc+','+a.tr];fly={p:v,x:x1,y:y1,vx:(x1-x0)*3+(Math.random()-.5)*80,vy:-260,r:0};
+        for(let i=0;i<22;i++)parts.push({x:x1,y:y1-s*.3,vx:(Math.random()-.5)*300,vy:-Math.random()*260,l:1,c:['#fff','#ffd23f','#ff7a1f','#ff3b3b'][i%4]})}
+      if(k>=1){B[a.tc+','+a.tr]=B[a.fc+','+a.fr];delete B[a.fc+','+a.fr];step++;anim=null;timer=.6;
+        msg.textContent=step>=SEQ.length?'¡JAQUE MATE! ♛':(step%2?'negras juegan':'blancas juegan');if(step>=SEQ.length)timer=2.6}}
+    // pieza que va a ser comida tiembla
+    const nx=!anim&&step<SEQ.length?SEQ[step]:null;let shakeK=null;if(nx){const [tc,tr]=xy(nx.slice(2));if(B[tc+','+tr])shakeK=tc+','+tr}
+    if(anim&&anim.cap&&!anim.hit)shakeK=anim.tc+','+anim.tr;
+    const pcs=Object.entries(B).sort((a,b)=>a[0].split(',')[1]-b[0].split(',')[1]);
+    x.textAlign='center';x.textBaseline='alphabetic';x.font=`${s*.92}px "Segoe UI Symbol","Noto Sans Symbols 2","DejaVu Sans",serif`;
+    const draw=(pc,px,py,rot,glow)=>{x.save();x.translate(px,py);x.rotate(rot||0);
+      if(glow){x.fillStyle='rgba(255,59,59,.45)';x.beginPath();x.ellipse(0,s*.08,s*.4,s*.16,0,0,7);x.fill()}
+      x.fillStyle='rgba(0,0,0,.3)';x.beginPath();x.ellipse(0,s*.1,s*.3,s*.1,0,0,7);x.fill();
+      x.lineWidth=Math.max(1.5,s*.05);x.strokeStyle=pc[0]==='w'?'#3a2a1a':'#c9c9d4';x.fillStyle=pc[0]==='w'?'#fffaf0':'#1a1a1f';
+      x.strokeText(G[pc[1]]+'︎',0,s*.12);x.fillText(G[pc[1]]+'︎',0,s*.12);x.restore()};
+    for(const [k,pc] of pcs){if(k===moving)continue;if(anim&&anim.hit&&k===anim.tc+','+anim.tr)continue;const [c,r]=k.split(',').map(Number);let [px,py]=P(c,r);let rot=0;
+      if(k===shakeK){rot=Math.sin(t*40)*.12;px+=Math.sin(t*55)*1.5}draw(pc,px,py,rot,k===shakeK)}
+    if(moving)draw(B[moving],mx,my,anim&&anim.cap&&anim.k>.55&&anim.k<.7?-.3:0);
+    if(fly){fly.vy+=700*dt;fly.x+=fly.vx*dt;fly.y+=fly.vy*dt;fly.r+=dt*12;draw(fly.p,fly.x,fly.y,fly.r);if(fly.y>H+60)fly=null}
+    parts=parts.filter(p=>(p.l-=dt*1.8)>0);for(const p of parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=500*dt;x.globalAlpha=p.l;x.fillStyle=p.c;x.beginPath();x.arc(p.x,p.y,2.4,0,7);x.fill()}x.globalAlpha=1;
+    x.restore();
+  });
+}
+
 /* ============ CATÁLOGO ============ */
 // Para enlazar cada app, pon su dirección en "url" (ej. 'https://tarima.cybercadtm.com').
 const APPS=[
   {id:'cabina',n:'Cabina',s:'Consola de DJ',cat:'lab',ac:'#ff2bd6',wide:1,url:'https://cabina.cybercadtm.com',d:'Consola de DJ, karaoke y reproductor. NUEVO: sección Beats, una caja de ritmos que se sincroniza con los decks. Dale PLAY, mueve el crossfader y prende pasos del beat.',t:['Beats','Karaoke','Web Audio'],f:demoDJ},
+  {id:'ajedrez',n:'Ajedrez 3D',s:'Animado · en línea',cat:'juegos',ac:'#ffcc4d',wide:1,url:'https://cybercadtm.com/ajedrez/',d:'Ajedrez 3D en primera persona con avatares, piezas tuneables y juego en línea con reloj y reacciones. Las piezas se golpean al comer y tiemblan cuando están en peligro.',t:['3D','En línea','Avatares'],f:demoAjedrez},
   {id:'orbita',n:'Órbita Júpiter',s:'Bubble shooter 3D',cat:'juegos',ac:'#ffb36b',url:'https://orbita.cybercadtm.com',d:'Dispara planetas desde la órbita de Júpiter y junta 3 del mismo color. Ahora con personajes como Fel, probador de apariencia y profesiones.',t:['Personajes','Física'],f:demoOrbita},
   {id:'monitor',n:'Monitor de Contenedores',s:'Patio de andenes',cat:'almacen',ac:'#00f0ff',wide:1,url:'',d:'Procesos e inventario de contenedores en tiempo real: andenes D1–D14, patio, racks y zona de surtido.',t:['Tiempo real','Logística'],f:demoMonitor},
   {id:'tarima',n:'Tarima Perfecta',s:'Arcade 3D de paletizado',cat:'juegos',ac:'#ffb020',url:'https://tarima-perfecta.cybercadtm.com',d:'Acomoda cajas en una tarima de 48×40 con gravedad real, patrones de estiba y etiquetas hacia afuera. Haz clic para soltar más rápido.',t:['3D','Gravedad real'],f:demoTarima},
