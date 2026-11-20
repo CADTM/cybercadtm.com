@@ -124,7 +124,7 @@ label.tg input{accent-color:#ffcc4d;width:17px;height:17px}
 <div id="toast"></div>
 <div class="sheet" id="sheetNet">
   <h2>Jugar en línea</h2>
-  <div id="netNo" style="font-size:14px;line-height:1.5;opacity:.9">El modo en línea funciona cuando abres este ajedrez dentro de <b>claude.ai</b> con tu cuenta. Para jugar con alguien, compártele el artifact desde el botón <b>Compartir</b> de claude.ai (tu rival también necesita una cuenta de Claude).</div>
+  <div id="netNo" style="font-size:14px;line-height:1.5;opacity:.9">Conectando…</div>
   <div id="netYes" style="display:none">
     <div class="row"><input class="txt" id="nick" maxlength="16" placeholder="Tu apodo"></div>
     <div id="netState" style="margin:10px 0;font-size:14px"></div>
@@ -134,7 +134,7 @@ label.tg input{accent-color:#ffcc4d;width:17px;height:17px}
     <div id="netList"></div>
     <h3>Unirme con código</h3>
     <div class="row"><input class="txt" id="netCode" maxlength="8" placeholder="Ej. K7P2Q" style="text-transform:uppercase"><button class="btn" id="netJoinBtn">Unirme</button></div>
-    <div class="row" style="margin-top:12px"><button class="btn" id="netLeave" style="display:none">Salir de la partida en línea</button></div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="netShare" style="display:none">📋 Copiar invitación</button><button class="btn" id="netLeave" style="display:none">Salir de la partida en línea</button></div>
   </div>
   <div class="row" style="margin-top:14px;justify-content:center"><button class="btn pri" id="netClose">Cerrar</button></div>
 </div>
@@ -622,9 +622,12 @@ addEventListener('resize',resize);
 function toast(t){const d=$('toast');d.textContent=t;d.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>d.classList.remove('show'),1800);}
 
 /* ---------- bucle ---------- */
-let last=performance.now();
+let last=performance.now(),lastFrame=0;
+function stepTweens(now){for(let i=tweens.length-1;i>=0;i--){const w=tweens[i];const k=Math.min(1,(now-w.t0)/w.dur);w.fn(w.ease(k));if(k>=1){tweens.splice(i,1);w.res();}}}
+// si la pestaña está en segundo plano (sin cuadros), las animaciones igual terminan
+setInterval(()=>{const n=performance.now();if(n-lastFrame>300)stepTweens(n);},120);
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;const t=now/1000;
-  for(let i=tweens.length-1;i>=0;i--){const w=tweens[i];const k=Math.min(1,(now-w.t0)/w.dur);w.fn(w.ease(k));if(k>=1){tweens.splice(i,1);w.res();}}
+  lastFrame=now;stepTweens(now);
   for(let i=flyers.length-1;i>=0;i--){const f=flyers[i];f.v.y-=20*dt;f.g.position.addScaledVector(f.v,dt);f.g.rotation.x+=f.w.x*dt;f.g.rotation.y+=f.w.y*dt;f.g.rotation.z+=f.w.z*dt;
     f.life-=dt;if(f.life<.4)f.g.scale.setScalar(Math.max(.01,f.life/.4));if(f.life<=0){scene.remove(f.g);pieceObjs.delete(f.g.userData.id);flyers.splice(i,1);}}
   for(let i=parts.length-1;i>=0;i--){const p=parts[i],u=p.userData;u.v.y-=12*dt;p.position.addScaledVector(u.v,dt);u.life-=dt;p.material.opacity=Math.max(0,u.life/u.max);
@@ -696,7 +699,7 @@ function rebuildFrom(list){resetBoard();for(const u of list){const m=findMove(u)
 function netSync(){if(!NET.active||busy||!NET.opp)return;const o=NET.opp;const og=+o.gid||1;
   if(og>NET.gid){NET.gid=og;resetBoard();netPublish();toast('¡Nueva partida!');}
   if(og!==NET.gid)return;
-  const th=String(o.moves||'').split(' ').filter(Boolean);const pre=uci.every((u,i)=>th[i]===u);
+  const th=String(o.moves||'').split(' ').filter(Boolean);const n=Math.min(th.length,uci.length);let pre=true;for(let i=0;i<n;i++)if(th[i]!==uci[i]){pre=false;break;}
   if(pre&&th.length>uci.length){const m=findMove(th[uci.length]);if(m){doMove(m,true);return;}}
   if(!pre&&NET.role==='guest'&&th.length){rebuildFrom(th);netPublish();}}
 function onGamePeers(peers){const others=peers.filter(p=>!p.sameTab&&p.presence&&p.presence.v===1);
@@ -727,6 +730,7 @@ function renderNet(){const box=$('netList');if(!box)return;
   $('netNo').style.display=NET.ns?'none':'';$('netYes').style.display=NET.ns?'':'none';
   $('netState').innerHTML=NET.active?(NET.oppHere?`🟢 Jugando contra <b>${esc(NET.oppNick)}</b> · sala <b>${NET.code.toUpperCase()}</b>`:`🟡 Esperando rival en la sala <b>${NET.code.toUpperCase()}</b> — compártele el código`):'⚪ Sin conectar';
   $('netLeave').style.display=NET.active?'':'none';
+  $('netShare').style.display=NET.active&&!NET.oppHere?'':'none';
   if(!NET.lobby){box.innerHTML='';return;}
   const open=NET.lobby.peers().filter(p=>!p.sameTab&&p.presence&&p.presence.open&&p.presence.open.code);
   box.innerHTML=open.length?'':'<div style="opacity:.6;font-size:13px">Nadie esperando por ahora.</div>';
@@ -739,9 +743,54 @@ $('nick').oninput=e=>{cfg.nick=e.target.value.slice(0,16);save();if(NET.active)n
 $('netCreate').onclick=()=>netJoin(newCode(),'host',$('netColor').value);
 $('netJoinBtn').onclick=()=>{const c=$('netCode').value.toLowerCase().replace(/[^a-z0-9]/g,'');if(c.length<3){toast('Escribe el código');return;}netJoin(c,'guest','b');};
 $('netLeave').onclick=()=>netLeave(false);
+$('netShare').onclick=()=>{const url=location.href.split('#')[0]+'#sala-'+NET.code;const txt='¡Juguemos ajedrez! Entra aquí: '+url+'  (código '+NET.code.toUpperCase()+')';
+  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Invitación copiada'),()=>{$('netCode').value=NET.code;toast('Código: '+NET.code.toUpperCase());});};
+function hashJoin(){const m=/^#sala-([a-z0-9]{3,8})$/.exec(location.hash);if(!m||!NET.ns)return false;history.replaceState(null,'',location.pathname+location.search);openSheet(null);netJoin(m[1],'guest','b');return true;}
 $('netClose').onclick=()=>openSheet(null);
+/* ---- transporte fuera de claude.ai: MQTT público (misma interfaz que la sala) ---- */
+const MQTT_LIB='https://unpkg.com/mqtt@5.16.1/dist/mqtt.min.js';
+const BROKERS=['wss://broker.hivemq.com:8884/mqtt','wss://broker.emqx.io:8084/mqtt','wss://test.mosquitto.org:8081/mqtt'];
+function loadScript(src){return new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src=src;sc.onload=ok;sc.onerror=ko;document.head.appendChild(sc);});}
+function mqttNS(){return new Promise(async res=>{
+  try{if(!window.mqtt)await loadScript(MQTT_LIB);}catch(e){return res(null);}
+  if(!window.mqtt)return res(null);
+  const BASE='cybercadtm/ajedrez3d/v1/';const myId=Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-3);
+  const online=new Set(),rooms=new Map();let client=null,bi=0,settled=false;
+  const fireAll=()=>rooms.forEach(r=>r.fire());
+  function mkRoom(name){const r={name,me:{},others:new Map(),subs:new Set(),q:false};
+    r.peers=()=>[{peer:myId,isMe:true,sameTab:true,kind:'viewer',guest:false,by:null,presence:r.me},
+      ...[...r.others].filter(([id])=>online.has(id)).map(([id,pr])=>({peer:id,isMe:false,sameTab:false,kind:'viewer',guest:false,by:null,presence:pr}))];
+    r.fire=()=>{if(r.q)return;r.q=true;setTimeout(()=>{r.q=false;const ps=r.peers();r.subs.forEach(f=>{try{f({peers:ps,joined:[],left:[],updated:[]});}catch(_){}});},30);};
+    r.pub=()=>{if(client)client.publish(BASE+'r/'+name+'/p/'+myId,JSON.stringify(r.me),{retain:true,qos:1});};
+    r.presence=async patch=>{const m=Object.assign({},r.me,patch);for(const k in patch)if(patch[k]===null)delete m[k];r.me=m;r.pub();r.fire();};
+    r.onPeers=f=>{r.subs.add(f);r.fire();return()=>r.subs.delete(f);};
+    r.connected=()=>!!(client&&client.connected);
+    r.leave=async()=>{if(client){client.publish(BASE+'r/'+name+'/p/'+myId,'',{retain:true,qos:1});client.unsubscribe(BASE+'r/'+name+'/p/+');}rooms.delete(name);r.subs.clear();};
+    rooms.set(name,r);if(client)client.subscribe(BASE+'r/'+name+'/p/+',{qos:1});return r;}
+  function onMsg(topic,buf){if(!topic.startsWith(BASE))return;const rest=topic.slice(BASE.length).split('/');const txt=buf&&buf.length<8000?buf.toString():'';
+    if(rest[0]==='on'&&rest.length===2){const id=rest[1];if(id===myId)return;if(txt==='1')online.add(id);else online.delete(id);fireAll();return;}
+    if(rest[0]==='r'&&rest[2]==='p'&&rest.length===4){const r=rooms.get(rest[1]),id=rest[3];if(!r||id===myId)return;
+      if(!txt)r.others.delete(id);else{try{const o=JSON.parse(txt);if(o&&typeof o==='object'&&!Array.isArray(o))r.others.set(id,o);}catch(_){}}r.fire();}}
+  function tryNext(){if(bi>=BROKERS.length){if(!settled){settled=true;res(null);}return;}
+    const url=BROKERS[bi++];let ok=false;
+    const c=mqtt.connect(url,{clientId:'cc_'+myId,clean:true,keepalive:20,reconnectPeriod:3000,connectTimeout:6000,
+      will:{topic:BASE+'on/'+myId,payload:'',retain:true,qos:1}});
+    const to=setTimeout(()=>{if(!ok){try{c.end(true);}catch(_){}tryNext();}},7500);
+    c.on('connect',()=>{c.publish(BASE+'on/'+myId,'1',{retain:true,qos:1});
+      if(!ok){ok=true;clearTimeout(to);client=c;c.on('message',onMsg);c.subscribe(BASE+'on/+',{qos:1});
+        for(const r of rooms.values()){c.subscribe(BASE+'r/'+r.name+'/p/+',{qos:1});}
+        const lobby=mkRoom('lobby');
+        const ns=Object.assign(lobby,{via:'mqtt',join:async n=>rooms.get(n)||mkRoom(n)});
+        settled=true;res(ns);}
+      else{for(const r of rooms.values())r.pub();}});
+    c.on('error',()=>{});c.on('close',()=>fireAll());}
+  addEventListener('pagehide',()=>{if(client){try{for(const r of rooms.values())client.publish(BASE+'r/'+r.name+'/p/'+myId,'',{retain:true,qos:0});client.publish(BASE+'on/'+myId,'',{retain:true,qos:0});client.end();}catch(_){}}});
+  tryNext();});}
+function useNS(ns){if(!ns){$('netNo').innerHTML='No se pudo conectar al servidor en línea. Revisa tu internet y vuelve a abrir la página.';renderNet();return;}
+  NET.ns=ns;NET.lobby=ns;try{ns.onPeers(()=>renderNet(),()=>{});}catch(_){}renderNet();hashJoin();}
 if(window.claude&&typeof window.claude.use==='function'){
-  window.claude.use('room').then(ns=>{if(!ns)return;NET.ns=ns;NET.lobby=ns;try{ns.onPeers(()=>renderNet(),()=>{});}catch(_){}renderNet();}).catch(()=>{});}
+  window.claude.use('room').then(ns=>ns?useNS(ns):mqttNS().then(useNS)).catch(()=>mqttNS().then(useNS));}
+else{$('netNo').innerHTML='Conectando al servidor en línea…';mqttNS().then(useNS);}
 
 // arranque
 $('mode').value=cfg.mode;$('level').value=cfg.level;$('side').value=cfg.side;
