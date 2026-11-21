@@ -1,7 +1,7 @@
 {
   "name": "Jupijedrez",
   "short_name": "Jupijedrez",
-  "description": "Jupijedrez: ajedrez 3D con avatares, escenarios, retos y juego en línea — @cybercadtm",
+  "description": "Jupijedrez: ajedrez, damas españolas y Conquián en 3D frente a Júpiter — @cybercadtm",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
