@@ -1,7 +1,7 @@
 {
   "name": "Jupijedrez",
   "short_name": "Jupijedrez",
-  "description": "Jupijedrez: ajedrez, damas españolas y Conquián en 3D frente a Júpiter — @cybercadtm",
+  "description": "Jupijedrez: ajedrez, damas, Conquián, dominó, oca y lotería en 3D frente a Júpiter — @cybercadtm",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
