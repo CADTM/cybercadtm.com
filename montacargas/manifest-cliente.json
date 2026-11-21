@@ -1,0 +1,15 @@
+{
+  "name": "Checklist de Montacargas MX3 (Cliente)",
+  "short_name": "MX3 Checklist",
+  "id": "./cliente.html",
+  "start_url": "./cliente.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#060914",
+  "theme_color": "#0067b1",
+  "lang": "es",
+  "icons": [
+    { "src": "icon-cliente-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-cliente-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

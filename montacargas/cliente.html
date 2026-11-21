@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MX3 Montacargas">
+<title>Cliente MX3, checklist de montacargas</title>
+<link rel="manifest" href="manifest-cliente.json"><meta name="theme-color" content="#0067b1"><link rel="icon" href="icon-cliente-192.png"><link rel="apple-touch-icon" href="icon-cliente-192.png">
+<style>
+:root{--bg:#060914;--pn:rgba(20,28,52,.62);--ln:rgba(120,160,255,.16);--tx:#e6ecff;--mu:#8391b8;--cy:#33a3ee;--vi:#0067b1;--ok:#3df5a1;--wa:#ffb020;--bd:#ff4d6d}
+*{box-sizing:border-box;margin:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:radial-gradient(1000px 500px at 85% -10%,rgba(0,103,177,.22),transparent),radial-gradient(900px 500px at -10% 110%,rgba(51,163,238,.16),transparent),var(--bg);color:var(--tx);font:15px/1.5 "Segoe UI",system-ui,sans-serif;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;background:linear-gradient(var(--ln) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,var(--ln) 1px,transparent 1px) 0 0/48px 48px;opacity:.28;pointer-events:none;-webkit-mask:radial-gradient(circle at 50% 30%,#000,transparent 75%);mask:radial-gradient(circle at 50% 30%,#000,transparent 75%)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 26px;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);background:rgba(6,9,20,.7);border-bottom:1px solid var(--ln)}
+h1{font-size:20px;font-weight:600;letter-spacing:.04em;background:linear-gradient(90deg,var(--cy),var(--vi));-webkit-background-clip:text;background-clip:text;color:transparent}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{background:none;border:1px solid transparent;color:var(--mu);padding:8px 14px;border-radius:10px;cursor:pointer;font:inherit}
+nav button:hover{color:var(--tx)}
+nav button.on{color:var(--cy);border-color:var(--cy);box-shadow:0 0 18px rgba(51,163,238,.28) inset,0 0 14px rgba(51,163,238,.2)}
+.clock{color:var(--mu);font-variant-numeric:tabular-nums}
+main{position:relative;max-width:1240px;margin:0 auto;padding:26px}
+.g{display:grid;gap:18px}
+.k4{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.k2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:18px;padding:20px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.card h3{font-size:15px;font-weight:600;margin-bottom:14px;color:#c9d6ff}
+.kpi b{display:block;font-size:40px;font-weight:300;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi span{color:var(--mu);font-size:13px}
+.kpi.a b{color:var(--cy);text-shadow:0 0 22px rgba(51,163,238,.5)}
+.kpi.b b{color:var(--vi);text-shadow:0 0 22px rgba(0,103,177,.5)}
+.kpi.c b{color:var(--wa);text-shadow:0 0 22px rgba(255,176,32,.45)}
+.kpi.d b{color:var(--ok);text-shadow:0 0 22px rgba(61,245,161,.45)}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;border:1px solid}
+.ok{color:var(--ok);border-color:var(--ok);background:rgba(61,245,161,.08)}
+.wa{color:var(--wa);border-color:var(--wa);background:rgba(255,176,32,.08)}
+.bd{color:var(--bd);border-color:var(--bd);background:rgba(255,77,109,.09)}
+.mu{color:var(--mu);border-color:var(--mu)}
+.fl{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.unit{position:relative;overflow:hidden}
+.unit:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c,var(--cy));box-shadow:0 0 16px var(--c,var(--cy))}
+.unit h4{font-size:18px;font-weight:600;display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.unit small{color:var(--mu)}
+.bar{height:7px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden;margin:6px 0 10px}
+.bar i{display:block;height:100%;border-radius:9px;background:var(--c,var(--cy));box-shadow:0 0 10px var(--c,var(--cy));transition:width .6s}
+.row{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--mu)}
+.row b{color:var(--tx);font-weight:500}
+.act{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+button.b,select,input,textarea{font:inherit;color:var(--tx);background:rgba(10,16,34,.8);border:1px solid var(--ln);border-radius:10px;padding:8px 12px}
+button.b{cursor:pointer}
+button.b:hover,select:focus,input:focus,textarea:focus{border-color:var(--cy);outline:none;box-shadow:0 0 12px rgba(51,163,238,.25)}
+button.p{background:linear-gradient(90deg,var(--cy),var(--vi));color:#04101a;border:0;font-weight:600}
+button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:10px;flex-wrap:wrap}
+.top h2{font-size:22px;font-weight:500}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{color:var(--mu);font-weight:500;text-align:left;padding:8px;border-bottom:1px solid var(--ln)}
+td{padding:9px 8px;border-bottom:1px solid rgba(120,160,255,.08)}
+.chk{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:14px 0}
+.it{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid var(--ln);border-radius:12px;cursor:pointer;user-select:none;transition:.2s}
+.it.ok{border-color:var(--ok);background:rgba(61,245,161,.07)}
+.it.bd{border-color:var(--bd);background:rgba(255,77,109,.1)}
+.f{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.f label{display:grid;gap:4px;color:var(--mu);font-size:13px}
+.f input,.f select,textarea{width:100%}
+.al{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(120,160,255,.08);font-size:14px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);flex:none}
+footer{position:relative;text-align:center;color:var(--mu);font-size:12px;padding:22px 26px 30px;border-top:1px solid var(--ln)}
+footer b{color:var(--cy);font-weight:500}
+.ov{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9;background:rgba(3,5,12,.78);-webkit-backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);align-items:center;justify-content:center}
+.ov.on{display:flex}
+.md{background:#0c1226;color:var(--tx);border:1px solid var(--cy);border-radius:18px;padding:22px;width:420px;max-width:92vw;max-height:90vh;overflow:auto;box-shadow:0 0 50px rgba(51,163,238,.25)}
+.em{color:var(--mu);padding:18px 0;text-align:center}
+.card svg text{fill:var(--mu);font-size:11px}
+.hb{display:flex;align-items:center;gap:14px}
+.hl{background:#fff;border-radius:10px;padding:5px 12px}
+.hl svg,.hl img{height:30px;width:auto;display:block}
+.ph{display:flex;gap:20px;align-items:center;justify-content:space-between;border-bottom:2px solid #0067b1;padding-bottom:12px;margin-bottom:14px}
+.ph>div:last-child{text-align:right}
+.ph .logo svg,.ph .logo img{height:44px;width:auto;display:block}
+.ph .sub{margin:2px 0 0!important}
+.paper{background:#fff;color:#111;border-radius:14px;padding:28px;max-width:960px;margin:0 auto;box-shadow:0 0 60px rgba(51,163,238,.18)}
+.paper:before{content:"";display:block;height:4px;background:linear-gradient(90deg,#33a3ee,#0067b1);margin:-28px -28px 22px;border-radius:14px 14px 0 0}
+.paper h1{background:none;color:#0b1220;font-size:22px;letter-spacing:0}
+.paper .sub{color:#555;margin:2px 0 14px;text-transform:capitalize}
+.paper h2{font-size:15px;margin:20px 0 8px;color:#0b1220;break-after:avoid}
+.paper table{font-size:12.5px;break-inside:avoid}
+.paper th{color:#333;border-bottom:2px solid #222;padding:5px 6px}
+.paper td{border-bottom:1px solid #ccc;padding:5px 6px;color:#111}
+.paper .ok{color:#087a4a;background:none;font-weight:600}.paper .wa{color:#a86400;background:none;font-weight:600}.paper .bd{color:#c0163a;background:none;font-weight:600}.paper .mu{color:#555;background:none}
+.paper ul{padding-left:18px;font-size:13px}
+.sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.sum div{border:1px solid #bbb;border-radius:8px;padding:8px 10px;font-size:12px;color:#444}
+.sum b{display:block;font-size:22px;color:#0b1220;font-weight:600}
+.sig{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:46px;text-align:center;font-size:13px;break-inside:avoid}
+.sig div{border-bottom:1px solid #222;padding-bottom:4px}
+.sig span{display:block;color:#555;font-size:12px;border-top:0;padding-top:4px;position:relative;top:24px}
+.note{margin-top:38px;font-size:11px;color:#666}
+@media(max-width:640px){.sum{grid-template-columns:repeat(2,1fr)}.paper{overflow-x:auto}}
+.seg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tag.bl{color:var(--cy);border-color:var(--cy);background:rgba(51,163,238,.08);margin:2px 4px 2px 0}
+.hr{display:flex;align-items:center;gap:12px}
+.ic{background:none;border:1px solid var(--ln);color:var(--mu);border-radius:10px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer;padding:0}
+.ic:hover{color:var(--cy);border-color:var(--cy)}
+.st{padding-left:20px;color:var(--mu);line-height:1.8;margin-bottom:14px}.st b{color:var(--tx);font-weight:500}
+.pill{font-size:12px;border:1px solid var(--ln);color:var(--mu);border-radius:99px;padding:2px 10px}
+.dl{color:var(--mu);font-size:13px;display:flex;align-items:center;gap:6px}
+.paper .mx td,.paper .mx th{text-align:center;padding:4px 3px;font-size:11px}
+.paper .mx td.l{text-align:left}
+.paper .mx{break-inside:auto}.paper tr{break-inside:avoid}
+.paper .lg{font-size:11px;color:#555;margin-top:6px}
+.paper.pg{margin-top:26px}
+.sum b{font-size:20px!important}
+@media print{.paper.pg{break-before:page;margin-top:0}}
+@media print{@page{size:letter;margin:12mm}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body:before,header,.np{display:none}body{background:#fff;color:#000}main{padding:0;max-width:none}.card{border-color:#999;background:#fff}.act,.top button{display:none}.paper{box-shadow:none;border-radius:0;padding:0;max-width:none}.paper:before{margin:0 0 14px;border-radius:0}}
+@media(pointer:coarse){input,select,textarea,button.b{font-size:16px}button.b,select,input{min-height:40px}nav button{padding:10px 14px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<header><div class="hb"><div class="hl" id="hl"></div><h1>Almacén MX3</h1><span class="pill" id="role"></span></div>
+<nav id="nav"></nav><div class="hr"><button class="ic" id="sc" title="Agregar acceso directo" aria-label="Agregar acceso directo" onclick="addSc()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></button><div class="clock" id="clk"></div></div></header>
+<main id="m"></main>
+<footer>© <span id="yr"></span> Almacén MX3, Fisher &amp; Paykel. <b>@cybercadtm</b></footer>
+<div id="dlg" class="ov"><form id="fm" class="md"></form></div>
+<script>
+const LOGO='<svg viewBox="0 0 190 46" xmlns="http://www.w3.org/2000/svg"><text x="0" y="25" font-family="Segoe UI,Arial,sans-serif" font-size="25" font-weight="600" fill="#0067b1">Fisher &amp; Paykel</text><text x="1" y="42" font-family="Segoe UI,Arial,sans-serif" font-size="11" letter-spacing="3.6" fill="#0067b1">HEALTHCARE</text></svg>';
+const CLIENT=true,FN=CLIENT?'cliente.html':'index.html',SK=CLIENT?'mx3c':'mc2';
+const $=s=>document.querySelector(s),H=new Date;
+const day=d=>(d||new Date()).toLocaleDateString('sv');
+const ITEMS=['Frenos','Claxon y alarma de reversa','Luces','Llantas','Horquillas','Mástil y cadenas','Fugas hidráulicas','Cinturón de seguridad','Nivel de batería','Extintor','Limpieza de montacargas'];
+const G1='Swing Reach',G2='Order Picker y Hombre parado',grp=t=>t=='Swing Reach'?G1:G2;
+const seed=()=>({f:[{id:'SR-01',t:'Swing Reach',s:'Operativo',h:1240,b:82},{id:'SR-02',t:'Swing Reach',s:'Operativo',h:980,b:64},{id:'SR-03',t:'Swing Reach',s:'Operativo',h:1510,b:45},{id:'OP-01',t:'Order Picker',s:'Operativo',h:2105,b:90},{id:'OP-02',t:'Order Picker',s:'Operativo',h:452,b:28},{id:'HP-01',t:'Hombre parado',s:'Operativo',h:870,b:71},{id:'HP-02',t:'Hombre parado',s:'Operativo',h:1320,b:53}],
+c:[{id:'CG-01',g:G1,s:'Funcionando',r:day(),n:''},{id:'CG-02',g:G2,s:'Funcionando',r:day(),n:''},{id:'CG-03',g:G2,s:'Funcionando',r:day(),n:''}],
+i:[{n:'Aserrín (sacos)',k:'Insumo',q:12,m:5},{n:'Mopas (pzas)',k:'Insumo',q:6,m:3},{n:'Navajas (cajas)',k:'Consumible',q:4,m:2},{n:'Lapiceros (pzas)',k:'Consumible',q:30,m:10},{n:'Guantes (pares)',k:'Consumible',q:40,m:20},{n:'Lentes (pzas)',k:'Consumible',q:10,m:5},{n:'Trapo (kg)',k:'Consumible',q:8,m:4},{n:'Windex (botellas)',k:'Consumible',q:5,m:2},{n:'Bolsas (paquetes)',k:'Consumible',q:10,m:4},{n:'Papel (rollos)',k:'Consumible',q:12,m:6}],
+k:[],mv:[],a:[],e:[],ra:[],b:[]});
+let S;try{S=JSON.parse(localStorage.getItem(SK))}catch(e){}S=S||seed();mig();
+function mig(){S.seen=S.seen||[];S.ce=S.ce||[];S.ae=S.ae||[];S.k.forEach(k=>{if(!k.id)k.id=uid()});(S.ra=S.ra||[]).forEach(r=>{if(r.c==null)r.c=(r.p||[]).find(n=>n)||''});S.k.forEach(k=>{if(k.fails.includes('Extintor y limpieza'))k.fails=k.fails.filter(x=>x!='Extintor y limpieza').concat(['Extintor','Limpieza de montacargas'])});S.mv=S.mv||[];S.logo=S.logo||'';S.a=S.a||[];S.e=S.e||[];S.ra=S.ra||[];S.b=S.b||[];S.mi=S.mi||250;S.f.forEach(u=>{if(u.ms==null)u.ms=u.h});S.c.forEach(c=>{if(c.s=='Libre'||c.s=='Cargando')c.s='Funcionando';c.r=c.r||'';c.n=c.n||''})}
+const save=()=>{try{localStorage.setItem(SK,JSON.stringify(S))}catch(e){}};
+const col={'En uso':'ok',Baja:'mu',Funcionando:'ok','En revisión':'wa','En mantenimiento':'wa',Operativo:'ok',Revisión:'wa',Mantenimiento:'wa','Fuera de servicio':'bd',Libre:'mu',Cargando:'ok',Falla:'bd'};
+const C={ok:'#3df5a1',wa:'#ffb020',bd:'#ff4d6d',mu:'#8391b8'};
+const st=i=>i.q<=i.m?'bd':i.q<=i.m*1.5?'wa':'ok';
+const bcol=b=>b>50?'#3df5a1':b>25?'#ffb020':'#ff4d6d';
+const tabs=CLIENT?[['ck','Checklist'],['cg','Cargadores'],['ar','Arneses'],['pr','Impresión de reportes'],['sy','Datos']]:[['pn','Panel'],['mc','Montacargas'],['cg','Cargadores'],['ar','Arneses'],['es','Escáneres y radios'],['in','Insumos'],['ck','Checklist'],['pr','Impresión de reportes'],['rp','Historial']];
+let tab=CLIENT?'ck':'pn';
+$('#nav').innerHTML=tabs.map(t=>`<button data-t="${t[0]}">${t[1]}</button>`).join('');
+$('#nav').onclick=e=>{if(e.target.dataset.t){tab=e.target.dataset.t;draw()}};
+setInterval(()=>$('#clk').textContent=new Date().toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'}),1000);
+function ask(title,fields,cb){const f=$('#fm'),d=$('#dlg'),v=x=>String(x==null?'':x).replace(/"/g,'&quot;');
+f.innerHTML=`<h3 style="margin-bottom:14px">${title}</h3><div class="f" style="grid-template-columns:1fr">${fields.map(q=>`<label>${q[1]}${q[2]?`<select name="${q[0]}">${q[2].map(o=>`<option ${o==q[4]?'selected':''}>${o}</option>`).join('')}</select>`:`<input name="${q[0]}" ${q[3]||''} value="${v(q[4])}">`}</label>`).join('')}</div><div class="act"><button class="b p" type="submit">Guardar</button><button class="b" type="button" id="cx">Cancelar</button></div>`;
+d.classList.add('on');$('#cx').onclick=()=>d.classList.remove('on');
+f.onsubmit=e=>{e.preventDefault();const o={};new FormData(f).forEach((x,k)=>o[k]=x);d.classList.remove('on');cb(o);save();draw()}}
+function donut(data){const T=data.reduce((a,b)=>a+b[1],0)||1;let off=0;const R=52,L=2*Math.PI*R;
+return `<svg viewBox="0 0 250 150" width="100%"><g transform="translate(75,75) rotate(-90)"><circle r="${R}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="16"/>${data.map(d=>{const l=d[1]/T*L,s=`<circle r="${R}" fill="none" stroke="${d[2]}" stroke-width="16" stroke-dasharray="${l} ${L-l}" stroke-dashoffset="${-off}" style="filter:drop-shadow(0 0 6px ${d[2]})"/>`;off+=l;return s}).join('')}</g><text x="75" y="80" text-anchor="middle" style="font-size:26px;fill:#e6ecff">${T}</text>${data.map((d,i)=>`<circle cx="160" cy="${40+i*24}" r="5" fill="${d[2]}"/><text x="172" y="${44+i*24}">${d[0]} · ${d[1]}</text>`).join('')}</svg>`}
+function week(){const n=S.f.length||1,o=[];for(let i=6;i>=0;i--){const d=new Date(Date.now()-i*864e5),k=day(d);o.push([d.toLocaleDateString('es-MX',{weekday:'short'}),new Set(S.k.filter(x=>x.d==k).map(x=>x.f)).size/n])}
+return `<svg viewBox="0 0 400 170" width="100%"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#33a3ee"/><stop offset="1" stop-color="#0067b1"/></linearGradient></defs>${[0,.5,1].map(v=>`<line x1="30" x2="395" y1="${130-v*110}" y2="${130-v*110}" stroke="rgba(120,160,255,.15)"/><text x="0" y="${134-v*110}">${v*100}%</text>`).join('')}${o.map((d,i)=>`<rect x="${44+i*52}" y="${130-d[1]*110}" width="30" height="${d[1]*110}" rx="6" fill="url(#gg)" style="filter:drop-shadow(0 0 6px rgba(51,163,238,.5))"/><text x="${59+i*52}" y="150" text-anchor="middle">${d[0]}</text>`).join('')}</svg>`}
+const tg=(t,c)=>`<span class="tag ${c||col[t]}">${t}</span>`;
+function pn(){const f=S.f,ok=f.filter(x=>x.s=='Operativo').length,hoy=new Set(S.k.filter(x=>x.d==day()).map(x=>x.f)).size,low=S.i.filter(x=>st(x)!='ok'),cu=S.c.filter(x=>x.s=='Funcionando').length;
+const al=[...f.filter(x=>x.s!='Operativo').map(x=>[C[col[x.s]],`${x.id} en estado ${x.s.toLowerCase()}`]),...S.c.filter(x=>x.s!='Funcionando').map(x=>[x.s=='Falla'?C.bd:C.wa,`Cargador ${x.id}: ${x.s.toLowerCase()}`]),...S.f.filter(x=>mt(x).c!='ok').map(x=>[mt(x).c=='bd'?C.bd:C.wa,`${x.id}: mantenimiento ${mt(x).t}`]),...S.e.filter(x=>x.s=='En revisión').map(x=>[C.wa,`Escáner ${x.id} en revisión`]),...S.ra.filter(x=>x.s=='En revisión').map(x=>[C.wa,`Radio ${x.id} en revisión`]),...S.a.filter(x=>x.s=='En revisión').map(x=>[C.wa,`Arnés ${x.id} en revisión`]),...low.map(x=>[C[st(x)],`${x.n}: quedan ${x.q} (mínimo ${x.m})`]),...f.filter(x=>x.s=='Operativo'&&!S.k.some(k=>k.d==day()&&k.f==x.id)).map(x=>[C.wa,`${x.id} sin checklist hoy`])];
+return `<div class="g k4"><div class="card kpi a"><b>${ok}/${f.length}</b><span>Montacargas operativos</span></div><div class="card kpi d"><b>${hoy}/${f.length}</b><span>Checklists de hoy</span></div><div class="card kpi b"><b>${cu}/${S.c.length}</b><span>Cargadores funcionando</span></div><div class="card kpi c"><b>${low.length}</b><span>Insumos por reponer</span></div></div>
+<div class="g k2" style="margin-top:18px"><div class="card"><h3>Estado de la flota</h3>${donut([['Operativo',ok,C.ok],['En revisión',f.filter(x=>x.s=='Revisión'||x.s=='Mantenimiento').length,C.wa],['Fuera de servicio',f.filter(x=>x.s=='Fuera de servicio').length,C.bd]])}</div>
+<div class="card"><h3>Cumplimiento de checklist, últimos 7 días</h3>${week()}</div>
+<div class="card"><h3>Carga de baterías</h3>${f.map(x=>`<div class="row"><span>${x.id} · ${x.t}</span><b>${x.b}%</b></div><div class="bar" style="--c:${bcol(x.b)}"><i style="width:${x.b}%"></i></div>`).join('')||'<div class="em">Sin unidades eléctricas.</div>'}</div>
+<div class="card"><h3>Alertas</h3>${al.map(a=>`<div class="al" style="--c:${a[0]}"><span class="dot"></span>${a[1]}</div>`).join('')||'<div class="em">Todo en orden. Sin alertas.</div>'}</div></div>`}
+function mc(){return `<div class="top"><h2>Montacargas</h2><div class="act" style="margin:0"><button class="b" onclick="setMi()">Mantenimiento cada ${S.mi} h</button><button class="b p" onclick="addF()">Agregar unidad</button></div></div><div class="fl">${S.f.map((x,n)=>{const c=C[col[x.s]];return `<div class="card unit" style="--c:${c}"><h4>${x.id}${tg(x.s)}</h4><small>${x.t}</small><div class="row" style="margin-top:10px"><span>Horómetro (horas de uso)</span><b>${x.h}</b></div>${(M=>`<div class="row"><span>Mantenimiento a las ${M.next} h</span>${tg(M.t,M.c)}</div>`)(mt(x))}<div class="row" style="margin-top:6px"><span>Batería</span><b>${x.b}%</b></div><div class="bar" style="--c:${bcol(x.b)}"><i style="width:${x.b}%"></i></div><div class="act"><select onchange="S.f[${n}].s=this.value;save();draw()">${['Operativo','Revisión','Mantenimiento','Fuera de servicio'].map(o=>`<option ${o==x.s?'selected':''}>${o}</option>`).join('')}</select><button class="b" onclick="mant(${n})">Registrar mantenimiento</button><button class="b" onclick="cfm('¿Eliminar ${x.id}?',()=>{S.f.splice(${n},1)})">Eliminar</button></div></div>`}).join('')}</div>`}
+window.addF=()=>ask('Nueva unidad',[['id','Número o nombre','','required','MC-0'+(S.f.length+1)],['t','Tipo',['Swing Reach','Order Picker','Hombre parado']],['h','Horas de uso','','type=number min=0',0]],o=>S.f.push({id:o.id,t:o.t,s:'Operativo',h:+o.h,ms:+o.h,b:100}));
+function cg(){return `<div class="top"><h2>Cargadores</h2>${CLIENT?'':`<button class="b p" onclick="ask('Nuevo cargador',[['id','Nombre','','required','CG-0'+(S.c.length+1)],['g','Da servicio a',[G1,G2]]],o=>S.c.push({id:o.id,g:o.g,s:'Funcionando',r:day(),n:''}))">Agregar cargador</button>`}</div><div class="fl">${S.c.map((x,n)=>`<div class="card unit" style="--c:${C[col[x.s]]}"><h4>${x.id}${tg(x.s)}</h4><small>Da servicio a: ${x.g}</small><div class="row" style="margin-top:10px"><span>Última revisión</span><b>${x.r||'Sin registro'}</b></div><div class="row"><span>Nota</span><b>${x.n||'—'}</b></div><div class="act"><button class="b p" onclick="rev(${n})">Registrar revisión</button><select onchange="cst(${n},this.value)">${['Funcionando','En revisión','En mantenimiento','Falla'].map(o=>`<option ${o==x.s?'selected':''}>${o}</option>`).join('')}</select>${CLIENT?'':`<button class="b" onclick="cfm('¿Eliminar ${x.id}?',()=>{S.c.splice(${n},1)})">Eliminar</button>`}</div></div>`).join('')}</div>`}
+window.rev=n=>ask('Revisión de '+S.c[n].id,[['r','Fecha de revisión','','type=date required',day()],['s','Funcionamiento',['Funcionando','En revisión','En mantenimiento','Falla']],['n','Nota o trabajo realizado','','',S.c[n].n]],o=>{Object.assign(S.c[n],o);cev(n)});
+function inn(){return `<div class="top"><h2>Insumos y consumibles</h2><button class="b p" onclick="ask('Nuevo artículo',[['n','Nombre','','required'],['k','Tipo',['Insumo','Consumible']],['q','Existencia','','type=number min=0',0],['m','Mínimo','','type=number min=0',5]],o=>S.i.push({n:o.n,k:o.k,q:+o.q,m:+o.m}))">Agregar artículo</button></div><div class="card"><table><tr><th>Artículo</th><th>Tipo</th><th style="width:26%">Nivel</th><th>Existencia</th><th></th></tr>${S.i.map((x,n)=>{const c=st(x),p=Math.min(100,x.q/(x.m*3||1)*100);return `<tr><td>${x.n}</td><td>${x.k}</td><td><div class="bar" style="--c:${C[c]};margin:0"><i style="width:${p}%"></i></div></td><td>${tg(x.q+' / mín '+x.m,c)}</td><td><div class="act" style="margin:0"><button class="b" onclick="mov(${n},-1)">Salida</button><button class="b" onclick="mov(${n},1)">Entrada</button><button class="b" onclick="edI(${n})">Editar</button><button class="b" onclick="cfm('¿Eliminar este artículo?',()=>{S.i.splice(${n},1)})">×</button></div></td></tr>`}).join('')}</table></div>`}
+window.mov=(n,g)=>ask((g>0?'Entrada de ':'Salida de ')+S.i[n].n,[['q','Cantidad','','type=number min=1 required',1]],o=>{const q=+o.q*g;S.i[n].q=Math.max(0,S.i[n].q+q);S.mv.push({d:day(),n:S.i[n].n,q})});
+window.edI=n=>ask('Editar '+S.i[n].n,[['q','Existencia','','type=number min=0',S.i[n].q],['m','Mínimo','','type=number min=0',S.i[n].m]],o=>{S.i[n].q=+o.q;S.i[n].m=+o.m});
+let cur={};
+function ck(){if(!cur.f)cur={f:(S.f[0]||{}).id,r:{}};ITEMS.forEach(i=>cur.r[i]=cur.r[i]||'ok');
+return `<div class="top"><h2>Checklist diario</h2></div><div class="card"><div class="f"><label>Montacargas<select id="cf">${S.f.map(x=>`<option ${x.id==cur.f?'selected':''}>${x.id}</option>`).join('')}</select></label><label>Elaboró<input id="co" placeholder="Nombre de quien elaboró" required></label><label>Turno<select id="ct"><option>Matutino</option><option>Vespertino</option><option>Nocturno</option></select></label><label>Horómetro<input id="ch" type="number" min="0"></label><label>Batería / combustible %<input id="cb" type="number" min="0" max="100"></label></div>
+<p style="margin-top:14px;color:var(--mu)">Toca cada punto para marcarlo como falla.</p><div class="chk">${ITEMS.map((i,n)=>`<div class="it ${cur.r[i]}" onclick="cur.r['${i}']=cur.r['${i}']=='ok'?'bd':'ok';keep();draw()"><span>${i}</span>${tg(cur.r[i]=='ok'?'Bien':'Falla',cur.r[i])}</div>`).join('')}</div>
+<label class="f" style="display:block"><span style="color:var(--mu);font-size:13px">Observaciones</span><textarea id="cn" rows="2"></textarea></label><div class="act"><button class="b p" onclick="sendC()">Guardar checklist</button></div></div>
+<div class="card" style="margin-top:18px"><h3>Registrados hoy</h3>${tbl(S.k.filter(x=>x.d==day()))}</div>`}
+function keep(){cur.f=$('#cf').value;cur.o=$('#co').value;cur.n=$('#cn').value}
+window.sendC=()=>{keep();const o=$('#co').value.trim();if(!cur.f)return msg('Selecciona el montacargas.');if(!o)return msg('Escribe quién elaboró el checklist.');const fails=ITEMS.filter(i=>cur.r[i]=='bd'),u=S.f.find(x=>x.id==cur.f);
+const hv=$('#ch').value,bv=$('#cb').value;S.k.push({id:uid(),d:day(),t:hm(),f:cur.f,o,u:$('#ct').value,fails,n:$('#cn').value,h:hv===''?null:+hv,b:bv===''?null:+bv,cn:S.cn||''});
+if(hv!=='')u.h=+hv;if(bv!=='')u.b=+bv;if(fails.length&&u.s=='Operativo')u.s='Revisión';
+cur={};save();draw()};
+function tbl(a){return a.length?`<table><tr><th>Fecha</th><th>Unidad</th><th>Elaboró</th><th>Turno</th><th>Resultado</th></tr>${a.slice().reverse().map(x=>`<tr><td>${x.d} ${x.t}</td><td>${x.f}</td><td>${x.o||'—'}</td><td>${x.u}</td><td>${x.fails.length?tg(x.fails.length+' falla(s): '+x.fails.join(', '),'bd'):tg('Sin fallas','ok')}</td></tr>`).join('')}</table>`:'<div class="em">Aún no hay checklists. Carga el primero desde esta pestaña.</div>'}
+function rp(){const a=S.k,fl=a.filter(x=>x.fails.length).length;
+return `<div class="top"><h2>Historial y respaldo</h2><div class="act" style="margin:0"><button class="b" onclick="csv()">Exportar CSV</button><button class="b" onclick="bk()">Respaldar datos</button><button class="b" onclick="$('#imp').click()">Restaurar respaldo</button><button class="b p" onclick="print()">Imprimir</button><input id="imp" type="file" accept=".json" hidden onchange="rs(this.files[0])"></div></div>
+<div class="g k4"><div class="card kpi a"><b>${a.length}</b><span>Checklists totales</span></div><div class="card kpi c"><b>${fl}</b><span>Con fallas</span></div><div class="card kpi d"><b>${a.length?Math.round((a.length-fl)/a.length*100):0}%</b><span>Sin fallas</span></div></div>
+<div class="card" style="margin-top:18px"><h3>Clientes</h3><p style="color:var(--mu);margin-bottom:12px">Exporta el catálogo para que los clientes tengan tus montacargas, cargadores y arneses. Después importa aquí los archivos JSON que ellos exporten; los registros repetidos se ignoran.</p><div class="act" style="margin:0"><button class="b p" onclick="expCat()">Exportar catálogo para clientes</button><button class="b" onclick="$('#icl').click()">Importar datos de clientes</button><input id="icl" type="file" accept=".json" multiple hidden onchange="impC(this.files)"></div></div>
+<div class="card" style="margin-top:18px"><h3>Historial</h3>${tbl(a)}</div>`}
+window.csv=()=>{const r=[['Fecha','Hora','Unidad','Elaboró','Turno','Fallas','Observaciones'],...S.k.map(x=>[x.d,x.t,x.f,x.o,x.u,x.fails.join('; '),x.n])];dl('checklists.csv',r.map(l=>l.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv')};
+window.bk=()=>dl('respaldo-montacargas-'+day()+'.json',JSON.stringify(S),'application/json');
+window.rs=f=>{if(!f)return;const r=new FileReader;r.onload=()=>{try{const d=JSON.parse(r.result);if(d.tipo=='cliente-mx3')return msg('Ese archivo es de un cliente. Para unirlo usa «Importar datos de clientes» en Historial.');if(!d.f||!d.k)throw 0;S=d;mig();save();draw()}catch(e){msg('El archivo no es un respaldo válido.')}};r.readAsText(f)};
+function dlgOpen(html,ok){const f=$('#fm'),d=$('#dlg');f.innerHTML=html;d.classList.add('on');$('#cx').onclick=()=>d.classList.remove('on');f.onsubmit=e=>{e.preventDefault();d.classList.remove('on');if(ok)ok()}}
+window.cfm=(t,fn)=>dlgOpen(`<h3 style="margin-bottom:14px">${t}</h3><div class="act"><button class="b p" type="submit">Confirmar</button><button class="b" type="button" id="cx">Cancelar</button></div>`,()=>{fn();save();draw()});
+window.msg=t=>dlgOpen(`<h3 style="margin-bottom:14px">${t}</h3><div class="act"><button class="b p" type="submit">Entendido</button><span id="cx"></span></div>`);
+function dl(n,t,m){if(window.claude&&claude.use){claude.use('downloads').then(d=>d?d.save({filename:n,data:'\ufeff'+t}):msg('Las descargas no están disponibles en esta vista.')).catch(e=>{if(!e||e.code!='declined')msg('No se pudo guardar el archivo.')});return}
+const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+t],{type:m}));a.download=n;a.click()}
+const R={t:'md',d:day(),e:day(),hd:day(new Date(Date.now()-30*864e5)),he:day(),hu:'Todas',by:''};
+const stx={ok:'Suficiente',wa:'Bajo',bd:'Reponer'};
+const lg=()=>LOGO;
+const days=(a,b)=>{const o=[];const d=new Date(a+'T12:00'),e=new Date(b+'T12:00');while(d<=e&&o.length<62){o.push(day(d));d.setDate(d.getDate()+1)}return o};
+const fD=(x,o)=>new Date(x+'T12:00').toLocaleDateString('es-MX',o);
+const rng=(a,b)=>a==b?fD(a,{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'del '+fD(a,{day:'numeric',month:'long'})+' al '+fD(b,{day:'numeric',month:'long',year:'numeric'});
+const bar=(t,a,b,x='')=>`<div class="top np"><div class="act" style="margin:0;align-items:center">${x}${a?`<label class="dl">Desde <input type="date" value="${R[a]}" onchange="R.${a}=this.value||day();draw()"></label><label class="dl">Hasta <input type="date" value="${R[b]}" onchange="R.${b}=this.value||day();draw()"></label>`:''}<input placeholder="Elaboró" value="${R.by}" onchange="R.by=this.value;draw()"><button class="b p" onclick="print()">Imprimir o guardar PDF</button></div></div>`;
+const pre=(a,b)=>`<button class="b" onclick="R.${a}=R.${b}=day();draw()">Hoy</button><button class="b" onclick="wk(0,'${a}','${b}')">Esta semana</button><button class="b" onclick="wk(-1,'${a}','${b}')">Semana pasada</button>`;
+window.wk=(o,a,b)=>{const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7)+7*o);R[a]=day(d);d.setDate(d.getDate()+6);R[b]=day(d);draw()};
+const head=(t,sub)=>`<div class="ph"><div class="logo">${lg()}</div><div><h1>${t}</h1><p class="sub">Almacén MX3, ${sub}</p></div></div>`;
+const sig=()=>`<div class="sig"><div>${R.by||'&nbsp;'}<span>Elaboró</span></div><div>&nbsp;<span>Supervisor</span></div><div>&nbsp;<span>Vo. Bo.</span></div></div>`;
+const note=()=>`<p class="note">Estado de las unidades, baterías y existencias corresponden al momento de la impresión: ${new Date().toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'})}. Checklists y movimientos son los del periodo indicado.</p>`;
+const mrow=k=>`<td>${k.t}</td><td class="l">${k.o||'—'}</td><td>${k.u}</td>${ITEMS.map(i=>k.fails.includes(i)?'<td class="bd">✗</td>':'<td class="ok">✓</td>').join('')}<td class="l">${k.n||''}</td>`;
+const mh=(first,dt)=>`<tr><th>${first}</th>${dt?'<th>Fecha</th>':''}<th>Hora</th><th>Elaboró</th><th>Turno</th>${ITEMS.map((_,i)=>`<th>${i+1}</th>`).join('')}<th>Obs.</th></tr>`;
+const legend=()=>`<p class="lg">${ITEMS.map((t,i)=>`${i+1}. ${t}`).join('&nbsp;&nbsp; ')}. Marca ✓ sin falla, ✗ con falla.</p>`;
+const cks=d=>{const ks=S.k.filter(x=>x.d==d);return `<table class="mx">${mh('Unidad')}${S.f.map(u=>{const a=ks.filter(k=>k.f==u.id);return a.length?a.map(k=>`<tr><td><b>${u.id}</b></td>${mrow(k)}</tr>`).join(''):`<tr><td><b>${u.id}</b></td><td colspan="${ITEMS.length+4}" class="wa">Checklist pendiente</td></tr>`}).join('')}</table>${legend()}`};
+const wkm=ds=>`<table class="mx"><tr><th>Unidad</th>${ds.map(d=>`<th>${fD(d,{weekday:'short',day:'numeric'})}</th>`).join('')}</tr>${S.f.map(u=>`<tr><td><b>${u.id}</b></td>${ds.map(d=>{const a=S.k.filter(k=>k.d==d&&k.f==u.id);return !a.length?'<td>—</td>':a.some(k=>k.fails.length)?'<td class="bd">✗</td>':'<td class="ok">✓</td>'}).join('')}</tr>`).join('')}</table><p class="lg">✓ checklist sin fallas, ✗ checklist con fallas, — sin checklist.</p>`;
+const est=()=>`<table><tr><th>Unidad</th><th>Tipo</th><th>Estado</th><th>Batería</th><th>Horómetro (horas de uso)</th><th>Próximo mantenimiento</th></tr>${S.f.map(u=>`<tr><td><b>${u.id}</b></td><td>${u.t}</td><td class="${col[u.s]}">${u.s}</td><td>${u.b}%</td><td>${u.h} h</td><td class="${mt(u).c}">${mt(u).next} h, ${mt(u).t}</td></tr>`).join('')}</table>`;
+const chg=()=>`<table><tr><th>Cargador</th><th>Da servicio a</th><th>Funcionamiento</th><th>Última revisión</th><th>Nota</th></tr>${S.c.map(x=>`<tr><td><b>${x.id}</b></td><td>${x.g}</td><td class="${col[x.s]}">${x.s}</td><td>${x.r||'Sin registro'}</td><td>${x.n||'—'}</td></tr>`).join('')}</table>`;
+const obs=d=>{const o=S.k.filter(k=>k.d==d&&(k.fails.length||k.n));return o.length?`<ul>${o.map(k=>`<li><b>${k.f}</b>${k.o?' (elaboró '+k.o+')':''}: ${k.fails.length?'falla en '+k.fails.join(', ').toLowerCase()+'. ':''}${k.n}</li>`).join('')}</ul>`:'<p>Sin observaciones en el día.</p>'};
+const sum=(a,b)=>{const ks=S.k.filter(k=>k.d>=a&&k.d<=b);return `<div class="sum"><div><b>${S.f.filter(x=>x.s=='Operativo').length}/${S.f.length}</b>Unidades operativas</div><div><b>${ks.length}</b>Checklists registrados</div><div><b>${ks.filter(k=>k.fails.length).length}</b>Con fallas</div><div><b>${S.c.filter(x=>x.s=='Funcionando').length}/${S.c.length}</b>Cargadores funcionando</div></div>`};
+function rd(){const [a,b]=[R.d,R.e].sort(),all=days(a,b),ds=all.length>1&&all.some(d=>d<=day())?all.filter(d=>d<=day()):all,wkm_=ds.length>1,r=rng(ds[0],ds[ds.length-1]);
+const top=bar('Reporte de montacargas','d','e',pre('d','e'));
+if(!wkm_)return top+`<div class="paper">${head('Reporte diario de montacargas y cargadores',r)}${sum(ds[0],ds[0])}<h2>1. Checklists del día</h2>${cks(ds[0])}<h2>2. Estado de montacargas</h2>${est()}<h2>3. Cargadores</h2>${chg()}<h2>4. Arneses</h2>${arnT()}<h2>5. Observaciones</h2>${obs(ds[0])}${sig()}${note()}</div>`;
+return top+`<div class="paper">${head('Reporte semanal de montacargas y cargadores',r)}${sum(ds[0],ds[ds.length-1])}<h2>1. Checklist por día</h2>${wkm(ds)}<h2>2. Estado de montacargas</h2>${est()}<h2>3. Cargadores</h2>${chg()}<h2>4. Arneses</h2>${arnT()}${sig()}${note()}</div>`+ds.filter(d=>S.k.some(k=>k.d==d)).map(d=>`<div class="paper pg">${head('Reporte diario de montacargas',rng(d,d))}<h2>Checklists del día</h2>${cks(d)}<h2>Observaciones</h2>${obs(d)}${sig()}</div>`).join('')}
+function ri(){const [a,b]=[R.d,R.e].sort(),mv=S.mv.filter(x=>x.d>=a&&x.d<=b),ent=n=>mv.filter(m=>m.n==n&&m.q>0).reduce((t,m)=>t+m.q,0),sal=n=>-mv.filter(m=>m.n==n&&m.q<0).reduce((t,m)=>t+m.q,0),low=S.i.filter(x=>st(x)!='ok');
+const tb=k=>{const l=S.i.filter(x=>x.k==k);return l.length?`<table><tr><th>Artículo</th><th>Entradas</th><th>Salidas</th><th>Existencia</th><th>Mínimo</th><th>Situación</th></tr>${l.map(x=>`<tr><td><b>${x.n}</b></td><td>${ent(x.n)||'—'}</td><td>${sal(x.n)||'—'}</td><td>${x.q}</td><td>${x.m}</td><td class="${st(x)}">${stx[st(x)]}</td></tr>`).join('')}</table>`:'<p>Sin artículos.</p>'};
+return bar('Reporte de insumos','d','e',pre('d','e'))+`<div class="paper">${head(a==b?'Reporte diario de insumos y consumibles':'Reporte semanal de insumos y consumibles',rng(a,b))}
+<div class="sum"><div><b>${S.i.length}</b>Artículos en control</div><div><b>${mv.filter(m=>m.q<0).length}</b>Salidas registradas</div><div><b>${mv.filter(m=>m.q>0).length}</b>Entradas registradas</div><div><b>${low.length}</b>Por reponer</div></div>
+<h2>1. Insumos</h2>${tb('Insumo')}<h2>2. Consumibles</h2>${tb('Consumible')}
+<h2>3. Pedido sugerido</h2>${low.length?`<ul>${low.map(x=>`<li><b>${x.n}</b>: quedan ${x.q}, mínimo ${x.m}. Reponer al menos ${Math.max(x.m*2-x.q,1)}.</li>`).join('')}</ul>`:'<p>No hay artículos por reponer.</p>'}
+${sig()}${note()}</div>`}
+function rh(){const [a,b]=[R.hd,R.he].sort(),us=R.hu=='Todas'?S.f:S.f.filter(u=>u.id==R.hu),sel=`<select onchange="R.hu=this.value;draw()"><option>Todas</option>${S.f.map(u=>`<option ${u.id==R.hu?'selected':''}>${u.id}</option>`).join('')}</select>`;
+return bar('Checklist por montacargas','hd','he',sel)+us.map((u,n)=>{const ks=S.k.filter(k=>k.f==u.id&&k.d>=a&&k.d<=b).sort((x,y)=>(x.d+x.t).localeCompare(y.d+y.t));
+return `<div class="paper ${n?'pg':''}">${head('Historial de checklist, '+u.id,rng(a,b))}<div class="sum"><div><b>${u.t}</b>Tipo</div><div><b>${u.s}</b>Estado actual</div><div><b>${ks.length}</b>Checklists en el periodo</div><div><b>${ks.filter(k=>k.fails.length).length}</b>Con fallas</div></div>
+<h2>Checklists registrados</h2>${ks.length?`<table class="mx">${mh('',1).replace('<th></th>','')}${ks.map(k=>`<tr><td>${fD(k.d,{day:'2-digit',month:'short'})}</td>${mrow(k)}</tr>`).join('')}</table>${legend()}`:'<p>Sin checklists en el periodo.</p>'}${sig()}</div>`}).join('')}
+const age=d=>{if(!d)return '—';const m=Math.max(0,Math.floor((Date.now()-new Date(d+'T12:00'))/2629800000)),y=Math.floor(m/12),r=m%12;return m<12?m+(m==1?' mes':' meses'):y+(y==1?' año':' años')+(r?' y '+r+(r==1?' mes':' meses'):'')};
+const fc=d=>d?fD(d,{day:'2-digit',month:'short',year:'numeric'}):'—';
+const ac=s=>s=='En uso'?'ok':s=='Baja'?'mu':'wa';
+const arF=(t,x,cb)=>ask(t,[['id','Número o serie del arnés','','required',x?x.id:''],['u','Asignado a',['Sin asignar',...S.f.map(f=>f.id)],'',x?x.u:'Sin asignar'],['p','Fecha de compra','','type=date required',x?x.p:day()],['s','Estado',['En uso','En revisión','Baja'],'',x?x.s:'En uso']],cb);
+window.arAdd=()=>arF('Nuevo arnés',null,o=>S.a.push({id:o.id,u:o.u,p:o.p,s:o.s}));
+window.arEd=n=>arF('Editar arnés',S.a[n],o=>Object.assign(S.a[n],o,{ts:Date.now()}));
+function ar(){return `<div class="top"><h2>Arneses</h2>${CLIENT?'':`<button class="b p" onclick="arAdd()">Agregar arnés</button>`}</div><div class="card">${S.a.length?`<table><tr><th>Arnés</th><th>Asignado a</th><th>Fecha de compra</th><th>Antigüedad</th><th>Estado</th><th></th></tr>${S.a.map((x,n)=>`<tr><td><b>${x.id}</b></td><td>${x.u}</td><td>${fc(x.p)}</td><td>${age(x.p)}</td><td>${tg(x.s,ac(x.s))}${x.n?` <small style="color:var(--mu)">${E(x.n)}</small>`:''}</td><td><div class="act" style="margin:0">${CLIENT?`<button class="b" onclick="ain(${n})">Inspección</button>`:`<button class="b" onclick="arEd(${n})">Editar</button><button class="b" onclick="cfm('¿Eliminar este arnés?',()=>{S.a.splice(${n},1)})">×</button>`}</div></td></tr>`).join('')}</table>`:'<div class="em">Aún no hay arneses. Agrega el primero con su fecha de compra.</div>'}</div>`}
+const arnT=()=>S.a.length?`<table><tr><th>Arnés</th><th>Asignado a</th><th>Fecha de compra</th><th>Antigüedad</th><th>Estado</th></tr>${S.a.map(x=>`<tr><td><b>${x.id}</b></td><td>${x.u}</td><td>${fc(x.p)}</td><td>${age(x.p)}</td><td class="${ac(x.s)}">${x.s}</td></tr>`).join('')}</table>`:'<p>Sin arneses registrados.</p>';
+function rar(){const n=t=>S.a.filter(x=>x.s==t).length;return bar('','','')+`<div class="paper">${head('Control de arneses',rng(day(),day()))}<div class="sum"><div><b>${S.a.length}</b>Arneses registrados</div><div><b>${n('En uso')}</b>En uso</div><div><b>${n('En revisión')}</b>En revisión</div><div><b>${n('Baja')}</b>De baja</div></div><h2>1. Arneses</h2>${arnT()}${sig()}</div>`}
+const RT=CLIENT?[['md','Montacargas y cargadores'],['ck','Checklist por unidad'],['ar','Arneses']]:[['md','Montacargas y cargadores'],['in','Insumos y consumibles'],['ck','Checklist por unidad'],['ar','Arneses'],['es','Escáneres y radios']];
+function pr(){return `<div class="top np"><h2>Impresión de reportes</h2></div><div class="seg np">${RT.map(t=>`<button class="b ${R.t==t[0]?'p':''}" onclick="R.t='${t[0]}';draw()">${t[1]}</button>`).join('')}</div>`+{md:rd,in:ri,ck:rh,ar:rar,es:res}[R.t]()}
+const mt=u=>{const mi=S.mi||250,ms=(u.ms==null?u.h:u.ms),left=ms+mi-u.h;return {next:ms+mi,left,c:left<0?'bd':left<=mi*.1?'wa':'ok',t:left<0?'vencido por '+(-left)+' h':'faltan '+left+' h'}};
+window.setMi=()=>ask('Intervalo de mantenimiento',[['m','Horas entre mantenimientos','','type=number min=1 required',S.mi]],o=>{S.mi=+o.m});
+window.mant=n=>ask('Mantenimiento de '+S.f[n].id,[['h','Horómetro al hacer el mantenimiento','','type=number min=0 required',S.f[n].h]],o=>{const u=S.f[n];u.ms=+o.h;if(+o.h>u.h)u.h=+o.h;if(u.s=='Mantenimiento')u.s='Operativo'});
+const E=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SH=['Matutino','Vespertino','Nocturno'];
+const EQ={e:['escáner','Escáneres'],ra:['radio','Radios']};
+const eqF=(k,t,x,cb)=>ask(t,[['id','Número o serie del '+EQ[k][0],'','required',x?x.id:''],['m','Modelo (opcional)','','',x?x.m:''],['s','Estado',['En uso','En revisión','Baja'],'',x?x.s:'En uso'],...(k=='ra'?[['c','Colaborador asignado (opcional)','','',x?x.c:'']]:SH.map((h,i)=>['p'+i,'Asignado en turno '+h.toLowerCase()+' (opcional)','','',x?x.p[i]:'']))],cb);
+const esO=o=>({id:o.id.trim(),m:(o.m||'').trim(),s:o.s,p:SH.map((_,i)=>(o['p'+i]||'').trim())});
+const roO=o=>({id:o.id.trim(),m:(o.m||'').trim(),s:o.s,c:(o.c||'').trim()});
+const rchk=(o,ex)=>{const id=o.id.trim().toLowerCase(),c=(o.c||'').trim().toLowerCase(),d=S.ra.find((r,i)=>i!=ex&&r.id.toLowerCase()==id);if(d)return 'Ya existe el radio '+d.id+'.';const q=c&&S.ra.find((r,i)=>i!=ex&&(r.c||'').toLowerCase()==c);return q?o.c.trim()+' ya tiene el radio '+q.id+'. Cada colaborador solo puede tener uno.':''};
+window.eqAdd=k=>eqF(k,'Nuevo '+EQ[k][0],null,o=>{if(k=='ra'){const e=rchk(o,-1);if(e)return msg(e);S.ra.push(roO(o))}else S.e.push(esO(o))});
+window.eqEd=(k,n)=>eqF(k,'Editar '+EQ[k][0],S[k][n],o=>{if(k=='ra'){const e=rchk(o,n);if(e)return msg(e);S.ra[n]=roO(o)}else S.e[n]=esO(o)});
+const asg=x=>SH.map((h,i)=>x.p[i]?`<span class="tag bl">${h}: ${E(x.p[i])}</span>`:'').join(' ')||'<span style="color:var(--mu)">Sin asignar</span>';
+const eqT=k=>`<div class="top"><h2>${EQ[k][1]}</h2><button class="b p" onclick="eqAdd('${k}')">Agregar ${EQ[k][0]}</button></div><div class="card">${S[k].length?`<table><tr><th>${EQ[k][0]=='radio'?'Radio':'Escáner'}</th><th>Modelo</th><th>Estado</th><th>${k=='ra'?'Colaborador':'Asignado a'}</th><th></th></tr>${S[k].map((x,n)=>`<tr><td><b>${E(x.id)}</b></td><td>${E(x.m)||'—'}</td><td>${tg(x.s,ac(x.s))}</td><td>${k=='ra'?(E(x.c)||'<span style="color:var(--mu)">Sin asignar</span>'):asg(x)}</td><td><div class="act" style="margin:0"><button class="b" onclick="eqEd('${k}',${n})">Editar</button><button class="b" onclick="cfm('¿Eliminar este ${EQ[k][0]}?',()=>{S['${k}'].splice(${n},1)})">×</button></div></td></tr>`).join('')}</table>`:`<div class="em">Aún no hay ${EQ[k][1].toLowerCase()}. Agrega el primero y asígnalo ${k=='ra'?'a un colaborador':'por turno'}.</div>`}</div>`;
+const BS=['Disponible','En uso','En carga','Baja'];
+const bc=s=>s=='Disponible'||s=='En uso'?'ok':s=='En carga'?'wa':'mu';
+const bF=(t,x,cb)=>ask(t,[['id','Número o serie de la batería','','required',x?x.id:''],['e','Para el escáner',['Cualquiera',...S.e.map(e=>e.id)],'',x?x.e:'Cualquiera'],['p','Fecha de compra (opcional)','','type=date',x?x.p:''],['s','Estado',BS,'',x?x.s:'Disponible']],cb);
+const bO=o=>({id:o.id.trim(),e:o.e,p:o.p||'',s:o.s});
+window.bAdd=()=>bF('Nueva batería extra',null,o=>S.b.push(bO(o)));
+window.bEd=n=>bF('Editar batería extra',S.b[n],o=>{S.b[n]=bO(o)});
+const bT=()=>`<div class="top"><h2>Baterías extra de escáner</h2><button class="b p" onclick="bAdd()">Agregar batería</button></div><div class="card">${S.b.length?`<div style="margin-bottom:12px">${BS.map(t=>tg(t+': '+S.b.filter(x=>x.s==t).length,bc(t))).join(' ')}</div><table><tr><th>Batería</th><th>Para el escáner</th><th>Fecha de compra</th><th>Antigüedad</th><th>Estado</th><th></th></tr>${S.b.map((x,n)=>`<tr><td><b>${E(x.id)}</b></td><td>${E(x.e)}</td><td>${fc(x.p)}</td><td>${age(x.p)}</td><td>${tg(x.s,bc(x.s))}</td><td><div class="act" style="margin:0"><button class="b" onclick="bEd(${n})">Editar</button><button class="b" onclick="cfm('¿Eliminar esta batería?',()=>{S.b.splice(${n},1)})">×</button></div></td></tr>`).join('')}</table>`:'<div class="em">Aún no hay baterías extra. Agrega la primera con su estado.</div>'}</div>`;
+function es(){return eqT('e')+`<div style="margin-top:30px">${eqT('ra')}</div><div style="margin-top:30px">${bT()}</div>`}
+const eqR=k=>S[k].length?`<table><tr><th>${EQ[k][0]=='radio'?'Radio':'Escáner'}</th><th>Modelo</th><th>Estado</th>${k=='ra'?'<th>Colaborador</th>':SH.map(h=>`<th>${h}</th>`).join('')}</tr>${S[k].map(x=>`<tr><td><b>${E(x.id)}</b></td><td>${E(x.m)||'—'}</td><td class="${ac(x.s)}">${x.s}</td>${k=='ra'?`<td>${E(x.c)||'—'}</td>`:SH.map((h,i)=>`<td>${E(x.p[i])||'—'}</td>`).join('')}</tr>`).join('')}</table>`:`<p>Sin ${EQ[k][1].toLowerCase()} registrados.</p>`;
+function res(){const rv=[...S.e,...S.ra].filter(x=>x.s=='En revisión').length;return bar('','','')+`<div class="paper">${head('Control de escáneres, radios y baterías',rng(day(),day()))}<div class="sum"><div><b>${S.e.length}</b>Escáneres</div><div><b>${S.ra.length}</b>Radios</div><div><b>${S.b.filter(x=>x.s=='Disponible').length}/${S.b.length}</b>Baterías disponibles</div><div><b>${rv}</b>Equipos en revisión</div></div><h2>1. Escáneres, asignación por turno</h2>${eqR('e')}<h2>2. Radios, uno por colaborador</h2>${eqR('ra')}<h2>3. Baterías extra de escáner</h2>${S.b.length?`<table><tr><th>Batería</th><th>Para el escáner</th><th>Fecha de compra</th><th>Antigüedad</th><th>Estado</th></tr>${S.b.map(x=>`<tr><td><b>${E(x.id)}</b></td><td>${E(x.e)}</td><td>${fc(x.p)}</td><td>${age(x.p)}</td><td class="${bc(x.s)}">${x.s}</td></tr>`).join('')}</table>`:'<p>Sin baterías registradas.</p>'}${sig()}</div>`}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+const hm=()=>new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+const vv=x=>x==null?'':x;
+const byTs=(p,q)=>p.ts-q.ts;
+function cev(n){const c=S.c[n];c.ts=Date.now();if(CLIENT)S.ce.push({id:uid(),ts:c.ts,c:c.id,s:c.s,r:c.r||day(),n:c.n||'',d:day(),t:hm(),cn:S.cn||''})}
+window.cst=(n,v)=>{S.c[n].s=v;cev(n);save();draw()};
+window.ain=n=>ask('Inspección de '+S.a[n].id,[['s','Estado',['En uso','En revisión','Baja'],'',S.a[n].s],['n','Nota (opcional)','','',S.a[n].n||'']],o=>{const a=S.a[n];a.s=o.s;a.n=(o.n||'').trim();a.ts=Date.now();if(CLIENT)S.ae.push({id:uid(),ts:a.ts,a:a.id,s:a.s,n:a.n,d:day(),t:hm(),cn:S.cn||''})});
+const applyK=k=>{const u=S.f.find(x=>x.id==k.f);if(u){if(k.h!=null&&k.h>u.h)u.h=k.h;if(k.b!=null)u.b=k.b;if(k.fails.length&&u.s=='Operativo')u.s='Revisión'}};
+const applyCh=e=>{const c=S.c.find(x=>x.id==e.c);if(c&&e.ts>(c.ts||0)){c.s=e.s;c.r=e.r||c.r;c.n=e.n;c.ts=e.ts;return 1}return 0};
+const applyAr=e=>{const a=S.a.find(x=>x.id==e.a);if(a&&e.ts>(a.ts||0)){a.s=e.s;a.n=e.n;a.ts=e.ts;return 1}return 0};
+function mergeC(d){const k=(d.k||[]).filter(x=>x.id&&!S.k.some(y=>y.id==x.id)).sort((p,q)=>(p.d+p.t).localeCompare(q.d+q.t)),c=(d.ce||[]).filter(e=>e.id&&!S.seen.includes(e.id)).sort(byTs),a=(d.ae||[]).filter(e=>e.id&&!S.seen.includes(e.id)).sort(byTs);
+k.forEach(x=>{S.k.push(x);applyK(x)});c.forEach(e=>{S.seen.push(e.id);applyCh(e)});a.forEach(e=>{S.seen.push(e.id);applyAr(e)});return [k.length,c.length,a.length]}
+const rdJ=(f,ok,bad)=>{const r=new FileReader;r.onload=()=>{let d=null;try{d=JSON.parse(r.result.replace(/^\ufeff/,''))}catch(e){}ok(d)};r.readAsText(f)};
+window.expCat=()=>dl('catalogo-mx3-'+day()+'.json',JSON.stringify({tipo:'catalogo-mx3',v:1,gen:new Date().toISOString(),mi:S.mi,f:S.f,c:S.c,a:S.a}),'application/json');
+window.impC=fs=>{if(!fs||!fs.length)return;Promise.all([...fs].map(f=>new Promise(r=>rdJ(f,r)))).then(a=>{const t=[0,0,0];let bad=0;a.forEach(d=>{if(!d||d.tipo!='cliente-mx3'){bad++;return}mergeC(d).forEach((v,i)=>t[i]+=v)});save();draw();msg('Importado: '+t[0]+' checklists, '+t[1]+' revisiones de cargadores y '+t[2]+' inspecciones de arneses.'+(bad?' '+bad+' archivo(s) no válido(s).':'')+' Los registros repetidos se ignoran.')})};
+window.impCat=f=>{if(!f)return;rdJ(f,d=>{if(!d||d.tipo!='catalogo-mx3')return msg('El archivo no es un catálogo del servidor.');S.f=d.f;S.c=d.c;S.a=d.a;S.mi=d.mi||250;S.cat=day();S.ce.slice().sort(byTs).forEach(applyCh);S.ae.slice().sort(byTs).forEach(applyAr);save();draw();msg('Catálogo cargado: '+S.f.length+' montacargas, '+S.c.length+' cargadores y '+S.a.length+' arneses.')})};
+window.expC=()=>dl('cliente-'+((S.cn||'mx3').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'mx3')+'-'+day()+'.json',JSON.stringify({tipo:'cliente-mx3',v:1,cn:S.cn||'',gen:new Date().toISOString(),k:S.k,ce:S.ce,ae:S.ae}),'application/json');
+const csvT=()=>[['Tipo','Fecha','Hora','Elemento','Elaboró','Turno','Resultado','Fallas','Horómetro','Batería','Nota','Cliente'],...S.k.map(k=>['Checklist',k.d,k.t,k.f,k.o,k.u,k.fails.length?'Con fallas':'Sin fallas',k.fails.join('; '),k.h,k.b,k.n,k.cn||S.cn]),...S.ce.map(e=>['Cargador',e.d,e.t,e.c,'','',e.s,'','','',e.n,e.cn||S.cn]),...S.ae.map(e=>['Arnés',e.d,e.t,e.a,'','',e.s,'','','',e.n,e.cn||S.cn])].map(l=>l.map(c=>'"'+String(vv(c)).replace(/"/g,'""')+'"').join(',')).join('\n');
+window.csvAll=()=>dl('registros-'+day()+'.csv',csvT(),'text/csv');
+function sy(){return `<div class="top"><h2>Datos y sincronización</h2></div><div class="g k2"><div class="card"><h3>Nombre de este cliente</h3><input id="cnm" value="${E(S.cn||'')}" placeholder="Ej. iPad turno matutino" style="width:100%"><div class="act"><button class="b p" onclick="S.cn=$('#cnm').value.trim();save();draw()">Guardar nombre</button></div></div>
+<div class="card"><h3>Catálogo del servidor</h3><p style="color:var(--mu);margin-bottom:12px">${S.cat?'Cargado el '+S.cat+'.':'Aún no cargado: se usan unidades de ejemplo.'} Pide el catálogo al servidor y cárgalo aquí para tener sus montacargas, cargadores y arneses.</p><div class="act" style="margin:0"><button class="b p" onclick="$('#icat').click()">Cargar catálogo</button><input id="icat" type="file" accept=".json" hidden onchange="impCat(this.files[0])"></div></div>
+<div class="card"><h3>Enviar al servidor</h3><p style="color:var(--mu);margin-bottom:12px">Registros guardados: ${S.k.length} checklists, ${S.ce.length} revisiones de cargadores y ${S.ae.length} inspecciones de arneses.</p><div class="act" style="margin:0"><button class="b p" onclick="expC()">Exportar JSON</button><button class="b" onclick="csvAll()">Exportar CSV</button></div></div>
+<div class="card"><h3>Vaciar registros</h3><p style="color:var(--mu);margin-bottom:12px">Hazlo solo después de que el servidor importó tus archivos. Los reportes impresos usan estos registros.</p><div class="act" style="margin:0"><button class="b" onclick="cfm('¿Vaciar todos los registros de este cliente?',()=>{S.k=[];S.ce=[];S.ae=[]})">Vaciar registros</button></div></div></div>`}
+function draw(){$('#yr').textContent=new Date().getFullYear();$('#hl').innerHTML=lg();$('#role').textContent=CLIENT?'Cliente'+(S.cn?': '+S.cn:''):'Servidor';document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t==tab));$('#m').innerHTML={pn,mc,cg,ar,es,in:inn,ck,pr,rp,sy}[tab]()}
+let dp=null;if(window.addEventListener)window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
+window.addSc=()=>{const ua=navigator.userAgent||'',ios=/iPad|iPhone|iPod/.test(ua)||(navigator.platform=='MacIntel'&&navigator.maxTouchPoints>1),dro=/Android/.test(ua),mac=/Mac/.test(ua)&&!ios,loc=location.protocol=='file:';let st;
+if(ios)st=['Abre esta página en <b>Safari</b>.','Toca <b>Compartir</b> (el cuadro con una flecha hacia arriba).','Elige <b>Añadir a pantalla de inicio</b> y toca <b>Añadir</b>.'];
+else if(dro)st=['Abre el menú <b>⋮</b> de Chrome.','Toca <b>Instalar app</b> o <b>Añadir a pantalla de inicio</b>.'];
+else if(loc)st=mac?['Busca el archivo <b>'+FN+'</b> en Finder.','Arrástralo al Escritorio mientras mantienes <b>Opción + Comando</b> para crear un alias.']:['Busca el archivo <b>'+FN+'</b> en el Explorador.','Clic derecho, <b>Enviar a</b> y luego <b>Escritorio (crear acceso directo)</b>.'];
+else st=mac?['En Safari: menú <b>Archivo</b> y luego <b>Añadir al Dock</b>.','En Chrome o Edge: menú <b>⋮</b>, <b>Guardar y compartir</b> y luego <b>Instalar página como aplicación</b>.']:['En Chrome o Edge abre el menú <b>⋮</b>.','En Chrome elige <b>Guardar y compartir</b> y luego <b>Crear acceso directo</b>. En Edge elige <b>Aplicaciones</b> y luego <b>Instalar este sitio como aplicación</b>.','Marca <b>Abrir como ventana</b> para que se abra como app.'];
+dlgOpen(`<h3 style="margin-bottom:12px">Agregar acceso directo</h3><ol class="st">${st.map(x=>`<li>${x}</li>`).join('')}</ol><div class="act">${dp?'<button class="b p" type="submit">Instalar ahora</button>':''}<button class="b" type="button" id="cx">Cerrar</button></div>`,()=>{if(dp){dp.prompt();dp=null}})};
+(()=>{try{const b=$('#sc');if(b&&b.style&&(navigator.standalone||matchMedia('(display-mode: standalone)').matches))b.style.display='none';const c=document.createElement('canvas');c.width=c.height=180;const x=c.getContext('2d'),g=x.createLinearGradient(0,0,180,180);g.addColorStop(0,'#33a3ee');g.addColorStop(1,'#0067b1');x.fillStyle=g;x.fillRect(0,0,180,180);x.fillStyle='#fff';x.textAlign='center';x.font='bold 66px Arial,sans-serif';x.fillText('MX3',90,100);x.font='20px Arial,sans-serif';x.fillText('Montacargas',90,136);const l=document.createElement('link');l.rel='apple-touch-icon';l.href=c.toDataURL('image/png');document.head.appendChild(l)}catch(e){}})();
+window.ask=ask;draw();
+</script><script>if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});</script></body></html>
