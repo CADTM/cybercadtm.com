@@ -108,6 +108,13 @@ section.lab{position:relative;z-index:2;padding:110px clamp(16px,4vw,48px) 60px;
 .card-top .live i{width:7px;height:7px;border-radius:50%;background:var(--ac);box-shadow:0 0 8px var(--ac);animation:pulse 1.4s infinite}
 .stage{position:relative;height:270px;background:#02030a;overflow:hidden;user-select:none;-webkit-user-select:none}
 .wide .stage{height:300px}
+.ct{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1.1fr;gap:10px;padding:34px 12px 46px}
+.ct canvas{width:100%;height:100%}
+.ct .lst{display:flex;flex-direction:column;gap:5px;overflow:hidden;font:500 10px 'JetBrains Mono',monospace}
+.ct .row{display:grid;grid-template-columns:1.3fr 1fr .6fr;gap:4px;padding:5px 7px;border-radius:6px;background:rgba(255,255,255,.04);border-left:3px solid var(--c,var(--ac));animation:ctIn .35s ease}
+.ct .row b{color:var(--tx);font-weight:600}.ct .row span{color:var(--mu)}.ct .row em{font-style:normal;text-align:right;color:var(--ac)}
+.ct .dst{display:flex;gap:6px;margin-top:auto}.ct .dst div{flex:1;padding:5px;border-radius:6px;border:1px solid rgba(255,255,255,.1);text-align:center;color:var(--mu)}.ct .dst b{display:block;color:var(--tx);font-size:13px}
+@keyframes ctIn{from{opacity:0;transform:translateX(12px)}}
 .pads8{position:absolute;left:10px;right:10px;bottom:10px;display:grid;grid-template-columns:repeat(8,1fr);gap:6px;z-index:3}
 .pads8 i{height:30px;border-radius:7px;border:1px solid color-mix(in srgb,var(--ac) 55%,transparent);background:rgba(255,255,255,.04);cursor:pointer;font-style:normal;font:600 9px 'JetBrains Mono',monospace;color:var(--mu);display:grid;place-items:center;transition:.08s}
 .pads8 i.on{background:var(--ac);color:#000;box-shadow:0 0 14px var(--ac)}
@@ -1099,7 +1106,7 @@ function demoAjedrez(st,card){
     if(anim&&anim.cap&&!anim.hit)shakeK=anim.tc+','+anim.tr;
     const pcs=Object.entries(B).sort((a,b)=>a[0].split(',')[1]-b[0].split(',')[1]);
     x.textAlign='center';x.textBaseline='alphabetic';x.font=`${s*.92}px "Segoe UI Symbol","Noto Sans Symbols 2","DejaVu Sans",serif`;
-    const draw=(pc,px,py,rot,glow)=>{x.save();x.translate(px,py);x.rotate(rot||0);
+    const draw=(pc,px,py,rot,glow)=>{if(!pc)return;x.save();x.translate(px,py);x.rotate(rot||0);
       if(glow){x.fillStyle='rgba(255,59,59,.45)';x.beginPath();x.ellipse(0,s*.08,s*.4,s*.16,0,0,7);x.fill()}
       x.fillStyle='rgba(0,0,0,.3)';x.beginPath();x.ellipse(0,s*.1,s*.3,s*.1,0,0,7);x.fill();
       x.lineWidth=Math.max(1.5,s*.05);x.strokeStyle=pc[0]==='w'?'#3a2a1a':'#c9c9d4';x.fillStyle=pc[0]==='w'?'#fffaf0':'#1a1a1f';
@@ -1142,14 +1149,39 @@ function demoStudio(st,card){
   });
 }
 
+// CALCULADORA DE TARIMAS — escaneo de cajas por tarima, destino y delivery
+function demoCalcTarimas(st,card){
+  st.innerHTML=`<div class="hud tl mono">TARIMA <b class="tn">#1</b></div><div class="hud tr mono">CAJAS <b class="tc">0</b> · PZS <b class="tp">0</b></div>
+  <div class="ct"><canvas></canvas><div class="lst"><div class="rows"></div><div class="dst"><div>MX-DC<b class="d0">0</b></div><div>USA<b class="d1">0</b></div><div>NZ<b class="d2">0</b></div></div></div></div>
+  <div class="hud bc"><button class="btn sm sc">▣ Escanear caja</button></div>`;
+  const cv=$('canvas',st),rows=$('.rows',st),DC=['#00f0ff','#ffb020','#c6ff3d'];
+  const PN=['900PT-4410','RT-232 KIT','MR850-A','F&P 4 MASK','AIR-ST 3'];
+  let boxes=[],tar=1,tot=[0,0,0],pz=0,user=0;
+  function scan(){const d=Math.random()*3|0,q=[24,36,48,12][Math.random()*4|0];
+    if(boxes.length>=24){boxes=[];tar++;$('.tn',st).textContent='#'+tar}
+    boxes.push({d,y:-30,t:boxes.length});tot[d]++;pz+=q;
+    const r=document.createElement('div');r.className='row';r.style.setProperty('--c',DC[d]);
+    r.innerHTML=`<b>${pick(PN)}</b><span>B${(Math.random()*9e5+1e5|0)}</span><em>${q} pz</em>`;rows.prepend(r);while(rows.children.length>5)rows.lastChild.remove();
+    $('.tc',st).textContent=boxes.length;$('.tp',st).textContent=pz.toLocaleString('es-MX');tot.forEach((v,k)=>$('.d'+k,st).textContent=v)}
+  $('.sc',st).onclick=()=>{user=1;scan()};
+  every(card,900,()=>{if(!user)scan()});
+  addLoop(card,dt=>{const {x,w,h}=fit(cv);x.clearRect(0,0,w,h);
+    const bw=Math.min(w/4.6,34),bh=bw*.62,ox=w/2-bw*2,base=h-18;
+    x.fillStyle='#6b4a2b';x.fillRect(ox-6,base,bw*4+12,7);x.fillStyle='#4a321c';for(let i=0;i<4;i++)x.fillRect(ox-6+i*(bw*4+6)/3,base+7,8,6);
+    boxes.forEach((b,i)=>{const col=i%4,lay=(i/4|0)%6,ty=base-(lay+1)*bh;b.y+=(ty-b.y)*Math.min(1,dt*9);
+      const bx=ox+col*bw;x.fillStyle='#c79a5e';x.fillRect(bx+1,b.y+1,bw-2,bh-2);x.fillStyle=DC[b.d];x.fillRect(bx+bw*.3,b.y+bh*.3,bw*.4,bh*.35);x.strokeStyle='rgba(0,0,0,.35)';x.strokeRect(bx+1,b.y+1,bw-2,bh-2)});
+  });
+}
+
 /* ============ CATÁLOGO ============ */
 // Para enlazar cada app, pon su dirección en "url" (ej. 'https://tarima.cybercadtm.com').
 const APPS=[
-  {id:'cabina',n:'Cabina',s:'Consola de DJ',cat:'lab',ac:'#ff2bd6',wide:1,url:'https://cabina.cybercadtm.com',d:'Consola de DJ, karaoke y reproductor. NUEVO: sección Beats, una caja de ritmos que se sincroniza con los decks. Dale PLAY, mueve el crossfader y prende pasos del beat.',t:['Beats','Karaoke','Web Audio'],f:demoDJ},
+  {id:'cabina',n:'Cabina',s:'Consola de DJ',cat:'lab',ac:'#ff2bd6',wide:1,url:'https://cabina.cybercadtm.com',d:'Consola de DJ, karaoke y reproductor. Su caja de ritmos Beats trae patrones de freestyle, fiesta y latinos, 4 memorias y rondas con palabras al azar. Dale PLAY, mueve el crossfader y prende pasos del beat.',t:['Beats','Karaoke','Web Audio'],f:demoDJ},
   {id:'cyberstudio',n:'CyberStudio',s:'Estudio de grabación',cat:'lab',ac:'#00e5ff',url:'https://cybercadtm.com/cyberstudio/',d:'Estudio completo en el navegador: 8 pistas, sinte polifónico, autotune con presets (Corrido Tumbado, Travis Robot), sampler vocal y pads 808. Toca los pads para oírlos.',t:['Autotune','8 pistas','Web Audio'],f:demoStudio},
   {id:'jupijedrez',n:'Jupijedrez',s:'Ajedrez 3D · en línea',cat:'juegos',ac:'#ff9a4d',wide:1,url:'https://cybercadtm.com/jupijedrez/',d:'Ajedrez 3D en primera persona frente a Júpiter: avatares, escenarios, piezas tuneables, retos de mate, pistas, récords y juego en línea con reloj y reacciones. Las piezas se golpean al comer.',t:['3D','En línea','Retos'],f:demoAjedrez},
   {id:'orbita',n:'Órbita Júpiter',s:'Bubble shooter 3D',cat:'juegos',ac:'#ffb36b',url:'https://orbita.cybercadtm.com',d:'Dispara planetas desde la órbita de Júpiter y junta 3 del mismo color. Ahora con personajes como Fel, probador de apariencia y profesiones.',t:['Personajes','Física'],f:demoOrbita},
-  {id:'monitor',n:'Monitor de Contenedores',s:'Patio de andenes',cat:'almacen',ac:'#00f0ff',wide:1,url:'',d:'Procesos e inventario de contenedores en tiempo real: andenes D1–D14, patio, racks y zona de surtido.',t:['Tiempo real','Logística'],f:demoMonitor},
+  {id:'monitor',n:'Monitor de Contenedores',s:'Patio de andenes',cat:'almacen',ac:'#00f0ff',wide:1,url:'https://cybercadtm.com/monitor/',d:'Procesos e inventario de contenedores en tiempo real: andenes D1–D14, patio, racks y zona de surtido.',t:['Tiempo real','Logística'],f:demoMonitor},
+  {id:'calctarimas',n:'Calculadora de Tarimas',s:'Control de paletizado',cat:'almacen',ac:'#ffb020',url:'https://tarimas.cybercadtm.com',d:'Escanea número de parte y batch, cuenta cajas y piezas por tarima y agrupa por destino y delivery. Genera PDF y tickets térmicos, y funciona sin internet.',t:['Escáner','PDF','Instalable'],f:demoCalcTarimas},
   {id:'tarima',n:'Tarima Perfecta',s:'Arcade 3D de paletizado',cat:'juegos',ac:'#ffb020',url:'https://tarima-perfecta.cybercadtm.com',d:'Acomoda cajas en una tarima de 48×40 con gravedad real, patrones de estiba y etiquetas hacia afuera. Haz clic para soltar más rápido.',t:['3D','Gravedad real'],f:demoTarima},
   {id:'dojo',n:'Dojo de Entrenamiento',s:'Pelea 1 vs 1',cat:'juegos',ac:'#00f0ff',url:'',d:'Fel entrena contra el saco en el almacén. Usa J · K · L o los botones para armar combos.',t:['Combos','Animación'],f:demoDojo},
   {id:'cripta',n:'La Cripta Flotante',s:'Arena isométrica online',cat:'juegos',ac:'#a66bff',url:'',d:'Peleas en una arena flotante que mezcla 2D y 3D, entre Smash Bros y Ragnarok. Haz clic para moverte y atrapa al espectro.',t:['Isométrico','Online'],f:demoCripta},
@@ -1157,7 +1189,7 @@ const APPS=[
   {id:'pos',n:'Punto de Venta',s:'Jugos, pays y galletas',cat:'vida',ac:'#c6ff3d',url:'',d:'Caja rápida con ticket, cálculo de cambio e inventario que se descuenta solo. Pruébalo: toca productos y cobra.',t:['Ventas','Inventario'],f:demoPOS},
   {id:'idiomas',n:'Cuaderno de Idiomas',s:'Inglés + Italiano',cat:'vida',ac:'#c6ff3d',url:'',d:'Tarjetas de vocabulario en español, inglés e italiano con pronunciación en voz alta.',t:['Flashcards','Voz'],f:demoIdiomas},
   {id:'tarjetas',n:'Control de Tarjetas',s:'Pagos y fechas',cat:'vida',ac:'#ff2bd6',url:'',d:'Todas mis tarjetas en un solo lugar: fechas de pago, mínimos y uso de línea. Toca la pila para cambiar.',t:['Finanzas','Recordatorios'],f:demoTarjetas},
-  {id:'pastillero',n:'Pastillero Familiar',s:'Medicamentos y citas',cat:'vida',ac:'#3cffb4',url:'',d:'Horario de tomas con cuenta regresiva, registro de lo tomado y avisos de citas para la familia.',t:['Salud','Avisos'],f:demoPastillero},
+  {id:'pastillero',n:'Pastillero Familiar',s:'Medicamentos y citas',cat:'vida',ac:'#3cffb4',url:'https://pastillerofamiliar.cybercadtm.com',d:'Horario de tomas con cuenta regresiva, registro de lo tomado y avisos de citas para la familia.',t:['Salud','Avisos'],f:demoPastillero},
   {id:'ia',n:'Servidor de IA',s:'IA local en mi PC',cat:'lab',ac:'#00f0ff',url:'',d:'Mi laptop convertida en servidor de modelos de IA locales, sin depender de la nube.',t:['LLM local','Ollama'],f:demoIA},
   {id:'canal',n:'Canal de Videos',s:'YouTube · TikTok · FB',cat:'lab',ac:'#ff3c5a',url:'',d:'El siguiente proyecto: contenido del día a día rumbo a la monetización. Cambia de plataforma para ver el formato.',t:['Próximamente','Contenido'],f:demoCanal},
 ];
