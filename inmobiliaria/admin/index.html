@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0a0f1c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Inmobiliaria">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Inmobiliaria · Gestión de compra, venta y renta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0f1c;--panel:#111a2e;--panel2:#16213a;--line:#24324f;--tx:#e8eef8;--mu:#8d9cb8;--ac:#2dd4bf;--venta:#fbbf24;--renta:#a78bfa;--ok:#34d399;--bad:#f87171;--warn:#fb923c;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Outfit,system-ui,sans-serif;background:radial-gradient(1100px 600px at 85% -15%,#14305a 0,transparent 60%),radial-gradient(800px 500px at -10% 110%,#0f3a3a 0,transparent 55%),var(--bg);background-attachment:fixed;color:var(--tx);min-height:100vh;font-size:15px}
+button,input,select,textarea{font:inherit;color:inherit}
+.mono{font-family:'JetBrains Mono',monospace}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{border-right:1px solid var(--line);padding:22px 14px;position:sticky;top:0;height:100vh;background:rgba(10,15,28,.6);backdrop-filter:blur(8px);display:flex;flex-direction:column}
+.brand{display:flex;gap:10px;align-items:center;margin:0 6px 26px}
+.logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--ac),#3b82f6);display:grid;place-items:center;box-shadow:0 0 22px #2dd4bf55}
+.logo svg{width:22px;height:22px;stroke:#04131a}
+.brand b{display:block;font-size:16px;line-height:1.1}
+.brand small{color:var(--mu);font-size:12px}
+nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;color:var(--mu);text-decoration:none;cursor:pointer;margin-bottom:3px;font-weight:500}
+nav a svg{width:20px;height:20px}
+nav a:hover{background:var(--panel);color:var(--tx)}
+nav a.on{background:linear-gradient(90deg,#2dd4bf22,transparent);color:var(--ac);box-shadow:inset 3px 0 0 var(--ac)}
+.side-foot{margin-top:auto;font-size:12px;color:var(--mu);padding:0 8px}
+svg.i{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+main{padding:26px 30px 90px;max-width:1300px;width:100%}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.top h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-.3px}
+.top .sub{color:var(--mu);font-size:13px;margin-top:2px}
+.sp{flex:1}
+.btn{border:1px solid var(--line);background:var(--panel2);padding:9px 15px;border-radius:10px;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;text-decoration:none;color:var(--tx)}
+.btn:hover{border-color:#3a4e78}
+.btn svg{width:17px;height:17px}
+.btn.pri{background:var(--ac);color:#04201c;border-color:var(--ac);font-weight:600}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:6px 10px;font-size:13px;border-radius:8px}
+.btn.danger{color:var(--bad);border-color:#5a2a35;background:transparent}
+.btn.wa{color:#4ade80;border-color:#1f5137}
+.iconbtn{width:40px;height:40px;padding:0;justify-content:center}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--r);padding:15px 16px;position:relative;overflow:hidden}
+.kpi:after{content:"";position:absolute;right:-30px;top:-30px;width:90px;height:90px;border-radius:50%;background:var(--glow,#2dd4bf);opacity:.09}
+.kpi span{color:var(--mu);font-size:12.5px;text-transform:uppercase;letter-spacing:.6px}
+.kpi b{display:block;font-size:22px;margin:6px 0 2px;font-family:'JetBrains Mono',monospace}
+.kpi small{color:var(--mu);font-size:12.5px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.card h3{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px}
+.card h3 .cnt{background:var(--panel2);color:var(--mu);font-size:12px;padding:2px 8px;border-radius:20px;font-weight:500}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row .grow{flex:1;min-width:0}
+.row .t{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .m{color:var(--mu);font-size:13px}
+.empty{color:var(--mu);text-align:center;padding:22px;font-size:14px}
+.chip{display:inline-block;padding:3px 9px;border-radius:20px;font-size:12px;font-weight:600;background:var(--panel2);color:var(--mu);border:1px solid var(--line);white-space:nowrap}
+.c-venta{color:var(--venta);border-color:#5b4716;background:#fbbf2412}
+.c-renta{color:var(--renta);border-color:#463a6e;background:#a78bfa12}
+.c-ambas{color:var(--ac);border-color:#1d5450;background:#2dd4bf12}
+.c-ok{color:var(--ok);border-color:#1d5440;background:#34d39912}
+.c-bad{color:var(--bad);border-color:#5a2a35;background:#f8717112}
+.c-warn{color:var(--warn);border-color:#5c3a1d;background:#fb923c12}
+.c-info{color:#60a5fa;border-color:#1e3a66;background:#60a5fa12}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.search{flex:1;min-width:200px;position:relative}
+.search input{width:100%;padding:10px 12px 10px 38px;border-radius:10px;border:1px solid var(--line);background:var(--panel)}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--mu)}
+.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:7px;cursor:pointer;color:var(--mu);font-weight:500;font-size:14px}
+.seg button.on{background:var(--panel2);color:var(--tx);box-shadow:0 0 0 1px var(--line)}
+select.f{padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--panel)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.prop{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s}
+.prop:hover{transform:translateY(-2px);border-color:#3a5080}
+.pimg{height:150px;position:relative;background-size:cover;background-position:center;display:grid;place-items:center}
+.pimg .ph{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#ffffffaa;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:6px}
+.pimg .ph svg{width:38px;height:38px;stroke:#ffffffaa}
+.pimg .st{position:absolute;top:10px;left:10px}
+.pimg .op{position:absolute;top:10px;right:10px}
+.st-Disponible{background:#0d3b2ecc;color:var(--ok);border-color:#1d5440}
+.st-Apartada{background:#4a2f10cc;color:var(--warn);border-color:#5c3a1d}
+.st-Rentada{background:#2e2552cc;color:var(--renta);border-color:#463a6e}
+.st-Vendida{background:#4a1d26cc;color:var(--bad);border-color:#5a2a35}
+.st-Inactiva{background:#222c40cc;color:var(--mu)}
+.pbody{padding:13px 14px}
+.pbody h4{margin:0 0 3px;font-size:15.5px}
+.pbody .loc{color:var(--mu);font-size:13px;margin-bottom:9px}
+.price{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px}
+.price.v{color:var(--venta)}.price.r{color:var(--renta)}
+.price small{font-size:12px;color:var(--mu);font-weight:500}
+.specs{display:flex;gap:12px;color:var(--mu);font-size:12.5px;margin-top:9px;flex-wrap:wrap}
+.list{display:grid;gap:10px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.item .grow{flex:1;min-width:200px}
+.item .t{font-weight:600}
+.item .m{color:var(--mu);font-size:13px;margin-top:2px}
+.av{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:15px;flex-shrink:0}
+.bar{height:8px;background:var(--panel2);border-radius:6px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--ac);border-radius:6px}
+.statbar{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:13.5px}
+.statbar .lb{width:90px;color:var(--mu)}
+.statbar .bar{flex:1;margin:0;height:10px}
+.statbar .n{width:28px;text-align:right;font-family:'JetBrains Mono',monospace}
+.subtabs{margin-bottom:16px}
+.inline-sel{padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);font-size:13px}
+#modal{position:fixed;inset:0;background:#030712bb;backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;z-index:50;overflow:auto;padding:40px 14px}
+#modal.on{display:flex}
+.mbox{background:var(--panel);border:1px solid var(--line);border-radius:18px;width:100%;max-width:640px;padding:22px;box-shadow:0 30px 80px #000a;animation:pop .18s ease}
+@keyframes pop{from{transform:translateY(10px);opacity:0}}
+.mbox h3{margin:0 0 16px;font-size:19px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--mu)}
+.grid label.full{grid-column:1/-1}
+.grid input,.grid select,.grid textarea{padding:10px 11px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font-size:15px;width:100%}
+.grid input:focus,.grid select:focus,.grid textarea:focus,.search input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px #2dd4bf22}
+.mact{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+.photo-in{display:flex;gap:10px;align-items:center}
+.photo-in img{width:90px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.det-img{height:220px;border-radius:12px;margin:-4px 0 14px;background-size:cover;background-position:center;display:grid;place-items:center}
+.dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:12px 0}
+.dl div{background:var(--panel2);border-radius:10px;padding:9px 11px}
+.dl span{display:block;color:var(--mu);font-size:12px}
+.dl b{font-size:14.5px}
+.fsec{grid-column:1/-1;font-size:12px;text-transform:uppercase;letter-spacing:1.2px;color:var(--ac);border-top:1px solid var(--line);padding-top:14px;margin-top:4px;font-weight:600}
+.fsec:first-child{border-top:0;padding-top:0;margin-top:0}
+.fld{display:flex;flex-direction:column;gap:7px;font-size:13px;color:var(--mu)}.fld.full{grid-column:1/-1}
+.mchips{display:flex;flex-wrap:wrap;gap:6px}
+.grid label.mc{display:inline-block}
+.mc input{position:absolute;opacity:0;pointer-events:none}
+.mc span{display:inline-block;padding:6px 11px;border:1px solid var(--line);border-radius:20px;cursor:pointer;color:var(--mu);font-size:13px;background:var(--bg);user-select:none}
+.mc input:checked+span{border-color:var(--ac);color:var(--ac);background:#2dd4bf18}
+.phs{display:flex;gap:8px;flex-wrap:wrap}
+.phs .th{position:relative;width:92px;height:70px;border-radius:9px;background-size:cover;background-position:center;border:1px solid var(--line)}
+.th button{position:absolute;top:3px;width:22px;height:22px;border-radius:50%;border:0;background:#000a;color:#fff;font-size:11px;cursor:pointer;padding:0;left:3px}
+.th button.x{left:auto;right:3px}
+.th em{position:absolute;bottom:3px;left:3px;font-size:10px;font-style:normal;background:var(--ac);color:#04201c;padding:1px 6px;border-radius:6px;font-weight:600}
+textarea.out{width:100%;height:160px;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:10px;font-family:'JetBrains Mono',monospace;font-size:12px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(30px);background:var(--panel2);border:1px solid var(--ac);color:var(--tx);padding:11px 18px;border-radius:12px;opacity:0;transition:.25s;z-index:60;pointer-events:none;box-shadow:0 10px 30px #0008;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%)}
+#pv{position:fixed;inset:0;z-index:70;background:var(--bg);display:flex;flex-direction:column}
+#pv .pvbar{display:flex;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--panel)}
+#pv iframe{flex:1;border:0;width:100%;background:#fff}
+footer{text-align:center;color:var(--mu);font-size:13px;padding:30px 0 10px}
+footer b{color:var(--ac);font-weight:600}
+.bnav{display:none}
+@media (max-width:860px){
+ .app{grid-template-columns:1fr}
+ aside{display:none}
+ main{padding:18px 14px 100px}
+ .cols{grid-template-columns:1fr}
+ .top h1{font-size:22px}
+ .bnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:rgba(12,18,33,.95);backdrop-filter:blur(10px);border-top:1px solid var(--line);z-index:40;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+ .bnav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;color:var(--mu);padding:5px 0;cursor:pointer}
+ .bnav a svg{width:21px;height:21px}
+ .bnav a.on{color:var(--ac)}
+ .grid{grid-template-columns:1fr}
+ .kpi b{font-size:19px}
+ .kpis{grid-template-columns:1fr 1fr}
+ #toast{bottom:90px}
+ .mbox{padding:18px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside>
+  <div class="brand"><div class="logo"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6"/></svg></div><div><b id="agName">Inmobiliaria</b><small>Compra · Venta · Renta</small></div></div>
+  <nav id="snav"></nav>
+  <div class="side-foot">Datos guardados en este navegador.<br>Respalda desde ⚙ Ajustes.</div>
+ </aside>
+ <main id="main"></main>
+</div>
+<div class="bnav" id="bnav"></div>
+<div id="modal"></div>
+<div id="toast"></div>
+
+<script>
+const KEY='inmo_cybercadtm_v1',GHKEY='inmo_cybercadtm_gh';
+const IS_WEB=/(^|\.)cybercadtm\.com$|github\.io$/.test(location.hostname);
+let db;
+const state={view:'inicio',pq:'',pop:'',pest:'',ptipo:'',cq:'',ctipo:'',rtab:'contratos',cob:'Vencido',vq:'activas'};
+const uid=()=>Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4);
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>(+n||0).toLocaleString('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});
+const short=n=>{n=+n||0;if(n>=1e6)return '$'+(n/1e6).toFixed(n>=1e7?1:2).replace(/\.?0+$/,'')+'M';if(n>=1e4)return '$'+Math.round(n/1e3)+'k';return money(n)};
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const TODAY=new Date();TODAY.setHours(0,0,0,0);
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const parse=s=>new Date(s+'T00:00:00');
+const fdate=s=>s?parse(s).toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'}):'—';
+const fper=p=>{const [y,m]=p.split('-');return new Date(+y,+m-1,1).toLocaleDateString('es-MX',{month:'long',year:'numeric'})};
+const ini=n=>String(n||'?').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const prop=id=>db.props.find(p=>p.id===id);
+const cli=id=>db.clients.find(c=>c.id===id);
+const pName=id=>prop(id)?.titulo||'—';
+const cName=id=>cli(id)?.nombre||'—';
+
+const IC={
+ home:'M3 11l9-8 9 8M5 10v10h14V10',
+ prop:'M4 21V6l8-4 8 4v15M9 9h.01M15 9h.01M9 13h.01M15 13h.01M10 21v-4h4v4',
+ users:'M16 20v-1a4 4 0 00-4-4H7a4 4 0 00-4 4v1M9.5 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7M21 20v-1a4 4 0 00-3-3.8M16 4.2a3.5 3.5 0 010 6.6',
+ tag:'M3 12V3h9l9 9-9 9-9-9zM7.5 7.5h.01',
+ key:'M14.5 9.5a4.5 4.5 0 11-1.2 3.1L4 21.9V19h2.5v-2.5H9l2.3-2.3M16.5 7.5h.01',
+ cal:'M4 6h16v15H4zM4 10h16M8 3v4M16 3v4',
+ gear:'M12 15a3 3 0 100-6 3 3 0 000 6zM19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-2.8 1.2V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-2.9-1.2l-.1.1a2 2 0 11-2.8-2.8l.1-.1A1.7 1.7 0 003 14H3a2 2 0 110-4h.1A1.7 1.7 0 004.3 7.2l-.1-.1a2 2 0 112.8-2.8l.1.1A1.7 1.7 0 0010 3.1V3a2 2 0 114 0v.1a1.7 1.7 0 002.9 1.2l.1-.1a2 2 0 112.8 2.8l-.1.1A1.7 1.7 0 0021 10h0a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z',
+ plus:'M12 5v14M5 12h14',
+ search:'M11 18a7 7 0 100-14 7 7 0 000 14zM21 21l-4.3-4.3',
+ copy:'M9 9h11v11H9zM5 15V4h11',
+ money:'M3 6h18v12H3zM12 15a3 3 0 100-6 3 3 0 000 6zM6 9v.01M18 15v.01',
+ edit:'M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4',
+ land:'M3 20l6-9 4 5 3-4 5 8zM16 6a2 2 0 100-4 2 2 0 000 4',
+ globe:'M12 21a9 9 0 100-18 9 9 0 000 18zM3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18',
+ eye:'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 15a3 3 0 100-6 3 3 0 000 6',
+ down:'M12 4v11M7 10l5 5 5-5M5 20h14'
+};
+const ic=(k,c='i')=>`<svg class="${c}" viewBox="0 0 24 24"><path d="${IC[k]}"/></svg>`;
+const NAV=[['inicio','Inicio','home'],['propiedades','Propiedades','prop'],['clientes','Clientes','users'],['ventas','Ventas','tag'],['rentas','Rentas','key'],['agenda','Agenda','cal'],['portal','Portal','globe']];
+const TIPOS=['Casa','Departamento','Terreno','Local','Oficina','Bodega'];
+const ESTADOS=['Disponible','Apartada','Rentada','Vendida','Inactiva'];
+const OPS=['Venta','Renta','Ambas'];
+const CTIPOS=['Comprador','Inquilino','Propietario','Prospecto'];
+const VEST=['Oferta','Apartado','Escrituración','Cerrada','Cancelada'];
+const AMEN=[['jardin','🌳 Jardín'],['patio','🧱 Patio'],['cochera','🚗 Cochera techada'],['porton','⚡ Portón eléctrico'],['alberca','🏊 Alberca'],['terraza','☀️ Terraza'],['balcon','🌇 Balcón'],['roof','🌆 Roof garden'],['servicio','🛏 Cuarto de servicio'],['lavado','🧺 Cuarto de lavado'],['bodega','📦 Bodega'],['cocina','🍳 Cocina integral'],['closets','🚪 Clósets'],['minisplit','❄️ Minisplit / A/C'],['calefaccion','🔥 Calefacción'],['solar','🔆 Paneles solares'],['calentador','♨️ Calentador solar'],['cisterna','💧 Cisterna'],['gas','🔵 Gas natural'],['fibra','📶 Internet / fibra'],['camaras','📹 Cámaras'],['privada','🔒 Fracc. privado'],['vigilancia','👮 Vigilancia 24/7'],['gimnasio','🏋️ Gimnasio'],['juegos','🛝 Área de juegos'],['elevador','🛗 Elevador'],['amueblado','🛋 Amueblado'],['mascotas','🐾 Acepta mascotas'],['vista','🌊 Vista al mar'],['accesible','♿ Accesible']];
+const AMENL=Object.fromEntries(AMEN);
+const CREDITOS=['Contado','Infonavit','Fovissste','Bancario','Cofinavit','Pensiones'];
+const LEGAL=['','Escriturada','Cesión de derechos','En trámite de escrituración','Régimen ejidal'];
+const CONSERV=['','A estrenar','Excelente','Buena','Para remodelar'];
+const AVAL=['','Sin aval','Aval con propiedad','Póliza jurídica','Aval o póliza'];
+const PLANTAS=[[0,'—'],[1,'1 planta'],[2,'2 plantas'],[3,'3 plantas'],[4,'4 o más']];
+const GRAD={Casa:'#0f766e,#1e3a8a',Departamento:'#4c1d95,#1e40af',Terreno:'#365314,#0f766e',Local:'#9a3412,#7c2d12',Oficina:'#1e3a8a,#312e81',Bodega:'#3f3f46,#1f2937'};
+const imgBg=p=>p.foto?`background-image:url(${p.foto})`:`background-image:linear-gradient(135deg,${GRAD[p.tipo]||GRAD.Casa})`;
+const opChip=o=>`<span class="chip c-${(o||'').toLowerCase()}">${esc(o)}</span>`;
+const avColor=t=>({Comprador:'#fbbf2422;color:#fbbf24',Inquilino:'#a78bfa22;color:#a78bfa',Propietario:'#2dd4bf22;color:#2dd4bf',Prospecto:'#60a5fa22;color:#60a5fa'}[t]||'#ffffff11;color:#ccc');
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('⚠ No se pudo guardar (espacio lleno o bloqueado)')}}
+function load(){try{const r=localStorage.getItem(KEY);if(r){db=JSON.parse(r);['props','clients','sales','contracts','payments','visits'].forEach(k=>db[k]=db[k]||[]);db.cfg=db.cfg||{agencia:'Inmobiliaria',comision:5};migrate();return}}catch(e){}if(IS_WEB){db={cfg:{agencia:'Inmobiliaria',comision:5},props:[],clients:[],sales:[],contracts:[],payments:[],visits:[]};migrate();save();setTimeout(welcome,400)}else demo()}
+function welcome(){modal(`<h3>👋 Bienvenido a tu administrador</h3><p style="color:var(--mu);line-height:1.6;margin-top:0">Esta versión instalada guarda sus datos en este dispositivo y empieza vacía.<br><br>Si ya tienes propiedades en la versión de Claude, ábrela, entra a <b>⚙ Ajustes → Copiar respaldo</b> y pégalo aquí en <b>⚙ Ajustes → Importar pegado</b>.</p><div class="mact"><button class="btn" onclick="closeModal();demo();render()">Ver con datos de ejemplo</button><span class="sp"></span><button class="btn" onclick="settings()">Importar respaldo</button><button class="btn pri" data-close>Empezar vacío</button></div>`)}
+
+function migrate(){db.cfg=Object.assign({ciudad:'Tijuana',whatsapp:'',telefono:'',email:'',eslogan:''},db.cfg);db.props.forEach(p=>{if(p.publicada===undefined)p.publicada=['Disponible','Apartada'].includes(p.estado);if(p.destacada===undefined)p.destacada=false;if(!Array.isArray(p.fotos))p.fotos=p.foto?[p.foto]:[];p.foto=p.fotos[0]||'';['amen','creditos'].forEach(k=>{if(!Array.isArray(p[k]))p[k]=[]});['m2t','plantas','antig','mant','depMeses','plazo'].forEach(k=>{p[k]=+p[k]||0});['legal','conserv','aval','tour','mapa'].forEach(k=>{p[k]=p[k]||''})})}
+function demo(){
+ const C=o=>Object.assign({id:uid(),email:'',notas:'',presupuesto:0,interes:''},o);
+ const c=[C({nombre:'Laura Méndez',tipo:'Propietario',tel:'6641234567'}),C({nombre:'Jorge Ramírez',tipo:'Comprador',tel:'6642345678',presupuesto:3000000,interes:'Venta',email:'jorge.r@correo.com'}),C({nombre:'Ana Torres',tipo:'Inquilino',tel:'6643456789',presupuesto:23000,interes:'Renta'}),C({nombre:'Roberto Silva',tipo:'Inquilino',tel:'6644567890'}),C({nombre:'Patricia Gómez',tipo:'Comprador',tel:'6645678901'}),C({nombre:'Miguel Ángel Ruiz',tipo:'Propietario',tel:'6646789012'}),C({nombre:'Sofía Herrera',tipo:'Inquilino',tel:'6647890123'}),C({nombre:'Daniel Castro',tipo:'Prospecto',tel:'6648901234',presupuesto:1800000,interes:'Venta'})];
+ const P=o=>Object.assign({id:uid(),foto:'',ciudad:'Tijuana',precio:0,renta:0,m2:0,rec:0,banos:0,est:0,notas:'',propietario:'',creado:iso(TODAY)},o);
+ const p=[
+  P({titulo:'Casa en Otay Universidad',tipo:'Casa',operacion:'Venta',estado:'Disponible',precio:2850000,colonia:'Otay Universidad',m2:160,rec:3,banos:2.5,est:2,propietario:c[0].id,notas:'Recién remodelada, a 5 min de UABC. Cocina integral y patio.'}),
+  P({titulo:'Departamento Zona Río',tipo:'Departamento',operacion:'Renta',estado:'Rentada',renta:14500,colonia:'Zona Río',m2:85,rec:2,banos:2,est:1,propietario:c[5].id,notas:'Amueblado, gimnasio y seguridad 24/7.'}),
+  P({titulo:'Terreno en Playas de Tijuana',tipo:'Terreno',operacion:'Venta',estado:'Disponible',precio:1450000,colonia:'Playas de Tijuana',m2:300,notas:'Uso habitacional, vista parcial al mar.'}),
+  P({titulo:'Local comercial Av. Revolución',tipo:'Local',operacion:'Renta',estado:'Disponible',renta:22000,colonia:'Zona Centro',m2:120,banos:1,notas:'Alto flujo peatonal, ideal restaurante.'}),
+  P({titulo:'Casa en Chapultepec',tipo:'Casa',operacion:'Venta',estado:'Vendida',precio:4200000,colonia:'Chapultepec',m2:240,rec:4,banos:3.5,est:3,propietario:c[0].id}),
+  P({titulo:'Depto en Colonia Cacho',tipo:'Departamento',operacion:'Ambas',estado:'Apartada',precio:2300000,renta:16000,colonia:'Cacho',m2:110,rec:3,banos:2,est:1,propietario:c[5].id}),
+  P({titulo:'Oficina Zona Urbana Río',tipo:'Oficina',operacion:'Renta',estado:'Rentada',renta:18000,colonia:'Zona Urbana Río',m2:70,banos:1,est:2}),
+  P({titulo:'Casa en Santa Fe',tipo:'Casa',operacion:'Ambas',estado:'Disponible',precio:1650000,renta:9500,colonia:'Santa Fe',m2:90,rec:2,banos:1.5,est:1})
+ ];
+ const mStart=k=>iso(new Date(TODAY.getFullYear(),TODAY.getMonth()-k,1));
+ const k=[{id:uid(),prop:p[1].id,inquilino:c[3].id,renta:14500,deposito:14500,inicio:mStart(5),meses:12,dia:5,estatus:'Activo',notas:''},{id:uid(),prop:p[6].id,inquilino:c[6].id,renta:18000,deposito:36000,inicio:mStart(3),meses:12,dia:1,estatus:'Activo',notas:'Aval: empresa'}];
+ [[0,{m2t:180,plantas:2,antig:8,conserv:'Excelente',legal:'Escriturada',creditos:['Contado','Infonavit','Bancario'],amen:['patio','cochera','porton','cocina','closets','minisplit','calentador','cisterna']}],[1,{plantas:1,antig:5,conserv:'Excelente',mant:1800,amen:['amueblado','gimnasio','vigilancia','elevador','minisplit','balcon','fibra'],depMeses:1,aval:'Póliza jurídica',plazo:12}],[2,{m2t:300,legal:'Escriturada',creditos:['Contado','Bancario'],amen:['vista']}],[3,{plantas:1,antig:20,conserv:'Buena',depMeses:2,aval:'Aval o póliza',plazo:24,amen:['bodega','camaras']}],[4,{m2t:300,plantas:2,antig:15,conserv:'Excelente',legal:'Escriturada',amen:['jardin','alberca','terraza','servicio']}],[5,{plantas:1,antig:3,conserv:'Excelente',mant:1200,legal:'Escriturada',creditos:['Contado','Infonavit','Fovissste','Bancario'],amen:['privada','vigilancia','roof','closets','cocina','mascotas'],depMeses:1,aval:'Aval o póliza',plazo:12}],[6,{plantas:1,mant:2500,depMeses:2,aval:'Póliza jurídica',plazo:12,amen:['elevador','vigilancia','fibra','minisplit']}],[7,{m2t:120,plantas:2,antig:12,conserv:'Para remodelar',legal:'Cesión de derechos',creditos:['Contado','Infonavit'],amen:['patio','cisterna','mascotas'],depMeses:1,aval:'Sin aval',plazo:6}]].forEach(([i,o])=>Object.assign(p[i],o));
+ p[0].destacada=true;p[5].destacada=true;p[7].destacada=true;
+ db={cfg:{agencia:'Inmobiliaria Frontera',comision:5,ciudad:'Tijuana',whatsapp:'',telefono:'',email:'',eslogan:'Casas, departamentos, terrenos y locales en Tijuana. Te acompañamos desde la visita hasta la firma.'},props:p,clients:c,contracts:k,payments:[],
+  sales:[{id:uid(),prop:p[4].id,comprador:c[4].id,precio:4150000,comision:5,fecha:iso(addDays(TODAY,-40)),estatus:'Cerrada',notas:'Crédito Infonavit + recursos propios'},{id:uid(),prop:p[5].id,comprador:c[1].id,precio:2250000,comision:5,fecha:iso(addDays(TODAY,-6)),estatus:'Apartado',notas:'Apartado con $50,000'}],
+  visits:[{id:uid(),fecha:iso(addDays(TODAY,1)),hora:'10:00',tipo:'Visita',prop:p[0].id,cliente:c[1].id,nota:'Mostrar casa y patio',hecho:false},{id:uid(),fecha:iso(addDays(TODAY,3)),hora:'17:30',tipo:'Visita',prop:p[3].id,cliente:c[2].id,nota:'',hecho:false},{id:uid(),fecha:iso(addDays(TODAY,7)),hora:'12:00',tipo:'Firma',prop:p[5].id,cliente:c[1].id,nota:'Firma de promesa de compraventa',hecho:false}]};
+ periods(k[0]).filter(x=>x.st!=='Pendiente').forEach(x=>db.payments.push({id:uid(),contrato:k[0].id,periodo:x.periodo,monto:x.monto,fecha:x.due,metodo:'Transferencia',nota:''}));
+ const pk=periods(k[1]).filter(x=>x.st==='Vencido');pk.slice(0,-1).forEach(x=>db.payments.push({id:uid(),contrato:k[1].id,periodo:x.periodo,monto:x.monto,fecha:x.due,metodo:'Depósito',nota:''}));
+ migrate();save();
+}
+
+/* ---------- rentas: periodos de pago ---------- */
+function endDate(c){const s=parse(c.inicio);return new Date(s.getFullYear(),s.getMonth()+(+c.meses||12),s.getDate()-1)}
+function periods(c,all){
+ const out=[];if(!c.inicio)return out;const s=parse(c.inicio);const lim=addDays(TODAY,35);
+ for(let i=0;i<(+c.meses||12);i++){
+  const y=s.getFullYear(),m=s.getMonth()+i;const last=new Date(y,m+1,0).getDate();
+  const due=new Date(y,m,Math.min(+c.dia||1,last));
+  if(!all&&due>lim)break;
+  const per=iso(new Date(y,m,1)).slice(0,7);
+  const pay=db.payments.find(p=>p.contrato===c.id&&p.periodo===per);
+  out.push({c,periodo:per,due:iso(due),monto:+c.renta,pay,st:pay?'Pagado':(due<TODAY?'Vencido':'Pendiente'),dias:Math.round((TODAY-due)/864e5)});
+ }
+ return out;
+}
+const activeC=()=>db.contracts.filter(c=>c.estatus==='Activo');
+const allPer=()=>activeC().flatMap(c=>periods(c));
+
+/* ---------- UI base ---------- */
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2400)}
+function modal(h){const m=$('#modal');m.innerHTML=`<div class="mbox">${h}</div>`;m.classList.add('on');m.scrollTop=0}
+function closeModal(){$('#modal').classList.remove('on');$('#modal').innerHTML=''}
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal'||e.target.closest('[data-close]'))closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+function askConfirm(msg,cb,ok='Eliminar'){modal(`<h3>¿Seguro?</h3><p style="color:var(--mu);margin:0">${msg}</p><div class="mact"><span class="sp"></span><button class="btn ghost" data-close>Cancelar</button><button class="btn danger" id="cfok">${ok}</button></div>`);$('#cfok').onclick=()=>{cb();closeModal();save();render()}}
+async function copyText(t){try{await navigator.clipboard.writeText(t);toast('Copiado al portapapeles ✓')}catch(e){modal(`<h3>Copia este texto</h3><textarea class="out" readonly>${esc(t)}</textarea><div class="mact"><span class="sp"></span><button class="btn pri" data-close>Listo</button></div>`);setTimeout(()=>$('textarea.out').select(),50)}}
+function shrink(file){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>{const w=Math.min(900,im.width),h=Math.round(im.height*w/im.width);const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(im,0,0,w,h);res(cv.toDataURL('image/jpeg',.66));URL.revokeObjectURL(im.src)};im.onerror=rej;im.src=URL.createObjectURL(file)})}
+
+function openForm(title,fields,vals,onSave,onDel){
+ const body=fields.map(f=>{
+  const v=vals[f.k]??f.def??'';let inp;
+  if(f.type==='section')return `<div class="fsec">${f.label}</div>`;
+  if(f.type==='multi'){const arr=Array.isArray(v)?v:[];return `<div class="fld full"><span>${f.label}</span><div class="mchips">${f.opts.map(([val,lab])=>`<label class="mc"><input type="checkbox" name="${f.k}" value="${esc(val)}" ${arr.includes(val)?'checked':''}><span>${esc(lab)}</span></label>`).join('')}</div></div>`}
+  if(f.type==='photos'){const arr=Array.isArray(v)?v:[];return `<div class="fld full"><span>Fotos (hasta 8 · la primera es la portada · ★ para hacerla portada)</span><div class="phs" id="phs"></div><input type="file" accept="image/*" multiple data-photos><input type="hidden" name="${f.k}" value="${esc(JSON.stringify(arr))}"></div>`}
+  if(f.type==='select')inp=`<select name="${f.k}" ${f.req?'required':''}>${f.opts.map(o=>{const[val,lab]=Array.isArray(o)?o:[o,o];return `<option value="${esc(val)}" ${String(val)===String(v)?'selected':''}>${esc(lab)}</option>`}).join('')}</select>`;
+  else if(f.type==='textarea')inp=`<textarea name="${f.k}" rows="3">${esc(v)}</textarea>`;
+  else if(f.type==='photo')inp=`<div class="photo-in"><img id="phprev" src="${v}" ${v?'':'hidden'}><input type="file" accept="image/*" data-photo><input type="hidden" name="${f.k}" value="${esc(v)}"></div>`;
+  else if(f.type==='check')inp=`<input type="checkbox" name="${f.k}" ${v?'checked':''} style="width:22px;height:22px">`;
+  else inp=`<input name="${f.k}" type="${f.type||'text'}" value="${esc(v)}" ${f.step?`step="${f.step}"`:''} ${f.req?'required':''} ${f.ph?`placeholder="${esc(f.ph)}"`:''}>`;
+  return `<label class="${f.full?'full':''}"><span>${f.label}</span>${inp}</label>`;
+ }).join('');
+ modal(`<form id="frm"><h3>${title}</h3><div class="grid">${body}</div><div class="mact">${onDel?'<button type="button" class="btn danger" id="delbtn">Eliminar</button>':''}<span class="sp"></span><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn pri">Guardar</button></div></form>`);
+ const fi=$('[data-photo]');if(fi)fi.onchange=async()=>{const f=fi.files[0];if(!f)return;try{const d=await shrink(f);fi.nextElementSibling.value=d;const im=$('#phprev');im.src=d;im.hidden=false}catch(e){toast('No se pudo leer la imagen')}};
+ const fp=$('[data-photos]');if(fp){const hid=fp.nextElementSibling;let arr=JSON.parse(hid.value||'[]');const draw=()=>{hid.value=JSON.stringify(arr);$('#phs').innerHTML=arr.map((f,i)=>`<div class="th" style="background-image:url(${f})">${i?`<button type="button" data-cover="${i}" title="Hacer portada">★</button>`:'<em>Portada</em>'}<button type="button" class="x" data-rm="${i}" title="Quitar">✕</button></div>`).join('')||'<span style="color:var(--mu);font-size:13px">Sin fotos</span>'};draw();
+  $('#phs').onclick=e=>{const r=e.target.dataset.rm,c=e.target.dataset.cover;if(r!==undefined){arr.splice(+r,1);draw()}if(c!==undefined){arr.unshift(arr.splice(+c,1)[0]);draw()}};
+  fp.onchange=async()=>{for(const f of [...fp.files]){if(arr.length>=8){toast('Máximo 8 fotos');break}try{arr.push(await shrink(f))}catch(e){toast('No se pudo leer una imagen')}}fp.value='';draw()}}
+ if(onDel)$('#delbtn').onclick=onDel;
+ $('#frm').onsubmit=e=>{e.preventDefault();const o={};const fd=new FormData(e.target);fd.forEach((v,k)=>o[k]=typeof v==='string'?v.trim():v);fields.forEach(f=>{if(f.type==='number')o[f.k]=+o[f.k]||0;if(f.type==='check')o[f.k]=!!o[f.k];if(f.type==='multi')o[f.k]=fd.getAll(f.k);if(f.type==='photos'){try{o[f.k]=JSON.parse(o[f.k]||'[]')}catch(x){o[f.k]=[]}}if(f.k==='plantas')o[f.k]=+o[f.k]||0});onSave(o);closeModal();save();render()};
+}
+
+/* ---------- navegación ---------- */
+function go(v){state.view=v;render();window.scrollTo(0,0)}
+function renderNav(){
+ $('#snav').innerHTML=NAV.map(([k,l,i])=>`<a class="${state.view===k?'on':''}" onclick="go('${k}')">${ic(i)}${l}</a>`).join('')+`<a onclick="settings()">${ic('gear')}Ajustes</a>`;
+ $('#bnav').innerHTML=NAV.map(([k,l,i])=>`<a class="${state.view===k?'on':''}" onclick="go('${k}')">${ic(i)}${l}</a>`).join('');
+ $('#agName').textContent=db.cfg.agencia||'Inmobiliaria';document.title=(db.cfg.agencia||'Inmobiliaria')+' · Gestión inmobiliaria';
+}
+function header(t,sub,btns=''){return `<div class="top"><div><h1>${t}</h1><div class="sub">${sub}</div></div><span class="sp"></span>${btns}<button class="btn iconbtn" onclick="settings()" title="Ajustes">${ic('gear')}</button></div>`}
+const FOOT=`<footer>Sistema de gestión inmobiliaria · <b>@cybercadtm</b></footer>`;
+function render(){renderNav();$('#main').innerHTML=VIEWS[state.view]()+FOOT;if(state.view==='propiedades')renderPGrid();if(state.view==='clientes')renderCList()}
+
+/* ---------- INICIO ---------- */
+function vInicio(){
+ const per=allPer();const venc=per.filter(x=>x.st==='Vencido').sort((a,b)=>b.dias-a.dias);
+ const ym=iso(TODAY).slice(0,7);const yy=String(TODAY.getFullYear());
+ const cobrado=db.payments.filter(p=>p.fecha&&p.fecha.startsWith(ym)).reduce((s,p)=>s+(+p.monto||0),0);
+ const mensual=activeC().reduce((s,c)=>s+(+c.renta||0),0);
+ const comAnio=db.sales.filter(s=>s.estatus==='Cerrada'&&(s.fecha||'').startsWith(yy)).reduce((s,v)=>s+v.precio*v.comision/100,0);
+ const pipe=db.sales.filter(s=>!['Cerrada','Cancelada'].includes(s.estatus));
+ const disp=db.props.filter(p=>p.estado==='Disponible').length;
+ const prox=db.visits.filter(v=>!v.hecho&&v.fecha>=iso(TODAY)).sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora)).slice(0,5);
+ const porVencer=activeC().filter(c=>{const d=(endDate(c)-TODAY)/864e5;return d>=0&&d<=60});
+ const max=Math.max(1,...ESTADOS.map(e=>db.props.filter(p=>p.estado===e).length));
+ const colE={Disponible:'var(--ok)',Apartada:'var(--warn)',Rentada:'var(--renta)',Vendida:'var(--bad)',Inactiva:'var(--mu)'};
+ const hoy=TODAY.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+ return header('Panel general',hoy.charAt(0).toUpperCase()+hoy.slice(1),`<button class="btn pri" onclick="formProp()">${ic('plus')}Propiedad</button>`)+`
+ <div class="kpis">
+  <div class="kpi" style="--glow:#2dd4bf"><span>Propiedades</span><b>${db.props.length}</b><small>${disp} disponibles</small></div>
+  <div class="kpi" style="--glow:#a78bfa"><span>Renta mensual</span><b>${short(mensual)}</b><small>${activeC().length} contratos activos</small></div>
+  <div class="kpi" style="--glow:#34d399"><span>Cobrado este mes</span><b>${short(cobrado)}</b><small>${TODAY.toLocaleDateString('es-MX',{month:'long'})}</small></div>
+  <div class="kpi" style="--glow:#f87171"><span>Rentas vencidas</span><b style="color:${venc.length?'var(--bad)':'inherit'}">${short(venc.reduce((s,x)=>s+x.monto,0))}</b><small>${venc.length} pago${venc.length===1?'':'s'}</small></div>
+  <div class="kpi" style="--glow:#fbbf24"><span>Comisiones ${yy}</span><b>${short(comAnio)}</b><small>ventas cerradas</small></div>
+  <div class="kpi" style="--glow:#60a5fa"><span>Ventas en proceso</span><b>${short(pipe.reduce((s,v)=>s+(+v.precio||0),0))}</b><small>${pipe.length} operaci${pipe.length===1?'ón':'ones'}</small></div>
+ </div>
+ <div class="cols">
+  <div class="card"><h3>⚠ Pagos vencidos <span class="cnt">${venc.length}</span></h3>${venc.length?venc.slice(0,6).map(x=>`<div class="row"><div class="grow"><div class="t">${esc(cName(x.c.inquilino))}</div><div class="m">${esc(pName(x.c.prop))} · ${fper(x.periodo)}</div></div><span class="chip c-bad">${x.dias} día${x.dias===1?'':'s'}</span><button class="btn sm" onclick="cobrar('${x.c.id}','${x.periodo}')">Cobrar ${short(x.monto)}</button></div>`).join(''):'<div class="empty">Sin pagos vencidos 🎉</div>'}</div>
+  <div class="card"><h3>📅 Próximas citas <span class="cnt">${prox.length}</span></h3>${prox.length?prox.map(v=>`<div class="row"><div class="av" style="background:#2dd4bf18;color:var(--ac);font-size:12px;line-height:1.1;text-align:center">${parse(v.fecha).getDate()}<br>${parse(v.fecha).toLocaleDateString('es-MX',{month:'short'}).replace('.','')}</div><div class="grow"><div class="t">${esc(v.tipo)} · ${esc(cName(v.cliente))}</div><div class="m">${esc(v.hora||'')} · ${esc(pName(v.prop))}</div></div></div>`).join(''):'<div class="empty">No hay citas próximas</div>'}</div>
+  <div class="card"><h3>🏘 Inventario por estado</h3>${ESTADOS.map(e=>{const n=db.props.filter(p=>p.estado===e).length;return `<div class="statbar"><span class="lb">${e}</span><div class="bar"><i style="width:${n/max*100}%;background:${colE[e]}"></i></div><span class="n">${n}</span></div>`}).join('')}</div>
+  <div class="card"><h3>📄 Contratos por vencer (60 días) <span class="cnt">${porVencer.length}</span></h3>${porVencer.length?porVencer.map(c=>`<div class="row"><div class="grow"><div class="t">${esc(pName(c.prop))}</div><div class="m">${esc(cName(c.inquilino))} · vence ${fdate(iso(endDate(c)))}</div></div><button class="btn sm" onclick="renovar('${c.id}')">Renovar</button></div>`).join(''):'<div class="empty">Ningún contrato vence pronto</div>'}</div>
+ </div>`;
+}
+
+/* ---------- PROPIEDADES ---------- */
+function vProps(){
+ return header('Propiedades',`${db.props.length} en cartera`,`<button class="btn pri" onclick="formProp()">${ic('plus')}Nueva</button>`)+`
+ <div class="filters"><div class="search">${ic('search')}<input id="pq" placeholder="Buscar por título, colonia, notas…" value="${esc(state.pq)}" oninput="state.pq=this.value;renderPGrid()"></div>
+ <div class="seg">${['','Venta','Renta'].map(o=>`<button class="${state.pop===o?'on':''}" onclick="state.pop='${o}';render()">${o||'Todas'}</button>`).join('')}</div>
+ <select class="f" onchange="state.pest=this.value;renderPGrid()"><option value="">Cualquier estado</option>${ESTADOS.map(e=>`<option ${state.pest===e?'selected':''}>${e}</option>`).join('')}</select>
+ <select class="f" onchange="state.ptipo=this.value;renderPGrid()"><option value="">Todos los tipos</option>${TIPOS.map(e=>`<option ${state.ptipo===e?'selected':''}>${e}</option>`).join('')}</select></div>
+ <div class="pgrid" id="pgrid"></div>`;
+}
+function priceHtml(p){const a=[];if(p.operacion!=='Renta')a.push(`<div class="price v">${money(p.precio)}</div>`);if(p.operacion!=='Venta')a.push(`<div class="price r">${money(p.renta)} <small>/mes</small></div>`);return a.join('')}
+function specs(p){const a=[];if(p.m2)a.push(`📐 ${p.m2} m²`);if(p.plantas)a.push(`🏢 ${p.plantas>=4?'4+':p.plantas} pl.`);if(p.rec)a.push(`🛏 ${p.rec}`);if(p.banos)a.push(`🚿 ${p.banos}`);if(p.est)a.push(`🚗 ${p.est}`);return a.join('<span></span>')}
+const plantasTxt=n=>n?(n>=4?'4 o más plantas':n+(n==1?' planta':' plantas')):'';
+function renderPGrid(){
+ const q=state.pq.toLowerCase();
+ const L=db.props.filter(p=>(!state.pop||p.operacion===state.pop||p.operacion==='Ambas')&&(!state.pest||p.estado===state.pest)&&(!state.ptipo||p.tipo===state.ptipo)&&(!q||[p.titulo,p.colonia,p.ciudad,p.notas,p.tipo,p.legal,(p.amen||[]).map(k=>AMENL[k]).join(' '),(p.creditos||[]).join(' ')].join(' ').toLowerCase().includes(q)));
+ $('#pgrid').innerHTML=L.length?L.map(p=>`<div class="prop" onclick="detProp('${p.id}')"><div class="pimg" style="${imgBg(p)}">${p.foto?'':`<div class="ph">${ic(p.tipo==='Terreno'?'land':'prop')}${esc(p.tipo)}</div>`}<span class="chip st st-${p.estado}">${esc(p.estado)}</span><span class="op">${opChip(p.operacion)}</span>${enPortal(p)?'<span class="chip" style="position:absolute;bottom:10px;left:10px;background:#0a0f1ccc">🌐 En portal</span>':''}${(p.fotos||[]).length>1?`<span class="chip" style="position:absolute;bottom:10px;right:10px;background:#0a0f1ccc">📷 ${p.fotos.length}</span>`:''}</div><div class="pbody"><h4>${esc(p.titulo)}</h4><div class="loc">📍 ${esc(p.colonia)}${p.ciudad?', '+esc(p.ciudad):''}</div>${priceHtml(p)}<div class="specs">${specs(p)}</div></div></div>`).join(''):'<div class="empty" style="grid-column:1/-1">No hay propiedades con esos filtros</div>';
+}
+function formProp(id){
+ const p=id?prop(id):{};
+ openForm(id?'Editar propiedad':'Nueva propiedad',[
+  {type:'section',label:'Datos generales'},
+  {k:'titulo',label:'Título',req:true,full:true,ph:'Ej. Casa en Otay'},
+  {k:'tipo',label:'Tipo',type:'select',opts:TIPOS},
+  {k:'operacion',label:'Operación',type:'select',opts:OPS},
+  {k:'estado',label:'Estado',type:'select',opts:ESTADOS},
+  {k:'propietario',label:'Propietario',type:'select',opts:[['','— Sin asignar —'],...db.clients.filter(c=>c.tipo==='Propietario').map(c=>[c.id,c.nombre])]},
+  {type:'section',label:'Precio y situación legal'},
+  {k:'precio',label:'Precio de venta (MXN)',type:'number'},
+  {k:'renta',label:'Renta mensual (MXN)',type:'number'},
+  {k:'mant',label:'Cuota de mantenimiento / mes',type:'number'},
+  {k:'legal',label:'Situación legal',type:'select',opts:LEGAL.map(x=>[x,x||'—'])},
+  {k:'creditos',label:'Formas de pago / créditos aceptados',type:'multi',opts:CREDITOS.map(x=>[x,x])},
+  {type:'section',label:'Ubicación'},
+  {k:'colonia',label:'Colonia',req:true},{k:'ciudad',label:'Ciudad',def:'Tijuana'},
+  {k:'direccion',label:'Dirección exacta (privada, no se publica)',full:true},
+  {k:'mapa',label:'Link de Google Maps (opcional, se muestra en el portal)',full:true,ph:'https://maps.app.goo.gl/…'},
+  {type:'section',label:'Características'},
+  {k:'m2',label:'m² de construcción',type:'number'},{k:'m2t',label:'m² de terreno',type:'number'},
+  {k:'plantas',label:'Plantas / niveles',type:'select',opts:PLANTAS},
+  {k:'rec',label:'Recámaras',type:'number'},
+  {k:'banos',label:'Baños (2.5 = 2 y medio)',type:'number',step:'0.5'},
+  {k:'est',label:'Estacionamiento (cajones)',type:'number'},
+  {k:'antig',label:'Antigüedad (años, 0 = nueva)',type:'number'},
+  {k:'conserv',label:'Estado de conservación',type:'select',opts:CONSERV.map(x=>[x,x||'—'])},
+  {type:'section',label:'Amenidades y servicios'},
+  {k:'amen',label:'Marca lo que tiene',type:'multi',opts:AMEN},
+  {type:'section',label:'Requisitos de renta'},
+  {k:'depMeses',label:'Depósito (meses)',type:'number'},
+  {k:'aval',label:'Garantía',type:'select',opts:AVAL.map(x=>[x,x||'—'])},
+  {k:'plazo',label:'Plazo mínimo (meses)',type:'number'},
+  {type:'section',label:'Fotos y publicación'},
+  {k:'fotos',type:'photos'},
+  {k:'tour',label:'Video o recorrido virtual (link de YouTube, TikTok…)',full:true,ph:'https://…'},
+  {k:'notas',label:'Descripción',type:'textarea',full:true},
+  {k:'publicada',label:'🌐 Publicar en el portal',type:'check',def:true},{k:'destacada',label:'★ Destacada en el portal',type:'check'}
+ ],p,o=>{o.foto=(o.fotos||[])[0]||'';if(id)Object.assign(p,o);else db.props.unshift({id:uid(),creado:iso(TODAY),...o});toast(id?'Propiedad actualizada':'Propiedad agregada')},
+ id?()=>askConfirm(`Se eliminará <b>${esc(p.titulo)}</b>. Las ventas y contratos ligados quedarán sin propiedad.`,()=>{db.props=db.props.filter(x=>x.id!==id)}):null);
+}
+function detRows(p,priv){
+ const r=[];const add=(a,b)=>{if(b!==''&&b!==0&&b!=null)r.push([a,b])};
+ add('Construcción',p.m2?p.m2+' m²':'');add('Terreno',p.m2t?p.m2t+' m²':'');add('Plantas',plantasTxt(p.plantas));add('Recámaras',p.rec);add('Baños',p.banos);add('Estacionamiento',p.est?p.est+(p.est==1?' cajón':' cajones'):'');
+ add('Antigüedad',p.antig?p.antig+(p.antig==1?' año':' años'):(p.conserv==='A estrenar'?'Nueva':''));add('Conservación',p.conserv);add('Mantenimiento',p.mant?money(p.mant)+'/mes':'');add('Situación legal',p.legal);
+ if(p.operacion!=='Renta'&&p.precio&&p.m2)add('Precio por m²',money(p.precio/p.m2));
+ if(p.operacion!=='Venta'){add('Depósito',p.depMeses?p.depMeses+(p.depMeses==1?' mes':' meses'):'');add('Garantía',p.aval);add('Plazo mínimo',p.plazo?p.plazo+' meses':'')}
+ if(priv)add('Propietario',cName(p.propietario));
+ return r;
+}
+function detProp(id){
+ const p=prop(id);if(!p)return;
+ const ventas=db.sales.filter(s=>s.prop===id),ks=db.contracts.filter(c=>c.prop===id),vis=db.visits.filter(v=>v.prop===id);
+ const fs=p.fotos||[];
+ modal(`<div class="det-img" id="dImg" style="${imgBg(p)}">${p.foto?'':`<div class="pimg" style="height:auto;background:none"><div class="ph">${ic(p.tipo==='Terreno'?'land':'prop')}${esc(p.tipo)}</div></div>`}</div>
+ ${fs.length>1?`<div class="phs" style="margin:-6px 0 14px">${fs.map((f,i)=>`<div class="th" style="background-image:url(${f});cursor:pointer" onclick="$('#dImg').style.backgroundImage='url('+db.props.find(x=>x.id==='${id}').fotos[${i}]+')'"></div>`).join('')}</div>`:''}
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><span class="chip st-${p.estado}">${esc(p.estado)}</span>${opChip(p.operacion)}<span class="chip">${esc(p.tipo)}</span>${p.plantas?`<span class="chip">🏢 ${plantasTxt(p.plantas)}</span>`:''}</div>
+ <h3 style="margin-bottom:4px">${esc(p.titulo)}</h3><div style="color:var(--mu);font-size:14px">📍 ${esc([p.direccion,p.colonia,p.ciudad].filter(Boolean).join(', '))}</div>
+ <div style="display:flex;gap:18px;margin-top:10px;flex-wrap:wrap">${priceHtml(p)}</div>
+ <div class="dl">${detRows(p,true).map(([a,b])=>`<div><span>${a}</span><b>${esc(b)}</b></div>`).join('')}</div>
+ ${(p.amen||[]).length?`<div class="mchips" style="margin-bottom:10px">${p.amen.map(k=>`<span class="chip">${esc(AMENL[k]||k)}</span>`).join('')}</div>`:''}
+ ${(p.creditos||[]).length&&p.operacion!=='Renta'?`<div style="font-size:13px;color:var(--mu);margin-bottom:10px">💳 Acepta: <b style="color:var(--tx)">${esc(p.creditos.join(', '))}</b></div>`:''}
+ ${p.notas?`<p style="color:var(--mu);margin:0 0 12px;line-height:1.5;white-space:pre-line">${esc(p.notas)}</p>`:''}
+ ${p.tour||p.mapa?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">${p.tour?`<a class="btn sm" href="${esc(p.tour)}" target="_blank" rel="noopener">🎬 Recorrido</a>`:''}${p.mapa?`<a class="btn sm" href="${esc(p.mapa)}" target="_blank" rel="noopener">🗺 Mapa</a>`:''}</div>`:''}
+ <div style="font-size:13px;color:var(--mu)">${ventas.length} venta(s) · ${ks.length} contrato(s) · ${vis.length} cita(s)</div>
+ <div class="mact"><button class="btn" onclick="copyText(ficha('${id}'))">${ic('copy')}Copiar ficha</button><button class="btn" onclick="formVisit(null,{prop:'${id}'})">${ic('cal')}Agendar</button>${p.operacion!=='Renta'&&p.estado!=='Vendida'?`<button class="btn" onclick="formSale(null,{prop:'${id}'})">${ic('tag')}Venta</button>`:''}${p.operacion!=='Venta'&&p.estado==='Disponible'?`<button class="btn" onclick="formContract(null,{prop:'${id}'})">${ic('key')}Rentar</button>`:''}<span class="sp"></span><button class="btn pri" onclick="formProp('${id}')">${ic('edit')}Editar</button></div>`);
+}
+function ficha(id){const p=prop(id);const L=[`🏠 ${p.titulo}`,`📍 ${[p.colonia,p.ciudad].filter(Boolean).join(', ')}`];if(p.operacion!=='Renta')L.push(`💰 Venta: ${money(p.precio)}`);if(p.operacion!=='Venta')L.push(`🔑 Renta: ${money(p.renta)} al mes`);
+ const s=[p.m2&&p.m2+' m² const.',p.m2t&&p.m2t+' m² terreno',plantasTxt(p.plantas),p.rec&&p.rec+' recámaras',p.banos&&p.banos+' baños',p.est&&p.est+(p.est==1?' cajón':' cajones')+' de estacionamiento'].filter(Boolean).join(' · ');if(s)L.push('📐 '+s);
+ if((p.amen||[]).length)L.push('✨ '+p.amen.map(k=>AMENL[k]).filter(Boolean).join(', '));
+ if(p.operacion!=='Renta'&&(p.creditos||[]).length)L.push('💳 Acepta: '+p.creditos.join(', '));if(p.legal)L.push('📄 '+p.legal);if(p.mant)L.push('🧾 Mantenimiento: '+money(p.mant)+'/mes');
+ if(p.operacion!=='Venta'&&(p.depMeses||p.aval))L.push('📝 Requisitos: '+[p.depMeses&&p.depMeses+' mes(es) de depósito',p.aval,p.plazo&&'plazo mínimo '+p.plazo+' meses'].filter(Boolean).join(', '));
+ if(p.notas)L.push('',p.notas);if(p.tour)L.push('🎬 '+p.tour);L.push('',`Informes: ${db.cfg.agencia}${db.cfg.whatsapp?' · WhatsApp '+db.cfg.whatsapp:''}`);return L.join('\n')}
+
+/* ---------- CLIENTES ---------- */
+function vClients(){
+ return header('Clientes',`${db.clients.length} registrados`,`<button class="btn pri" onclick="formClient()">${ic('plus')}Nuevo</button>`)+`
+ <div class="filters"><div class="search">${ic('search')}<input placeholder="Buscar nombre, teléfono, correo…" value="${esc(state.cq)}" oninput="state.cq=this.value;renderCList()"></div>
+ <div class="seg">${['',...CTIPOS].map(o=>`<button class="${state.ctipo===o?'on':''}" onclick="state.ctipo='${o}';render()">${o||'Todos'}</button>`).join('')}</div></div><div class="list" id="clist"></div>`;
+}
+function matches(c){return db.props.filter(p=>p.estado==='Disponible'&&(!c.interes||p.operacion===c.interes||p.operacion==='Ambas')&&(!c.presupuesto||(c.interes==='Renta'?p.operacion!=='Venta'&&p.renta<=c.presupuesto:p.operacion!=='Renta'&&p.precio<=c.presupuesto)))}
+function renderCList(){
+ const q=state.cq.toLowerCase();
+ const L=db.clients.filter(c=>(!state.ctipo||c.tipo===state.ctipo)&&(!q||[c.nombre,c.tel,c.email,c.notas].join(' ').toLowerCase().includes(q)));
+ $('#clist').innerHTML=L.length?L.map(c=>{const mt=['Comprador','Inquilino','Prospecto'].includes(c.tipo)&&c.interes?matches(c):null;const tel=String(c.tel||'').replace(/\D/g,'');return `<div class="item"><div class="av" style="background:${avColor(c.tipo)}">${ini(c.nombre)}</div><div class="grow"><div class="t">${esc(c.nombre)} <span class="chip" style="margin-left:4px">${esc(c.tipo)}</span></div><div class="m">${esc(c.tel||'')}${c.email?' · '+esc(c.email):''}${c.presupuesto?` · Presupuesto ${money(c.presupuesto)}${c.interes?' ('+esc(c.interes)+')':''}`:''}</div></div>${mt?`<button class="btn sm" onclick="showMatches('${c.id}')">🎯 ${mt.length} coincidencia${mt.length===1?'':'s'}</button>`:''}${tel?`<a class="btn sm wa" href="https://wa.me/${tel.length===10?'52'+tel:tel}" target="_blank" rel="noopener">WhatsApp</a>`:''}<button class="btn sm" onclick="formClient('${c.id}')">${ic('edit')}</button></div>`}).join(''):'<div class="empty">Sin clientes con esos filtros</div>';
+}
+function showMatches(id){const c=cli(id),L=matches(c);modal(`<h3>Propiedades para ${esc(c.nombre)}</h3><div style="color:var(--mu);font-size:13px;margin-bottom:8px">${esc(c.interes)} · hasta ${money(c.presupuesto)}</div>${L.length?L.map(p=>`<div class="row" style="cursor:pointer" onclick="detProp('${p.id}')"><div class="av" style="${imgBg(p)};background-size:cover"></div><div class="grow"><div class="t">${esc(p.titulo)}</div><div class="m">${esc(p.colonia)} · ${c.interes==='Renta'?money(p.renta)+'/mes':money(p.precio)}</div></div>${opChip(p.operacion)}</div>`).join(''):'<div class="empty">Ninguna propiedad disponible coincide</div>'}<div class="mact"><span class="sp"></span><button class="btn" data-close>Cerrar</button></div>`)}
+function formClient(id,pre){
+ const c=id?cli(id):Object.assign({},pre);
+ openForm(id?'Editar cliente':'Nuevo cliente',[
+  {k:'nombre',label:'Nombre completo',req:true,full:true},{k:'tipo',label:'Tipo',type:'select',opts:CTIPOS},
+  {k:'tel',label:'Teléfono',type:'tel',ph:'664…'},{k:'email',label:'Correo',type:'email',full:false},
+  {k:'interes',label:'Interés',type:'select',opts:[['','—'],'Venta','Renta']},
+  {k:'presupuesto',label:'Presupuesto (MXN)',type:'number'},
+  {k:'notas',label:'Notas',type:'textarea',full:true}
+ ],c,o=>{if(id)Object.assign(c,o);else db.clients.unshift({id:uid(),...o});toast(id?'Cliente actualizado':'Cliente agregado')},
+ id?()=>askConfirm(`Se eliminará a <b>${esc(c.nombre)}</b>.`,()=>{db.clients=db.clients.filter(x=>x.id!==id)}):null);
+}
+
+/* ---------- VENTAS ---------- */
+function syncSale(s){const p=prop(s.prop);if(!p)return;if(s.estatus==='Cerrada')p.estado='Vendida';else if(s.estatus==='Apartado'||s.estatus==='Escrituración')p.estado='Apartada';else if(s.estatus==='Cancelada'&&['Apartada','Vendida'].includes(p.estado))p.estado='Disponible'}
+const vChip=e=>({Oferta:'c-info',Apartado:'c-warn',Escrituración:'c-renta',Cerrada:'c-ok',Cancelada:'c-bad'}[e]||'');
+function vSales(){
+ const L=[...db.sales].sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+ const cer=db.sales.filter(s=>s.estatus==='Cerrada');
+ return header('Ventas',`${db.sales.length} operaciones de compraventa`,`<button class="btn pri" onclick="formSale()">${ic('plus')}Nueva venta</button>`)+`
+ <div class="kpis">${VEST.map(e=>{const s=db.sales.filter(x=>x.estatus===e);return `<div class="kpi"><span>${e}</span><b>${s.length}</b><small>${short(s.reduce((a,x)=>a+(+x.precio||0),0))}</small></div>`}).join('')}<div class="kpi" style="--glow:#fbbf24"><span>Comisiones cobradas</span><b>${short(cer.reduce((a,s)=>a+s.precio*s.comision/100,0))}</b><small>total histórico</small></div></div>
+ <div class="list">${L.length?L.map(s=>`<div class="item"><div class="av" style="background:#fbbf2418;color:var(--venta)">${ic('tag')}</div><div class="grow"><div class="t">${esc(pName(s.prop))}</div><div class="m">Comprador: ${esc(cName(s.comprador))} · ${fdate(s.fecha)}${s.notas?' · '+esc(s.notas):''}</div></div><div style="text-align:right"><div class="price v">${money(s.precio)}</div><div class="m" style="font-size:12.5px;color:var(--mu)">Comisión ${s.comision}% = ${money(s.precio*s.comision/100)}</div></div><select class="inline-sel ${vChip(s.estatus)}" onchange="setSale('${s.id}',this.value)">${VEST.map(e=>`<option ${e===s.estatus?'selected':''}>${e}</option>`).join('')}</select><button class="btn sm" onclick="formSale('${s.id}')">${ic('edit')}</button></div>`).join(''):'<div class="empty">Aún no hay ventas registradas</div>'}</div>`;
+}
+function setSale(id,e){const s=db.sales.find(x=>x.id===id);s.estatus=e;if(e==='Cerrada'&&!s.fecha)s.fecha=iso(TODAY);syncSale(s);save();render();toast('Estatus: '+e)}
+function formSale(id,pre){
+ const s=id?db.sales.find(x=>x.id===id):Object.assign({fecha:iso(TODAY),comision:db.cfg.comision,estatus:'Oferta'},pre);
+ if(!id&&s.prop&&!s.precio)s.precio=prop(s.prop)?.precio||0;
+ openForm(id?'Editar venta':'Nueva venta',[
+  {k:'prop',label:'Propiedad',type:'select',req:true,full:true,opts:[['','— Elige —'],...db.props.filter(p=>p.operacion!=='Renta'&&(p.estado!=='Vendida'||p.id===s.prop)).map(p=>[p.id,`${p.titulo} · ${money(p.precio)}`])]},
+  {k:'comprador',label:'Comprador',type:'select',req:true,opts:[['','— Elige —'],...db.clients.filter(c=>c.tipo!=='Propietario').map(c=>[c.id,c.nombre])]},
+  {k:'estatus',label:'Estatus',type:'select',opts:VEST},
+  {k:'precio',label:'Precio pactado (MXN)',type:'number',req:true},{k:'comision',label:'Comisión %',type:'number',step:'0.1'},
+  {k:'fecha',label:'Fecha',type:'date'},{k:'notas',label:'Notas (crédito, apartado…)',full:true}
+ ],s,o=>{if(!o.precio)o.precio=prop(o.prop)?.precio||0;let x;if(id){x=Object.assign(s,o)}else{x={id:uid(),...o};db.sales.unshift(x)}syncSale(x);toast('Venta guardada')},
+ id?()=>askConfirm('Se eliminará esta venta.',()=>{db.sales=db.sales.filter(x=>x.id!==id)}):null);
+}
+
+/* ---------- RENTAS ---------- */
+function vRentas(){
+ const per=allPer();const cnt=e=>per.filter(x=>x.st===e).length;
+ const top=header('Rentas',`${activeC().length} contratos activos · ${short(activeC().reduce((s,c)=>s+(+c.renta||0),0))} al mes`,`<button class="btn pri" onclick="formContract()">${ic('plus')}Contrato</button>`)+
+ `<div class="seg subtabs" style="display:inline-flex"><button class="${state.rtab==='contratos'?'on':''}" onclick="state.rtab='contratos';render()">Contratos</button><button class="${state.rtab==='cobranza'?'on':''}" onclick="state.rtab='cobranza';render()">Cobranza ${cnt('Vencido')?`<span class="chip c-bad" style="padding:0 7px">${cnt('Vencido')}</span>`:''}</button></div>`;
+ if(state.rtab==='contratos'){
+  const L=[...db.contracts].sort((a,b)=>(a.estatus>b.estatus?1:-1));
+  return top+`<div class="list">${L.length?L.map(c=>{const ps=periods(c,true),pag=ps.filter(x=>x.pay).length,ven=periods(c).filter(x=>x.st==='Vencido').length;const fin=endDate(c),dl=Math.round((fin-TODAY)/864e5);return `<div class="item"><div class="av" style="background:#a78bfa18;color:var(--renta)">${ic('key')}</div><div class="grow"><div class="t">${esc(pName(c.prop))} ${c.estatus==='Activo'?(ven?`<span class="chip c-bad">${ven} vencido${ven>1?'s':''}</span>`:'<span class="chip c-ok">Al corriente</span>'):'<span class="chip">Terminado</span>'} ${c.estatus==='Activo'&&dl>=0&&dl<=60?`<span class="chip c-warn">vence en ${dl} d</span>`:''}</div><div class="m">Inquilino: ${esc(cName(c.inquilino))} · Paga el día ${c.dia} · ${fdate(c.inicio)} → ${fdate(iso(fin))} · Depósito ${money(c.deposito)}</div><div class="bar" style="max-width:340px"><i style="width:${pag/ps.length*100}%;background:var(--renta)"></i></div><div class="m" style="font-size:12px">${pag} de ${ps.length} meses pagados</div></div><div class="price r">${money(c.renta)} <small>/mes</small></div><button class="btn sm" onclick="pagosDe('${c.id}')">Pagos</button><button class="btn sm" onclick="formContract('${c.id}')">${ic('edit')}</button></div>`}).join(''):'<div class="empty">Sin contratos de renta</div>'}</div>`;
+ }
+ const L=(state.cob==='Todos'?per:per.filter(x=>x.st===state.cob)).sort((a,b)=>state.cob==='Pagado'?b.due.localeCompare(a.due):a.due.localeCompare(b.due));
+ return top+`<div class="filters"><div class="seg">${['Vencido','Pendiente','Pagado','Todos'].map(o=>`<button class="${state.cob===o?'on':''}" onclick="state.cob='${o}';render()">${o==='Todos'?o:o+'s'} ${o!=='Todos'?`(${cnt(o)})`:''}</button>`).join('')}</div></div><div class="list">${L.length?L.map(payRow).join(''):'<div class="empty">Nada por aquí</div>'}</div>`;
+}
+function payRow(x){
+ const ch=x.st==='Pagado'?'c-ok':x.st==='Vencido'?'c-bad':'c-warn';
+ return `<div class="item"><div class="av" style="background:#ffffff08;color:var(--mu);font-size:11px;text-align:center;line-height:1.15">${fper(x.periodo).split(' ')[0].slice(0,3).toUpperCase()}<br>${x.periodo.slice(2,4)}</div><div class="grow"><div class="t">${esc(cName(x.c.inquilino))} · <span style="font-weight:400;color:var(--mu)">${esc(pName(x.c.prop))}</span></div><div class="m">${fper(x.periodo)} · vence ${fdate(x.due)}${x.pay?` · pagado ${fdate(x.pay.fecha)} (${esc(x.pay.metodo)})`:''}</div></div><span class="chip ${ch}">${x.st==='Vencido'?x.dias+' días vencido':x.st}</span><div class="price r">${money(x.pay?x.pay.monto:x.monto)}</div>${x.pay?`<button class="btn sm" onclick="recibo('${x.pay.id}')">Recibo</button><button class="btn sm ghost" onclick="deshacer('${x.pay.id}')" title="Deshacer pago">↺</button>`:`<button class="btn sm pri" onclick="cobrar('${x.c.id}','${x.periodo}')">${ic('money')}Cobrar</button>`}</div>`;
+}
+function cobrar(cid,per){
+ const c=db.contracts.find(x=>x.id===cid);
+ openForm(`Registrar pago · ${fper(per)}`,[
+  {k:'monto',label:'Monto recibido',type:'number',req:true},{k:'fecha',label:'Fecha de pago',type:'date',req:true},
+  {k:'metodo',label:'Método',type:'select',opts:['Transferencia','Efectivo','Depósito','Tarjeta','Cheque']},{k:'nota',label:'Nota / referencia'}
+ ],{monto:c.renta,fecha:iso(TODAY)},o=>{db.payments.push({id:uid(),contrato:cid,periodo:per,...o});toast('Pago registrado ✓')});
+}
+function deshacer(pid){askConfirm('Se quitará este pago y el mes volverá a quedar pendiente.',()=>{db.payments=db.payments.filter(p=>p.id!==pid)},'Quitar pago')}
+function recibo(pid){const p=db.payments.find(x=>x.id===pid),c=db.contracts.find(x=>x.id===p.contrato);copyText(`🧾 RECIBO DE RENTA\n${db.cfg.agencia}\n\nRecibí de: ${cName(c.inquilino)}\nInmueble: ${pName(c.prop)}\nPeriodo: ${fper(p.periodo)}\nMonto: ${money(p.monto)}\nFecha de pago: ${fdate(p.fecha)}\nMétodo: ${p.metodo}${p.nota?'\nRef: '+p.nota:''}\n\nFolio: ${p.id.toUpperCase()}`)}
+function pagosDe(cid){const c=db.contracts.find(x=>x.id===cid);const ps=periods(c,true);const tot=ps.filter(x=>x.pay).reduce((s,x)=>s+(+x.pay.monto||0),0);modal(`<h3>Pagos · ${esc(pName(c.prop))}</h3><div style="color:var(--mu);font-size:13px;margin-bottom:10px">${esc(cName(c.inquilino))} · cobrado ${money(tot)} de ${money(c.renta*ps.length)}</div>${ps.map(x=>{const ch=x.st==='Pagado'?'c-ok':x.st==='Vencido'?'c-bad':'';return `<div class="row"><div class="grow"><div class="t" style="text-transform:capitalize">${fper(x.periodo)}</div><div class="m">vence ${fdate(x.due)}${x.pay?' · pagado '+fdate(x.pay.fecha):''}</div></div><span class="chip ${ch}">${x.st}</span>${!x.pay&&x.st!=='Pendiente'||(!x.pay&&x.due<=iso(addDays(TODAY,35)))?`<button class="btn sm" onclick="cobrar('${c.id}','${x.periodo}')">Cobrar</button>`:''}</div>`}).join('')}<div class="mact"><span class="sp"></span><button class="btn" data-close>Cerrar</button></div>`)}
+function syncContract(c){const p=prop(c.prop);if(!p)return;if(c.estatus==='Activo')p.estado='Rentada';else if(p.estado==='Rentada'&&!db.contracts.some(x=>x.prop===p.id&&x.estatus==='Activo'&&x.id!==c.id))p.estado='Disponible'}
+function formContract(id,pre){
+ const c=id?db.contracts.find(x=>x.id===id):Object.assign({inicio:iso(new Date(TODAY.getFullYear(),TODAY.getMonth(),1)),meses:12,dia:1,estatus:'Activo'},pre);
+ if(!id&&c.prop&&!c.renta){c.renta=prop(c.prop)?.renta||0;c.deposito=c.renta}
+ openForm(id?'Editar contrato':'Nuevo contrato de renta',[
+  {k:'prop',label:'Propiedad',type:'select',req:true,full:true,opts:[['','— Elige —'],...db.props.filter(p=>p.operacion!=='Venta'&&(p.estado==='Disponible'||p.id===c.prop)).map(p=>[p.id,`${p.titulo} · ${money(p.renta)}/mes`])]},
+  {k:'inquilino',label:'Inquilino',type:'select',req:true,opts:[['','— Elige —'],...db.clients.filter(x=>x.tipo!=='Propietario').map(x=>[x.id,x.nombre])]},
+  {k:'estatus',label:'Estatus',type:'select',opts:['Activo','Terminado']},
+  {k:'renta',label:'Renta mensual',type:'number',req:true},{k:'deposito',label:'Depósito en garantía',type:'number'},
+  {k:'inicio',label:'Fecha de inicio',type:'date',req:true},{k:'meses',label:'Duración (meses)',type:'number',req:true},
+  {k:'dia',label:'Día de pago (1-31)',type:'number',req:true},{k:'notas',label:'Notas (aval, póliza jurídica…)',full:true}
+ ],c,o=>{o.dia=Math.min(31,Math.max(1,o.dia||1));o.meses=Math.max(1,o.meses||12);let x;if(id){const old=c.prop;x=Object.assign(c,o);if(old!==o.prop){const op=prop(old);if(op&&op.estado==='Rentada')op.estado='Disponible'}}else{x={id:uid(),...o};db.contracts.unshift(x)}syncContract(x);toast('Contrato guardado')},
+ id?()=>askConfirm('Se eliminará el contrato y su historial de pagos.',()=>{db.contracts=db.contracts.filter(x=>x.id!==id);db.payments=db.payments.filter(p=>p.contrato!==id);const p=prop(c.prop);if(p&&p.estado==='Rentada')p.estado='Disponible'}):null);
+}
+function renovar(cid){const c=db.contracts.find(x=>x.id===cid);const f=endDate(c);formContract(null,{prop:c.prop,inquilino:c.inquilino,renta:c.renta,deposito:c.deposito,dia:c.dia,meses:12,inicio:iso(addDays(f,1)),notas:'Renovación'});const p=prop(c.prop);const s=$('#frm select[name=prop]');if(s&&p&&!s.querySelector(`option[value="${c.prop}"]`)){s.insertAdjacentHTML('beforeend',`<option value="${c.prop}" selected>${esc(p.titulo)}</option>`)}const f2=$('#frm');if(!f2)return;const prev=f2.onsubmit;f2.onsubmit=e=>{c.estatus='Terminado';prev(e)}}
+
+/* ---------- AGENDA ---------- */
+function vAgenda(){
+ const t=iso(TODAY);const sorted=[...db.visits].sort((a,b)=>(a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+ const L=state.vq==='activas'?sorted.filter(v=>!v.hecho&&v.fecha>=t):state.vq==='atrasadas'?sorted.filter(v=>!v.hecho&&v.fecha<t):sorted.filter(v=>v.hecho).reverse();
+ const n=k=>k==='activas'?db.visits.filter(v=>!v.hecho&&v.fecha>=t).length:k==='atrasadas'?db.visits.filter(v=>!v.hecho&&v.fecha<t).length:db.visits.filter(v=>v.hecho).length;
+ let last='';
+ return header('Agenda','Visitas, firmas, avalúos y llamadas',`<button class="btn pri" onclick="formVisit()">${ic('plus')}Cita</button>`)+`
+ <div class="filters"><div class="seg">${[['activas','Próximas'],['atrasadas','Sin cerrar'],['hechas','Hechas']].map(([k,l])=>`<button class="${state.vq===k?'on':''}" onclick="state.vq='${k}';render()">${l} (${n(k)})</button>`).join('')}</div></div>
+ <div class="list">${L.length?L.map(v=>{const d=parse(v.fecha);const lbl=v.fecha===t?'Hoy':v.fecha===iso(addDays(TODAY,1))?'Mañana':d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});const h=lbl!==last?`<div style="color:var(--ac);font-size:13px;font-weight:600;margin-top:6px;text-transform:capitalize">${lbl}</div>`:'';last=lbl;return h+`<div class="item"><input type="checkbox" ${v.hecho?'checked':''} onchange="toggleV('${v.id}')" style="width:20px;height:20px;accent-color:var(--ac)"><div class="av" style="background:#2dd4bf14;color:var(--ac);font-size:13px" class="mono">${esc(v.hora||'--:--')}</div><div class="grow"><div class="t" style="${v.hecho?'text-decoration:line-through;opacity:.6':''}">${esc(v.tipo)} · ${esc(cName(v.cliente))}</div><div class="m">${esc(pName(v.prop))}${v.nota?' · '+esc(v.nota):''}</div></div><button class="btn sm" onclick="formVisit('${v.id}')">${ic('edit')}</button></div>`}).join(''):'<div class="empty">Sin citas aquí</div>'}</div>`;
+}
+function toggleV(id){const v=db.visits.find(x=>x.id===id);v.hecho=!v.hecho;save();render()}
+function formVisit(id,pre){
+ const v=id?db.visits.find(x=>x.id===id):Object.assign({fecha:iso(addDays(TODAY,1)),hora:'10:00',tipo:'Visita'},pre);
+ openForm(id?'Editar cita':'Nueva cita',[
+  {k:'tipo',label:'Tipo',type:'select',opts:['Visita','Firma','Avalúo','Entrega de llaves','Llamada','Otro']},
+  {k:'fecha',label:'Fecha',type:'date',req:true},{k:'hora',label:'Hora',type:'time'},
+  {k:'cliente',label:'Cliente',type:'select',opts:[['','—'],...db.clients.map(c=>[c.id,c.nombre])]},
+  {k:'prop',label:'Propiedad',type:'select',full:true,opts:[['','—'],...db.props.map(p=>[p.id,p.titulo])]},
+  {k:'nota',label:'Nota',full:true},{k:'hecho',label:'Realizada',type:'check'}
+ ],v,o=>{if(id)Object.assign(v,o);else db.visits.push({id:uid(),...o});toast('Cita guardada')},
+ id?()=>askConfirm('Se eliminará esta cita.',()=>{db.visits=db.visits.filter(x=>x.id!==id)}):null);
+}
+
+/* ---------- PORTAL PÚBLICO ---------- */
+const PORTAL_TPL="<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Propiedades en venta y renta<\/title>\n<meta name=\"description\" content=\"Casas, departamentos, terrenos y locales en venta y renta.\">\n<meta name=\"theme-color\" content=\"#0d1b2a\">\n<link rel=\"icon\" href=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f9b8e'/%3E%3Cpath d='M14 30 32 14l18 16M19 28v20h26V28' fill='none' stroke='white' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E\">\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link href=\"https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap\" rel=\"stylesheet\">\n<style>\n:root{--ink:#0d1b2a;--mu:#5b6b80;--line:#e3e8ef;--bg:#f6f4ef;--card:#fff;--ac:#0f9b8e;--ac2:#0b7a70;--gold:#c8961e;--violet:#7c5cd6;--r:16px}\n*{box-sizing:border-box}html{scroll-behavior:smooth}\nbody{margin:0;font-family:Outfit,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15.5px}\nbutton,input,select,textarea{font:inherit;color:inherit}\na{color:inherit}\n.wrap{max-width:1200px;margin:0 auto;padding:0 20px}\nheader.nav{position:sticky;top:0;z-index:30;background:rgba(246,244,239,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}\nheader.nav .wrap{display:flex;align-items:center;gap:18px;height:66px}\n.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none}\n.logo i{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--ac),#2563eb);display:grid;place-items:center}\n.logo svg{width:20px;height:20px;stroke:#fff}\n.sp{flex:1}\n.nav a.l{text-decoration:none;color:var(--mu);font-weight:500}\n.nav a.l:hover{color:var(--ink)}\n.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:12px;padding:11px 18px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}\n.btn svg{width:18px;height:18px}\n.btn.wa{background:#1fae5b;color:#fff}.btn.wa:hover{background:#18964d}\n.btn.pri{background:var(--ink);color:#fff}.btn.pri:hover{background:#1c3350}\n.btn.out{background:#fff;border:1px solid var(--line);color:var(--ink)}\nsvg.i{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}\n.hero{position:relative;overflow:hidden;background:radial-gradient(900px 420px at 85% 0%,#1d4f7a 0,transparent 65%),radial-gradient(700px 400px at 0% 100%,#0f6e66 0,transparent 60%),var(--ink);color:#fff;padding:70px 0 120px}\n.hero:after{content:\"\";position:absolute;inset:0;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(180deg,#000,transparent)}\n.hero .wrap{position:relative;z-index:1}\n.eyebrow{display:inline-flex;gap:8px;align-items:center;background:#ffffff14;border:1px solid #ffffff22;padding:6px 12px;border-radius:30px;font-size:13px;color:#cfe9e5}\n.hero h1{font-family:Fraunces,Georgia,serif;font-size:clamp(34px,5.4vw,60px);line-height:1.04;margin:18px 0 14px;max-width:760px;letter-spacing:-.5px}\n.hero h1 em{font-style:normal;color:#5eead4}\n.hero p{color:#c4d0de;font-size:18px;max-width:560px;margin:0}\n.searchbox{position:relative;z-index:2;margin:-70px auto 0;background:#fff;border-radius:20px;box-shadow:0 24px 60px #0d1b2a26;padding:16px;max-width:1160px}\n.tabs{display:flex;gap:6px;margin-bottom:12px}\n.tabs button{border:0;background:transparent;padding:8px 16px;border-radius:10px;font-weight:600;color:var(--mu);cursor:pointer}\n.tabs button.on{background:var(--ink);color:#fff}\n.sfields{display:grid;grid-template-columns:1.1fr 1fr 1fr .9fr 1fr auto;gap:10px}\n.achips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}\n.achips button{border:1px solid var(--line);background:#fafbfc;border-radius:30px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--mu);font-weight:500}\n.achips button.on{border-color:var(--ac);background:#0f9b8e14;color:var(--ac2);font-weight:600}\n.amen{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 18px}\n.amen span{background:var(--bg);border-radius:30px;padding:7px 12px;font-size:13.5px}\n.h4{font-weight:700;font-size:15px;margin:18px 0 8px}\n.gnav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:0;background:#ffffffe6;cursor:pointer;font-size:20px;box-shadow:0 4px 14px #0003}\n.gnav.l{left:14px}.gnav.r{right:14px}\n.gcount{position:absolute;bottom:14px;right:14px;background:#0d1b2ab3;color:#fff;border-radius:20px;padding:4px 10px;font-size:12.5px}\n.thumbs{display:flex;gap:8px;padding:10px 28px 0;overflow-x:auto}\n.thumbs div{flex:0 0 76px;height:56px;border-radius:9px;background-size:cover;background-position:center;cursor:pointer;opacity:.6;border:2px solid transparent}\n.thumbs div.on{opacity:1;border-color:var(--ac)}\n.pc{position:absolute;bottom:12px;right:12px;background:#0d1b2ab3;color:#fff;border-radius:20px;padding:3px 9px;font-size:12px}\n.sfields label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}\n.sfields select,.sfields input{padding:12px;border:1px solid var(--line);border-radius:11px;background:#fafbfc;font-size:15px;text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink);width:100%}\n.sfields .btn{align-self:end;height:47px}\nsection{padding:56px 0 10px}\n.sh{display:flex;align-items:end;gap:14px;margin-bottom:22px;flex-wrap:wrap}\n.sh h2{font-family:Fraunces,Georgia,serif;font-size:32px;margin:0;letter-spacing:-.3px}\n.sh p{margin:4px 0 0;color:var(--mu)}\n.sh select{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#fff}\n.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:20px}\n.card{background:var(--card);border-radius:var(--r);overflow:hidden;cursor:pointer;border:1px solid var(--line);transition:transform .18s,box-shadow .18s;display:flex;flex-direction:column}\n.card:hover{transform:translateY(-4px);box-shadow:0 18px 40px #0d1b2a1c}\n.img{aspect-ratio:4/3;background-size:cover;background-position:center;position:relative;display:grid;place-items:center}\n.img .ph{color:#ffffffcc;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600}\n.img .ph svg{width:44px;height:44px;stroke:#ffffffcc}\n.badges{position:absolute;top:12px;left:12px;display:flex;gap:6px;flex-wrap:wrap}\n.b{padding:5px 10px;border-radius:30px;font-size:12px;font-weight:700;background:#fff;color:var(--ink);box-shadow:0 2px 8px #0002}\n.b.v{background:var(--gold);color:#fff}.b.r{background:var(--violet);color:#fff}.b.s{background:#f59e0b;color:#fff}.b.d{background:var(--ink);color:#fde68a}\n.cbody{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}\n.price{font-weight:800;font-size:21px;letter-spacing:-.3px}\n.price small{font-size:13px;color:var(--mu);font-weight:500}\n.price2{font-size:14px;color:var(--violet);font-weight:700}\n.ct{font-weight:600;font-size:16.5px}\n.loc{color:var(--mu);font-size:14px;display:flex;align-items:center;gap:5px}\n.loc svg{width:15px;height:15px}\n.feats{display:flex;gap:14px;border-top:1px solid var(--line);padding-top:11px;margin-top:auto;color:var(--mu);font-size:13.5px;flex-wrap:wrap}\n.feats span{display:flex;align-items:center;gap:5px}\n.feats svg{width:16px;height:16px}\n.empty{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--mu);background:#fff;border-radius:var(--r);border:1px dashed var(--line)}\n.feat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}\n.feat-row .card .img{aspect-ratio:16/10}\n#det{position:fixed;inset:0;background:#0d1b2acc;backdrop-filter:blur(4px);z-index:50;display:none;overflow:auto;padding:30px 14px}\n#det.on{display:block}\n.dbox{background:#fff;max-width:880px;margin:0 auto;border-radius:22px;overflow:hidden;animation:up .2s ease}\n@keyframes up{from{transform:translateY(16px);opacity:0}}\n.dimg{aspect-ratio:16/8;background-size:cover;background-position:center;position:relative;display:grid;place-items:center}\n.dclose{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;border:0;background:#fff;cursor:pointer;font-size:20px;box-shadow:0 4px 14px #0003}\n.dcont{padding:26px 28px 30px;display:grid;grid-template-columns:1fr 280px;gap:28px}\n.dcont h2{font-family:Fraunces,Georgia,serif;font-size:30px;margin:6px 0 6px;line-height:1.1}\n.specs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin:18px 0}\n.specs div{background:var(--bg);border-radius:12px;padding:12px}\n.specs span{display:block;font-size:12px;color:var(--mu)}\n.specs b{font-size:16px}\n.desc{line-height:1.65;color:#2b3a4d;white-space:pre-line}\n.side{background:var(--bg);border-radius:16px;padding:18px;align-self:start;display:flex;flex-direction:column;gap:10px}\n.side .price{font-size:26px}\n.contact{background:var(--ink);color:#fff;border-radius:24px;padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:30px;margin:60px 0 20px}\n.contact h2{font-family:Fraunces,Georgia,serif;font-size:34px;margin:0 0 10px}\n.contact p{color:#b9c6d6}\n.cl{display:flex;flex-direction:column;gap:12px;margin-top:18px}\n.cl div{display:flex;gap:10px;align-items:center;color:#dfe8f2}\n.cl svg{width:20px;height:20px;stroke:#5eead4}\n.cform{display:flex;flex-direction:column;gap:10px}\n.cform input,.cform textarea,.cform select{padding:12px 14px;border-radius:11px;border:1px solid #ffffff22;background:#ffffff0d;color:#fff}\n.cform input::placeholder,.cform textarea::placeholder{color:#8fa1b6}\n.cform select option{color:#000}\nfooter{text-align:center;color:var(--mu);font-size:13.5px;padding:26px 0 34px}\nfooter b{color:var(--ac2)}\n#toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,30px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;opacity:0;transition:.25s;z-index:60;pointer-events:none}\n#toast.on{opacity:1;transform:translate(-50%,0)}\n.count{color:var(--mu);font-size:14px}\n@media (max-width:820px){\n .sfields{grid-template-columns:1fr 1fr}\n .thumbs{padding:10px 20px 0}\n .sfields .btn{grid-column:1/-1}\n .nav a.l{display:none}\n .dcont{grid-template-columns:1fr;padding:20px}\n .contact{grid-template-columns:1fr;padding:26px}\n .hero{padding:44px 0 110px}\n .feat-row{grid-template-columns:1fr}\n}\n<\/style>\n<\/head>\n<body>\n<header class=\"nav\"><div class=\"wrap\"><a class=\"logo\" href=\"#inicio\"><i><svg class=\"i\" viewBox=\"0 0 24 24\"><path d=\"M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6\"/><\/svg><\/i><span id=\"agN\"><\/span><\/a><span class=\"sp\"><\/span><a class=\"l\" href=\"#propiedades\">Propiedades<\/a><a class=\"l\" href=\"#contacto\">Contacto<\/a><a class=\"btn wa\" id=\"hdrWa\" target=\"_blank\" rel=\"noopener\"><\/a><\/div><\/header>\n<div class=\"hero\" id=\"inicio\"><div class=\"wrap\"><span class=\"eyebrow\" id=\"eyb\"><\/span><h1 id=\"h1\"><\/h1><p id=\"slog\"><\/p><\/div><\/div>\n<div class=\"wrap\"><div class=\"searchbox\">\n <div class=\"tabs\" id=\"tabs\"><\/div>\n <div class=\"sfields\">\n  <label>Tipo<select id=\"fTipo\"><\/select><\/label>\n  <label>Zona / colonia<select id=\"fCol\"><\/select><\/label>\n  <label>Precio máximo<input id=\"fMax\" type=\"number\" inputmode=\"numeric\" placeholder=\"Sin límite\"><\/label>\n  <label>Crédito<select id=\"fCre\"><option value=\"\">Cualquiera<\/option><\/select><\/label>\n  <label>Recámaras<select id=\"fRec\"><option value=\"0\">Cualquiera<\/option><option value=\"1\">1+<\/option><option value=\"2\">2+<\/option><option value=\"3\">3+<\/option><option value=\"4\">4+<\/option><\/select><\/label>\n  <button class=\"btn pri\" id=\"go\"><svg class=\"i\" viewBox=\"0 0 24 24\"><path d=\"M11 18a7 7 0 100-14 7 7 0 000 14zM21 21l-4.3-4.3\"/><\/svg>Buscar<\/button>\n <\/div>\n <div class=\"achips\" id=\"achips\"><\/div>\n<\/div><\/div>\n<div class=\"wrap\">\n <section id=\"destacadas\" hidden><div class=\"sh\"><div><h2>Destacadas<\/h2><p>Nuestra selección de la semana<\/p><\/div><\/div><div class=\"feat-row\" id=\"featGrid\"><\/div><\/section>\n <section id=\"propiedades\"><div class=\"sh\"><div><h2>Propiedades<\/h2><p class=\"count\" id=\"cnt\"><\/p><\/div><span class=\"sp\"><\/span><select id=\"sort\"><option value=\"rec\">Más recientes<\/option><option value=\"asc\">Menor precio<\/option><option value=\"desc\">Mayor precio<\/option><option value=\"m2\">Más amplias<\/option><\/select><\/div><div class=\"grid\" id=\"grid\"><\/div><\/section>\n <div class=\"contact\" id=\"contacto\"><div><h2>¿Buscas algo en especial?<\/h2><p>Cuéntanos qué necesitas y te ayudamos a encontrarlo. También recibimos tu propiedad para venderla o rentarla.<\/p><div class=\"cl\" id=\"cl\"><\/div><\/div>\n <form class=\"cform\" id=\"cform\"><input id=\"cfN\" placeholder=\"Tu nombre\"><select id=\"cfT\"><option>Quiero comprar<\/option><option>Quiero rentar<\/option><option>Quiero vender mi propiedad<\/option><option>Quiero rentar mi propiedad<\/option><\/select><textarea id=\"cfM\" rows=\"4\" placeholder=\"Zona, presupuesto, recámaras…\"><\/textarea><a class=\"btn wa\" id=\"cfGo\" target=\"_blank\" rel=\"noopener\">Enviar por WhatsApp<\/a><\/form><\/div>\n<\/div>\n<footer><span id=\"ftA\"><\/span> · Actualizado <span id=\"ftD\"><\/span><br>Sitio por <b>@cybercadtm<\/b><\/footer>\n<div id=\"det\"><\/div><div id=\"toast\"><\/div>\n<script>\nconst DATA=/*__DATA__*/null;\nconst D=DATA||{cfg:{agencia:'Inmobiliaria',ciudad:'Tijuana',whatsapp:'',telefono:'',email:'',eslogan:''},props:[],generado:''};\nconst C=D.cfg;\nconst $=s=>document.querySelector(s);\nconst esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[c]));\nconst money=n=>(+n||0).toLocaleString('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});\nconst IC={home:'M3 11l9-8 9 8M5 10v10h14V10',land:'M3 20l6-9 4 5 3-4 5 8zM16 6a2 2 0 100-4 2 2 0 000 4',pin:'M12 21s-7-6.2-7-11.5A7 7 0 0119 9.5C19 14.8 12 21 12 21zM12 12a2.5 2.5 0 100-5 2.5 2.5 0 000 5',bed:'M3 18V7M3 14h18v4M21 14v-3a3 3 0 00-3-3h-7v6M7 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3',bath:'M4 12h16v3a4 4 0 01-4 4H8a4 4 0 01-4-4v-3zM6 12V5a2 2 0 014 0M7 19l-1 2M17 19l1 2',area:'M4 4h16v16H4zM4 9h5V4M20 15h-5v5',car:'M5 16h14M6 16l1.5-5h9L18 16M5 16v3M19 16v3M8 13.5h.01M16 13.5h.01',wa:'M3 21l1.7-5A8.5 8.5 0 1112 20.5a8.5 8.5 0 01-4.2-1.1L3 21z',phone:'M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2',mail:'M3 6h18v12H3zM3 7l9 6 9-6',layers:'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5',share:'M8.6 13.5l6.8 4M15.4 6.5l-6.8 4M18 8a3 3 0 100-6 3 3 0 000 6zM6 15a3 3 0 100-6 3 3 0 000 6zM18 22a3 3 0 100-6 3 3 0 000 6z'};\nconst ic=k=>`<svg class=\"i\" viewBox=\"0 0 24 24\"><path d=\"${IC[k]}\"/><\/svg>`;\nconst GRAD={Casa:'#0f766e,#1e3a8a',Departamento:'#5b21b6,#1e40af',Terreno:'#3f6212,#0f766e',Local:'#9a3412,#7c2d12',Oficina:'#1e3a8a,#312e81',Bodega:'#3f3f46,#1f2937'};\nconst cov=p=>(p.fotos||[])[0]||'';const bg=p=>cov(p)?`background-image:url(${cov(p)})`:`background-image:linear-gradient(135deg,${GRAD[p.tipo]||GRAD.Casa})`;\nconst ph=p=>cov(p)?'':`<div class=\"ph\">${ic(p.tipo==='Terreno'?'land':'home')}${esc(p.tipo)}<\/div>`;\nconst waNum=String(C.whatsapp||'').replace(/\\D/g,'');const waFull=waNum.length===10?'52'+waNum:waNum;\nconst wa=t=>waFull?`https://wa.me/${waFull}?text=${encodeURIComponent(t)}`:'#contacto';\nlet st={op:'',tipo:'',col:'',max:0,rec:0,cre:'',am:[],sort:'rec'};\nconst plTxt=n=>n?(n>=4?'4 o más plantas':n+(n==1?' planta':' plantas')):'';\nconst isV=p=>p.operacion!=='Renta',isR=p=>p.operacion!=='Venta';\nconst priceFor=p=>st.op==='Renta'?(+p.renta||0):st.op==='Venta'?(+p.precio||0):(isV(p)?+p.precio:+p.renta);\n\nfunction init(){\n document.title=`${C.agencia} · Propiedades en venta y renta en ${C.ciudad||'tu ciudad'}`;\n $('#agN').textContent=C.agencia;$('#ftA').textContent='© '+new Date().getFullYear()+' '+C.agencia;\n $('#ftD').textContent=D.generado?new Date(D.generado+'T00:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}):'—';\n $('#eyb').textContent=D.props.length?`● ${D.props.length} propiedad${D.props.length===1?'':'es'} disponible${D.props.length===1?'':'s'}`:'● Nuevas propiedades muy pronto';document.querySelector('meta[name=description]').content=`${C.agencia}: casas, departamentos, terrenos y locales en venta y renta en ${C.ciudad||''}.`;\n $('#h1').innerHTML=`Encuentra tu próximo hogar en <em>${esc(C.ciudad||'la ciudad')}<\/em>`;\n $('#slog').textContent=C.eslogan||'Casas, departamentos, terrenos y locales en venta y renta, con asesoría de principio a fin.';\n const hw=$('#hdrWa');hw.href=wa(`Hola ${C.agencia}, me interesa información sobre sus propiedades.`);hw.innerHTML=ic('wa')+'<span>WhatsApp<\/span>';\n $('#tabs').innerHTML=[['','Todas'],['Venta','Comprar'],['Renta','Rentar']].map(([k,l])=>`<button data-op=\"${k}\" class=\"${st.op===k?'on':''}\">${l}<\/button>`).join('');\n $('#tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;st.op=b.dataset.op;[...$('#tabs').children].forEach(x=>x.classList.toggle('on',x===b));draw()};\n const tipos=[...new Set(D.props.map(p=>p.tipo))].sort(),cols=[...new Set(D.props.map(p=>p.colonia).filter(Boolean))].sort();\n $('#fTipo').innerHTML='<option value=\"\">Todos<\/option>'+tipos.map(t=>`<option>${esc(t)}<\/option>`).join('');\n $('#fCol').innerHTML='<option value=\"\">Todas<\/option>'+cols.map(t=>`<option>${esc(t)}<\/option>`).join('');\n const cres=[...new Set(D.props.flatMap(p=>p.creditos||[]))].filter(x=>x!=='Contado');$('#fCre').innerHTML='<option value=\"\">Cualquiera<\/option>'+cres.map(t=>`<option>${esc(t)}<\/option>`).join('');if(!cres.length)$('#fCre').closest('label').style.display='none';\n const cnt={};D.props.forEach(p=>(p.amen||[]).forEach(a=>cnt[a]=(cnt[a]||0)+1));const top=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).slice(0,10);\n $('#achips').innerHTML=top.map(a=>`<button data-a=\"${esc(a)}\">${esc(a)}<\/button>`).join('');\n $('#achips').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a;st.am=st.am.includes(a)?st.am.filter(x=>x!==a):[...st.am,a];b.classList.toggle('on');draw()};\n const apply=()=>{st.tipo=$('#fTipo').value;st.col=$('#fCol').value;st.max=+$('#fMax').value||0;st.rec=+$('#fRec').value;st.cre=$('#fCre').value;draw()};\n ['#fTipo','#fCol','#fRec','#fCre'].forEach(s=>$(s).onchange=apply);$('#fMax').oninput=apply;\n $('#go').onclick=()=>{apply();document.getElementById('propiedades').scrollIntoView({behavior:'smooth'})};\n $('#sort').onchange=e=>{st.sort=e.target.value;draw()};\n const cl=[];if(C.whatsapp)cl.push(`<div>${ic('wa')}WhatsApp: ${esc(C.whatsapp)}<\/div>`);if(C.telefono)cl.push(`<div>${ic('phone')}Teléfono: ${esc(C.telefono)}<\/div>`);if(C.email)cl.push(`<div>${ic('mail')}${esc(C.email)}<\/div>`);cl.push(`<div>${ic('pin')}${esc(C.ciudad||'')}<\/div>`);$('#cl').innerHTML=cl.join('');\n const upd=()=>{$('#cfGo').href=wa(`Hola ${C.agencia}, soy ${$('#cfN').value||'—'}. ${$('#cfT').value}. ${$('#cfM').value}`)};['#cfN','#cfT','#cfM'].forEach(s=>$(s).addEventListener('input',upd));upd();\n const F=D.props.filter(p=>p.destacada);if(F.length){$('#destacadas').hidden=false;$('#featGrid').innerHTML=F.slice(0,3).map(card).join('')}\n document.body.addEventListener('click',e=>{const c=e.target.closest('[data-id]');if(c){open(c.dataset.id)}});\n $('#det').addEventListener('click',e=>{if(e.target.id==='det'||e.target.closest('.dclose'))closeD()});\n document.addEventListener('keydown',e=>{if(e.key==='Escape')closeD();if($('#det').classList.contains('on')&&gp&&(gp.fotos||[]).length>1){if(e.key==='ArrowRight')setG(gi+1);if(e.key==='ArrowLeft')setG(gi-1)}});\n window.addEventListener('hashchange',route);\n draw();route();\n}\nfunction card(p){\n const pr=st.op==='Renta'||!isV(p)?`<div class=\"price\">${money(p.renta)} <small>/ mes<\/small><\/div>`:`<div class=\"price\">${money(p.precio)}<\/div>${isR(p)&&st.op!=='Venta'?`<div class=\"price2\">o renta ${money(p.renta)}/mes<\/div>`:''}`;\n const f=[];if(p.m2)f.push(`<span>${ic('area')}${p.m2} m²<\/span>`);if(p.plantas)f.push(`<span>${ic('layers')}${p.plantas>=4?'4+':p.plantas} pl.<\/span>`);if(p.rec)f.push(`<span>${ic('bed')}${p.rec} rec.<\/span>`);if(p.banos)f.push(`<span>${ic('bath')}${p.banos} baños<\/span>`);if(p.est)f.push(`<span>${ic('car')}${p.est}<\/span>`);\n return `<div class=\"card\" data-id=\"${p.id}\"><div class=\"img\" style=\"${bg(p)}\">${ph(p)}<div class=\"badges\">${isV(p)?'<span class=\"b v\">Venta<\/span>':''}${isR(p)?'<span class=\"b r\">Renta<\/span>':''}${p.estado==='Apartada'?'<span class=\"b s\">Apartada<\/span>':''}${p.destacada?'<span class=\"b d\">★ Destacada<\/span>':''}<\/div>${(p.fotos||[]).length>1?`<span class=\"pc\">📷 ${p.fotos.length}<\/span>`:''}<\/div><div class=\"cbody\">${pr}<div class=\"ct\">${esc(p.titulo)}<\/div><div class=\"loc\">${ic('pin')}${esc(p.colonia)}${p.ciudad?', '+esc(p.ciudad):''}<\/div>${f.length?`<div class=\"feats\">${f.join('')}<\/div>`:''}<\/div><\/div>`;\n}\nfunction draw(){\n let L=D.props.filter(p=>(!st.op||(st.op==='Venta'?isV(p):isR(p)))&&(!st.tipo||p.tipo===st.tipo)&&(!st.col||p.colonia===st.col)&&(!st.rec||(+p.rec||0)>=st.rec)&&(!st.max||priceFor(p)<=st.max)&&(!st.cre||(p.creditos||[]).includes(st.cre))&&st.am.every(a=>(p.amen||[]).includes(a)));\n if(st.sort==='asc')L.sort((a,b)=>priceFor(a)-priceFor(b));else if(st.sort==='desc')L.sort((a,b)=>priceFor(b)-priceFor(a));else if(st.sort==='m2')L.sort((a,b)=>(b.m2||0)-(a.m2||0));\n $('#cnt').textContent=`${L.length} resultado${L.length===1?'':'s'}`;\n $('#grid').innerHTML=L.length?L.map(card).join(''):(D.props.length?'':`<div class=\"empty\">Muy pronto publicaremos nuestras propiedades aquí.<br>Mientras tanto, cuéntanos qué buscas.<br><br><a class=\"btn wa\" href=\"${wa('Hola, busco una propiedad.')}\" target=\"_blank\" rel=\"noopener\">${ic('wa')}Escríbenos<\/a><\/div>`)||`<div class=\"empty\">No encontramos propiedades con esos filtros.<br><br><a class=\"btn wa\" href=\"${wa('Hola, busco una propiedad y no encontré opciones en el sitio.')}\" target=\"_blank\" rel=\"noopener\">${ic('wa')}Pídenos opciones<\/a><\/div>`;\n}\nlet gi=0,gp=null;\nfunction setG(i){const fs=gp.fotos||[];if(!fs.length)return;gi=(i+fs.length)%fs.length;$('#dimg').style.backgroundImage=`url(${fs[gi]})`;$('#gc').textContent=`${gi+1} / ${fs.length}`;[...document.querySelectorAll('.thumbs div')].forEach((t,k)=>t.classList.toggle('on',k===gi))}\nfunction open(id){const p=D.props.find(x=>x.id===id);if(!p)return;gp=p;gi=0;if(location.hash!=='#p-'+id)history.replaceState(null,'','#p-'+id);\n const s=[];const add=(a,b)=>{if(b!==''&&b!==0&&b!=null&&b!==undefined)s.push([a,b])};\n add('Construcción',p.m2?p.m2+' m²':'');add('Terreno',p.m2t?p.m2t+' m²':'');add('Plantas',plTxt(p.plantas));add('Recámaras',p.rec);add('Baños',p.banos);add('Estacionamiento',p.est?p.est+(p.est==1?' cajón':' cajones'):'');add('Tipo',p.tipo);\n add('Antigüedad',p.antig?p.antig+(p.antig==1?' año':' años'):(p.conserv==='A estrenar'?'Nueva':''));add('Conservación',p.conserv);add('Mantenimiento',p.mant?money(p.mant)+'/mes':'');add('Situación legal',p.legal);\n if(isV(p)&&p.m2&&p.precio)add('Precio por m²',money(p.precio/p.m2));\n const req=[];if(p.depMeses)req.push(`Depósito: ${p.depMeses} ${p.depMeses==1?'mes':'meses'}`);if(p.aval)req.push(`Garantía: ${p.aval}`);if(p.plazo)req.push(`Plazo mínimo: ${p.plazo} meses`);\n const fs=p.fotos||[];\n $('#det').innerHTML=`<div class=\"dbox\"><div class=\"dimg\" id=\"dimg\" style=\"${bg(p)}\">${ph(p)}<button class=\"dclose\" aria-label=\"Cerrar\">✕<\/button>${fs.length>1?`<button class=\"gnav l\" onclick=\"setG(gi-1)\">‹<\/button><button class=\"gnav r\" onclick=\"setG(gi+1)\">›<\/button><span class=\"gcount\" id=\"gc\">1 / ${fs.length}<\/span>`:''}<\/div>${fs.length>1?`<div class=\"thumbs\">${fs.map((f,i)=>`<div class=\"${i?'':'on'}\" style=\"background-image:url(${f})\" onclick=\"setG(${i})\"><\/div>`).join('')}<\/div>`:''}<div class=\"dcont\"><div><div class=\"badges\" style=\"position:static\">${isV(p)?'<span class=\"b v\">Venta<\/span>':''}${isR(p)?'<span class=\"b r\">Renta<\/span>':''}${p.estado==='Apartada'?'<span class=\"b s\">Apartada<\/span>':''}<\/div><h2>${esc(p.titulo)}<\/h2><div class=\"loc\">${ic('pin')}${esc(p.colonia)}${p.ciudad?', '+esc(p.ciudad):''}<\/div><div class=\"specs\">${s.map(([a,b])=>`<div><span>${a}<\/span><b>${esc(b)}<\/b><\/div>`).join('')}<\/div>${p.notas?`<div class=\"desc\">${esc(p.notas)}<\/div>`:''}\n ${(p.amen||[]).length?`<div class=\"h4\">Amenidades y servicios<\/div><div class=\"amen\">${p.amen.map(a=>`<span>${esc(a)}<\/span>`).join('')}<\/div>`:''}\n ${isV(p)&&(p.creditos||[]).length?`<div class=\"h4\">Formas de pago<\/div><div class=\"amen\">${p.creditos.map(a=>`<span>💳 ${esc(a)}<\/span>`).join('')}<\/div>`:''}\n ${isR(p)&&req.length?`<div class=\"h4\">Requisitos para rentar<\/div><div class=\"amen\">${req.map(a=>`<span>📝 ${esc(a)}<\/span>`).join('')}<\/div>`:''}<\/div>\n <div class=\"side\">${isV(p)?`<div><div style=\"font-size:13px;color:var(--mu)\">Precio de venta<\/div><div class=\"price\">${money(p.precio)}<\/div><\/div>`:''}${isR(p)?`<div><div style=\"font-size:13px;color:var(--mu)\">Renta mensual<\/div><div class=\"price\" style=\"color:var(--violet)\">${money(p.renta)}<\/div><\/div>`:''}<a class=\"btn wa\" href=\"${wa(`Hola ${C.agencia}, me interesa la propiedad \"${p.titulo}\" en ${p.colonia} (ref. ${p.id.slice(0,6).toUpperCase()}). ¿Sigue disponible?`)}\" target=\"_blank\" rel=\"noopener\">${ic('wa')}Me interesa<\/a><a class=\"btn out\" href=\"${wa(`Hola ${C.agencia}, quiero agendar una visita a \"${p.titulo}\" en ${p.colonia} (ref. ${p.id.slice(0,6).toUpperCase()}).`)}\" target=\"_blank\" rel=\"noopener\">📅 Agendar visita<\/a>${p.tour?`<a class=\"btn out\" href=\"${esc(p.tour)}\" target=\"_blank\" rel=\"noopener\">🎬 Ver recorrido<\/a>`:''}${p.mapa?`<a class=\"btn out\" href=\"${esc(p.mapa)}\" target=\"_blank\" rel=\"noopener\">🗺 Ver en mapa<\/a>`:''}<button class=\"btn out\" id=\"shr\">${ic('share')}Compartir<\/button><div style=\"font-size:12px;color:var(--mu)\">Ref. ${p.id.slice(0,6).toUpperCase()}<\/div><\/div><\/div><\/div>`;\n $('#det').classList.add('on');$('#det').scrollTop=0;document.body.style.overflow='hidden';\n $('#shr').onclick=async()=>{const t=`${p.titulo} · ${p.colonia}\\n${isV(p)?'Venta '+money(p.precio):''}${isV(p)&&isR(p)?' · ':''}${isR(p)?'Renta '+money(p.renta)+'/mes':''}\\n${location.href}`;try{await navigator.clipboard.writeText(t);toast('Enlace copiado ✓')}catch(e){toast('No se pudo copiar')}};\n}\nfunction closeD(){$('#det').classList.remove('on');document.body.style.overflow='';if(location.hash.startsWith('#p-'))history.replaceState(null,'','#propiedades')}\nfunction route(){const h=location.hash;if(h.startsWith('#p-'))open(h.slice(3))}\nfunction toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2200)}\ninit();\n<\/script>\n<\/body>\n<\/html>\n";
+const enPortal=p=>p.publicada&&['Disponible','Apartada'].includes(p.estado);
+let DL=null;(async()=>{try{if(window.claude&&claude.use)DL=await claude.use('downloads')}catch(e){}})();
+function portalData(fmap){const c=db.cfg;return{cfg:{agencia:c.agencia,ciudad:c.ciudad,whatsapp:c.whatsapp,telefono:c.telefono,email:c.email,eslogan:c.eslogan},generado:iso(TODAY),props:db.props.filter(enPortal).sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).map(p=>({id:p.id,titulo:p.titulo,tipo:p.tipo,operacion:p.operacion,estado:p.estado,precio:+p.precio||0,renta:+p.renta||0,colonia:p.colonia,ciudad:p.ciudad,m2:p.m2,m2t:p.m2t,plantas:p.plantas,rec:p.rec,banos:p.banos,est:p.est,antig:p.antig,conserv:p.conserv,mant:p.mant,legal:p.legal,creditos:p.operacion!=='Renta'?p.creditos||[]:[],amen:(p.amen||[]).map(k=>AMENL[k]).filter(Boolean),depMeses:p.operacion!=='Venta'?p.depMeses:0,aval:p.operacion!=='Venta'?p.aval:'',plazo:p.operacion!=='Venta'?p.plazo:0,tour:p.tour,mapa:p.mapa,notas:p.notas,fotos:(p.fotos||[]).map(f=>fmap&&fmap[f]||f),destacada:!!p.destacada}))}}
+function portalHTML(fmap){return PORTAL_TPL.replace('/*__DATA__*/null',()=>JSON.stringify(portalData(fmap)).replace(/</g,'\\u003c'))}
+function vPortal(){
+ const pub=db.props.filter(enPortal);const c=db.cfg;
+ return header('Portal público',`${pub.length} propiedades visibles para tus clientes`,`<button class="btn" onclick="previewPortal()">${ic('eye')}Vista previa</button><button class="btn" onclick="downloadPortal()">${ic('down')}Descargar</button><button class="btn pri" onclick="publishWeb()">🚀 Publicar en la web</button>`)+`
+ ${c.whatsapp?'':`<div class="card" style="border-color:#5c3a1d;margin-bottom:16px;color:var(--warn)">⚠ Agrega tu número de WhatsApp abajo para que el botón <b>"Me interesa"</b> del portal te mande los mensajes.</div>`}
+ <div class="cols">
+ <div class="card"><h3>📇 Datos de contacto del portal</h3><div class="grid">
+  <label><span>Nombre de la inmobiliaria</span><input id="pAg" value="${esc(c.agencia)}"></label>
+  <label><span>Ciudad</span><input id="pCi" value="${esc(c.ciudad)}"></label>
+  <label><span>WhatsApp (10 dígitos)</span><input id="pWa" type="tel" value="${esc(c.whatsapp)}" placeholder="664…"></label>
+  <label><span>Teléfono</span><input id="pTe" type="tel" value="${esc(c.telefono)}"></label>
+  <label class="full"><span>Correo</span><input id="pEm" type="email" value="${esc(c.email)}"></label>
+  <label class="full"><span>Eslogan / frase de portada</span><textarea id="pEs" rows="2">${esc(c.eslogan)}</textarea></label>
+ </div><div class="mact"><span class="sp"></span><button class="btn pri" onclick="savePortalCfg()">Guardar datos</button></div></div>
+ <div class="card"><h3>🚀 Cómo publicarlo en tu dominio</h3><ol style="color:var(--mu);line-height:1.7;margin:0;padding-left:20px;font-size:14px">
+  <li>Marca qué propiedades se publican (abajo) y llena tus datos de contacto.</li>
+  <li>Instala el administrador desde <span class="mono" style="color:var(--ac)">cybercadtm.com/inmobiliaria/admin/</span> (menú del navegador → <i>Instalar app</i> / <i>Agregar a inicio</i>).</li>
+  <li>Conecta tu token de GitHub una sola vez (abajo).</li>
+  <li>Cada vez que cambies algo, toca <b>🚀 Publicar en la web</b>: sube fotos y portal a <span class="mono" style="color:var(--ac)">cybercadtm.com/inmobiliaria/</span>.</li>
+ </ol><p style="color:var(--mu);font-size:13px;margin:12px 0 0">El portal solo muestra lo público: título, fotos, precio, colonia, características, amenidades y requisitos. No incluye dirección exacta, propietarios, clientes ni pagos.</p>
+ <div class="mact"><button class="btn" onclick="copyText(portalHTML())">${ic('copy')}Copiar HTML</button></div></div>
+ </div>
+ ${ghCard()}
+ <div class="card" style="margin-top:16px"><h3>🏘 Propiedades en el portal <span class="cnt">${pub.length} de ${db.props.length}</span></h3>
+ ${db.props.map(p=>{const ok=['Disponible','Apartada'].includes(p.estado);return `<div class="row"><div class="av" style="${imgBg(p)};background-size:cover"></div><div class="grow"><div class="t">${esc(p.titulo)}</div><div class="m">${esc(p.colonia)} · <span class="chip st-${p.estado}" style="padding:1px 7px">${p.estado}</span>${!ok&&p.publicada?' · no se muestra por su estado':''}</div></div><label style="display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mu);cursor:pointer"><input type="checkbox" ${p.destacada?'checked':''} onchange="togP('${p.id}','destacada')" style="accent-color:var(--venta)">★</label><label style="display:flex;gap:6px;align-items:center;font-size:13px;cursor:pointer;color:${enPortal(p)?'var(--ac)':'var(--mu)'}"><input type="checkbox" ${p.publicada?'checked':''} onchange="togP('${p.id}','publicada')" style="accent-color:var(--ac);width:18px;height:18px">Publicar</label></div>`}).join('')||'<div class="empty">Aún no tienes propiedades</div>'}</div>`;
+}
+/* ---------- Conexión con la web (GitHub Pages) ---------- */
+function ghCfg(){try{return Object.assign({repo:'CADTM/cybercadtm.com',branch:'main',folder:'inmobiliaria',token:''},JSON.parse(localStorage.getItem(GHKEY)||'{}'))}catch(e){return{repo:'CADTM/cybercadtm.com',branch:'main',folder:'inmobiliaria',token:''}}}
+function siteURL(g){g=g||ghCfg();return g.repo.toLowerCase()==='cadtm/cybercadtm.com'?`https://cybercadtm.com/${g.folder}/`:`https://${g.repo.split('/')[0].toLowerCase()}.github.io/${g.repo.split('/')[1]}/${g.folder}/`}
+function ghCard(){const g=ghCfg(),lp=db.cfg.lastPub;
+ return `<div class="card" style="margin-top:16px"><h3>🔗 Conexión con tu web <span class="cnt">${g.token?'conectado':'sin conectar'}</span></h3>
+ ${IS_WEB?'':`<div style="color:var(--warn);font-size:13.5px;margin-bottom:12px">⚠ Publicar directo solo funciona en la versión instalada desde <b>cybercadtm.com/${esc(g.folder)}/admin/</b>. Aquí puedes usar “Descargar portal”.</div>`}
+ <div class="grid"><label><span>Repositorio</span><input id="gRe" value="${esc(g.repo)}"></label><label><span>Rama</span><input id="gBr" value="${esc(g.branch)}"></label>
+ <label><span>Carpeta en tu web</span><input id="gFo" value="${esc(g.folder)}"></label>
+ <label><span>Token de GitHub ${g.token?'(guardado ✓)':''}</span><input id="gTo" type="password" placeholder="${g.token?'•••••••• (déjalo vacío para conservarlo)':'github_pat_…'}" autocomplete="off"></label></div>
+ <p style="color:var(--mu);font-size:12.5px;line-height:1.55;margin:10px 0 0">Crea el token en <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener" style="color:var(--ac)">github.com/settings/personal-access-tokens/new</a> → <i>Only select repositories</i>: <b>${esc(g.repo)}</b> → <i>Permissions › Contents</i>: <b>Read and write</b>. Se guarda solo en este dispositivo y no va en los respaldos.</p>
+ <div class="mact"><button class="btn" onclick="saveGh()">Guardar conexión</button>${g.token?'<button class="btn danger" onclick="forgetGh()">Desconectar</button>':''}<span class="sp"></span><a class="btn ghost" href="${siteURL(g)}" target="_blank" rel="noopener">Ver sitio ↗</a><button class="btn pri" onclick="publishWeb()">🚀 Publicar en la web</button></div>
+ <div id="pubLog" class="mono" style="font-size:12px;color:var(--mu);margin-top:10px;white-space:pre-line">${lp?`Última publicación: ${new Date(lp.at).toLocaleString('es-MX')} · ${lp.n} propiedades`:''}</div></div>`}
+function saveGh(){const g=ghCfg();g.repo=$('#gRe').value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\.git$/,'')||g.repo;g.branch=$('#gBr').value.trim()||'main';g.folder=$('#gFo').value.trim().replace(/^\/+|\/+$/g,'')||'inmobiliaria';const t=$('#gTo').value.trim();if(t)g.token=t;try{localStorage.setItem(GHKEY,JSON.stringify(g));toast('Conexión guardada')}catch(e){toast('No se pudo guardar')}render()}
+function forgetGh(){const g=ghCfg();g.token='';try{localStorage.setItem(GHKEY,JSON.stringify(g))}catch(e){}render();toast('Token borrado de este dispositivo')}
+async function sha256(str){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,20)}
+let publishing=false;
+async function publishWeb(){
+ if(publishing)return;const g=ghCfg();const log=t=>{const e=$('#pubLog');if(e)e.textContent+=(e.textContent?'\n':'')+t};
+ if(!g.token){toast('Primero guarda tu token de GitHub');$('#gTo')?.focus();return}
+ if(!db.props.some(enPortal)){toast('No hay propiedades publicadas (Disponibles o Apartadas)');return}
+ publishing=true;$('#pubLog').textContent='';
+ const api=async(path,opt={})=>{const r=await fetch('https://api.github.com/repos/'+g.repo+path,{method:opt.method||'GET',headers:{Authorization:'Bearer '+g.token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(opt.body?{'Content-Type':'application/json'}:{})},body:opt.body?JSON.stringify(opt.body):undefined});if(!r.ok){let m='';try{m=(await r.json()).message}catch(e){}const err=new Error(`${r.status} ${m}`);err.status=r.status;throw err}return r.json()};
+ try{
+  for(let intento=1;intento<=2;intento++){
+   log('Conectando con '+g.repo+'…');
+   const ref=await api(`/git/ref/heads/${g.branch}`);const head=ref.object.sha;
+   const commit=await api(`/git/commits/${head}`);
+   const tree=await api(`/git/trees/${commit.tree.sha}?recursive=1`);
+   const have=new Set(tree.tree.filter(t=>t.type==='blob').map(t=>t.path));
+   const pre=g.folder+'/fotos/';const fmap={},entries=[],used=new Set();
+   const fotos=[...new Set(db.props.filter(enPortal).flatMap(p=>p.fotos||[]).filter(f=>f.startsWith('data:')))];
+   let subidas=0;
+   for(const f of fotos){const h=await sha256(f);const ext=/^data:image\/png/.test(f)?'png':'jpg';const path=pre+h+'.'+ext;fmap[f]='fotos/'+h+'.'+ext;used.add(path);
+    if(!have.has(path)){log(`Subiendo foto ${++subidas}…`);const b=await api('/git/blobs',{method:'POST',body:{content:f.split(',')[1],encoding:'base64'}});entries.push({path,mode:'100644',type:'blob',sha:b.sha})}}
+   for(const t of tree.tree)if(t.type==='blob'&&t.path.startsWith(pre)&&!used.has(t.path))entries.push({path:t.path,mode:'100644',type:'blob',sha:null});
+   log('Generando portal…');
+   const html=portalHTML(fmap);
+   const hb=await api('/git/blobs',{method:'POST',body:{content:html,encoding:'utf-8'}});
+   entries.push({path:g.folder+'/index.html',mode:'100644',type:'blob',sha:hb.sha});
+   const nt=await api('/git/trees',{method:'POST',body:{base_tree:commit.tree.sha,tree:entries}});
+   const n=db.props.filter(enPortal).length;
+   const nc=await api('/git/commits',{method:'POST',body:{message:`Inmobiliaria: actualiza portal (${n} propiedades)`,tree:nt.sha,parents:[head]}});
+   try{await api(`/git/refs/heads/${g.branch}`,{method:'PATCH',body:{sha:nc.sha}})}catch(e){if(intento<2&&(e.status===422||e.status===409)){log('La web cambió mientras publicaba, reintentando…');continue}throw e}
+   db.cfg.lastPub={at:Date.now(),n};save();
+   log(`✅ Publicado: ${n} propiedades${subidas?`, ${subidas} foto(s) nueva(s)`:''}.\nGitHub Pages tarda ~1 minuto en mostrar los cambios.\n${siteURL(g)}`);
+   toast('¡Portal publicado en la web! 🚀');break;
+  }
+ }catch(e){const m=String(e.message||e);log('❌ '+(e.status===401?'Token inválido o vencido.':e.status===403?'El token no tiene permiso de escritura (Contents: Read and write) en '+g.repo+'.':e.status===404?'No encontré el repositorio o la rama. Revisa el nombre y que el token tenga acceso a ese repositorio.':/Failed to fetch|NetworkError|Load failed/i.test(m)?'No hay conexión con GitHub'+(IS_WEB?'.':' (en la versión de Claude está bloqueado; usa la versión instalada).'):m))}
+ finally{publishing=false}
+}
+function togP(id,k){const p=prop(id);p[k]=!p[k];save();render()}
+function savePortalCfg(){const v=i=>$(i).value.trim();Object.assign(db.cfg,{agencia:v('#pAg')||'Inmobiliaria',ciudad:v('#pCi'),whatsapp:v('#pWa'),telefono:v('#pTe'),email:v('#pEm'),eslogan:v('#pEs')});save();render();toast('Datos del portal guardados')}
+function previewPortal(){const o=document.createElement('div');o.id='pv';o.innerHTML=`<div class="pvbar"><b>Vista previa del portal</b><span class="sp"></span><button class="btn sm pri" onclick="downloadPortal()">${ic('down')}Descargar</button><button class="btn sm" onclick="document.getElementById('pv').remove()">✕ Cerrar</button></div><iframe></iframe>`;document.body.appendChild(o);o.querySelector('iframe').srcdoc=portalHTML()}
+async function downloadPortal(){const h=portalHTML();if(!DL&&IS_WEB){try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download='index.html';document.body.appendChild(a);a.click();a.remove();toast('Portal descargado ✓');return}catch(e){}}if(DL){try{await DL.save({filename:'index.html',data:h});toast('Portal descargado ✓');return}catch(e){if(e&&/declin|cancel|abort/i.test(String(e.message||e.code||e)))return}}copyText(h);toast('Copia el HTML y guárdalo como index.html')}
+
+/* ---------- AJUSTES ---------- */
+function settings(){
+ modal(`<h3>⚙ Ajustes</h3><div class="grid"><label><span>Nombre de la inmobiliaria</span><input id="sAg" value="${esc(db.cfg.agencia)}"></label><label><span>Comisión de venta por defecto (%)</span><input id="sCo" type="number" step="0.1" value="${db.cfg.comision}"></label></div>
+ <div class="mact"><span class="sp"></span><button class="btn pri" id="sSave">Guardar</button></div>
+ <h3 style="margin-top:22px;font-size:16px">Respaldo de datos</h3><p style="color:var(--mu);font-size:13.5px;margin-top:-6px">Los datos viven en este navegador. Copia el respaldo y guárdalo; para restaurar, pégalo abajo.</p>
+ <textarea class="out" id="sJson" placeholder="Pega aquí un respaldo para importarlo…"></textarea>
+ <div class="mact"><button class="btn" id="sExp">${ic('copy')}Copiar respaldo</button><button class="btn" id="sImp">Importar pegado</button><span class="sp"></span><button class="btn danger" id="sDemo">Datos de ejemplo</button><button class="btn danger" id="sClr">Borrar todo</button></div>`);
+ $('#sSave').onclick=()=>{db.cfg.agencia=$('#sAg').value.trim()||'Inmobiliaria';db.cfg.comision=+$('#sCo').value||0;save();closeModal();render();toast('Ajustes guardados')};
+ $('#sExp').onclick=()=>{const j=JSON.stringify(db);$('#sJson').value=j;copyText(j)};
+ $('#sImp').onclick=()=>{try{const d=JSON.parse($('#sJson').value);if(!d.props||!d.clients)throw 0;db=d;['sales','contracts','payments','visits'].forEach(k=>db[k]=db[k]||[]);db.cfg=db.cfg||{agencia:'Inmobiliaria',comision:5};migrate();save();closeModal();render();toast('Respaldo importado ✓')}catch(e){toast('Ese texto no es un respaldo válido')}};
+ $('#sDemo').onclick=()=>askConfirm('Se reemplazarán tus datos actuales por los de ejemplo.',()=>demo(),'Reemplazar');
+ $('#sClr').onclick=()=>askConfirm('Se borrarán todas las propiedades, clientes, ventas, contratos, pagos y citas.',()=>{db={cfg:db.cfg,props:[],clients:[],sales:[],contracts:[],payments:[],visits:[]}},'Borrar todo');
+}
+
+const VIEWS={inicio:vInicio,propiedades:vProps,clientes:vClients,ventas:vSales,rentas:vRentas,agenda:vAgenda,portal:vPortal};
+load();render();
+if('serviceWorker' in navigator&&/cybercadtm\.com$/.test(location.hostname)){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+</script>
+</body>
+</html>

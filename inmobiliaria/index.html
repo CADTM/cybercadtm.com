@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Propiedades en venta y renta</title>
+<meta name="description" content="Casas, departamentos, terrenos y locales en venta y renta.">
+<meta name="theme-color" content="#0d1b2a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f9b8e'/%3E%3Cpath d='M14 30 32 14l18 16M19 28v20h26V28' fill='none' stroke='white' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d1b2a;--mu:#5b6b80;--line:#e3e8ef;--bg:#f6f4ef;--card:#fff;--ac:#0f9b8e;--ac2:#0b7a70;--gold:#c8961e;--violet:#7c5cd6;--r:16px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Outfit,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15.5px}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+header.nav{position:sticky;top:0;z-index:30;background:rgba(246,244,239,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.nav .wrap{display:flex;align-items:center;gap:18px;height:66px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none}
+.logo i{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--ac),#2563eb);display:grid;place-items:center}
+.logo svg{width:20px;height:20px;stroke:#fff}
+.sp{flex:1}
+.nav a.l{text-decoration:none;color:var(--mu);font-weight:500}
+.nav a.l:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:12px;padding:11px 18px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn svg{width:18px;height:18px}
+.btn.wa{background:#1fae5b;color:#fff}.btn.wa:hover{background:#18964d}
+.btn.pri{background:var(--ink);color:#fff}.btn.pri:hover{background:#1c3350}
+.btn.out{background:#fff;border:1px solid var(--line);color:var(--ink)}
+svg.i{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hero{position:relative;overflow:hidden;background:radial-gradient(900px 420px at 85% 0%,#1d4f7a 0,transparent 65%),radial-gradient(700px 400px at 0% 100%,#0f6e66 0,transparent 60%),var(--ink);color:#fff;padding:70px 0 120px}
+.hero:after{content:"";position:absolute;inset:0;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(180deg,#000,transparent)}
+.hero .wrap{position:relative;z-index:1}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;background:#ffffff14;border:1px solid #ffffff22;padding:6px 12px;border-radius:30px;font-size:13px;color:#cfe9e5}
+.hero h1{font-family:Fraunces,Georgia,serif;font-size:clamp(34px,5.4vw,60px);line-height:1.04;margin:18px 0 14px;max-width:760px;letter-spacing:-.5px}
+.hero h1 em{font-style:normal;color:#5eead4}
+.hero p{color:#c4d0de;font-size:18px;max-width:560px;margin:0}
+.searchbox{position:relative;z-index:2;margin:-70px auto 0;background:#fff;border-radius:20px;box-shadow:0 24px 60px #0d1b2a26;padding:16px;max-width:1160px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{border:0;background:transparent;padding:8px 16px;border-radius:10px;font-weight:600;color:var(--mu);cursor:pointer}
+.tabs button.on{background:var(--ink);color:#fff}
+.sfields{display:grid;grid-template-columns:1.1fr 1fr 1fr .9fr 1fr auto;gap:10px}
+.achips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.achips button{border:1px solid var(--line);background:#fafbfc;border-radius:30px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--mu);font-weight:500}
+.achips button.on{border-color:var(--ac);background:#0f9b8e14;color:var(--ac2);font-weight:600}
+.amen{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 18px}
+.amen span{background:var(--bg);border-radius:30px;padding:7px 12px;font-size:13.5px}
+.h4{font-weight:700;font-size:15px;margin:18px 0 8px}
+.gnav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:0;background:#ffffffe6;cursor:pointer;font-size:20px;box-shadow:0 4px 14px #0003}
+.gnav.l{left:14px}.gnav.r{right:14px}
+.gcount{position:absolute;bottom:14px;right:14px;background:#0d1b2ab3;color:#fff;border-radius:20px;padding:4px 10px;font-size:12.5px}
+.thumbs{display:flex;gap:8px;padding:10px 28px 0;overflow-x:auto}
+.thumbs div{flex:0 0 76px;height:56px;border-radius:9px;background-size:cover;background-position:center;cursor:pointer;opacity:.6;border:2px solid transparent}
+.thumbs div.on{opacity:1;border-color:var(--ac)}
+.pc{position:absolute;bottom:12px;right:12px;background:#0d1b2ab3;color:#fff;border-radius:20px;padding:3px 9px;font-size:12px}
+.sfields label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
+.sfields select,.sfields input{padding:12px;border:1px solid var(--line);border-radius:11px;background:#fafbfc;font-size:15px;text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink);width:100%}
+.sfields .btn{align-self:end;height:47px}
+section{padding:56px 0 10px}
+.sh{display:flex;align-items:end;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.sh h2{font-family:Fraunces,Georgia,serif;font-size:32px;margin:0;letter-spacing:-.3px}
+.sh p{margin:4px 0 0;color:var(--mu)}
+.sh select{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:20px}
+.card{background:var(--card);border-radius:var(--r);overflow:hidden;cursor:pointer;border:1px solid var(--line);transition:transform .18s,box-shadow .18s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-4px);box-shadow:0 18px 40px #0d1b2a1c}
+.img{aspect-ratio:4/3;background-size:cover;background-position:center;position:relative;display:grid;place-items:center}
+.img .ph{color:#ffffffcc;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600}
+.img .ph svg{width:44px;height:44px;stroke:#ffffffcc}
+.badges{position:absolute;top:12px;left:12px;display:flex;gap:6px;flex-wrap:wrap}
+.b{padding:5px 10px;border-radius:30px;font-size:12px;font-weight:700;background:#fff;color:var(--ink);box-shadow:0 2px 8px #0002}
+.b.v{background:var(--gold);color:#fff}.b.r{background:var(--violet);color:#fff}.b.s{background:#f59e0b;color:#fff}.b.d{background:var(--ink);color:#fde68a}
+.cbody{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.price{font-weight:800;font-size:21px;letter-spacing:-.3px}
+.price small{font-size:13px;color:var(--mu);font-weight:500}
+.price2{font-size:14px;color:var(--violet);font-weight:700}
+.ct{font-weight:600;font-size:16.5px}
+.loc{color:var(--mu);font-size:14px;display:flex;align-items:center;gap:5px}
+.loc svg{width:15px;height:15px}
+.feats{display:flex;gap:14px;border-top:1px solid var(--line);padding-top:11px;margin-top:auto;color:var(--mu);font-size:13.5px;flex-wrap:wrap}
+.feats span{display:flex;align-items:center;gap:5px}
+.feats svg{width:16px;height:16px}
+.empty{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--mu);background:#fff;border-radius:var(--r);border:1px dashed var(--line)}
+.feat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+.feat-row .card .img{aspect-ratio:16/10}
+#det{position:fixed;inset:0;background:#0d1b2acc;backdrop-filter:blur(4px);z-index:50;display:none;overflow:auto;padding:30px 14px}
+#det.on{display:block}
+.dbox{background:#fff;max-width:880px;margin:0 auto;border-radius:22px;overflow:hidden;animation:up .2s ease}
+@keyframes up{from{transform:translateY(16px);opacity:0}}
+.dimg{aspect-ratio:16/8;background-size:cover;background-position:center;position:relative;display:grid;place-items:center}
+.dclose{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;border:0;background:#fff;cursor:pointer;font-size:20px;box-shadow:0 4px 14px #0003}
+.dcont{padding:26px 28px 30px;display:grid;grid-template-columns:1fr 280px;gap:28px}
+.dcont h2{font-family:Fraunces,Georgia,serif;font-size:30px;margin:6px 0 6px;line-height:1.1}
+.specs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin:18px 0}
+.specs div{background:var(--bg);border-radius:12px;padding:12px}
+.specs span{display:block;font-size:12px;color:var(--mu)}
+.specs b{font-size:16px}
+.desc{line-height:1.65;color:#2b3a4d;white-space:pre-line}
+.side{background:var(--bg);border-radius:16px;padding:18px;align-self:start;display:flex;flex-direction:column;gap:10px}
+.side .price{font-size:26px}
+.contact{background:var(--ink);color:#fff;border-radius:24px;padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:30px;margin:60px 0 20px}
+.contact h2{font-family:Fraunces,Georgia,serif;font-size:34px;margin:0 0 10px}
+.contact p{color:#b9c6d6}
+.cl{display:flex;flex-direction:column;gap:12px;margin-top:18px}
+.cl div{display:flex;gap:10px;align-items:center;color:#dfe8f2}
+.cl svg{width:20px;height:20px;stroke:#5eead4}
+.cform{display:flex;flex-direction:column;gap:10px}
+.cform input,.cform textarea,.cform select{padding:12px 14px;border-radius:11px;border:1px solid #ffffff22;background:#ffffff0d;color:#fff}
+.cform input::placeholder,.cform textarea::placeholder{color:#8fa1b6}
+.cform select option{color:#000}
+footer{text-align:center;color:var(--mu);font-size:13.5px;padding:26px 0 34px}
+footer b{color:var(--ac2)}
+#toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,30px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;opacity:0;transition:.25s;z-index:60;pointer-events:none}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.count{color:var(--mu);font-size:14px}
+@media (max-width:820px){
+ .sfields{grid-template-columns:1fr 1fr}
+ .thumbs{padding:10px 20px 0}
+ .sfields .btn{grid-column:1/-1}
+ .nav a.l{display:none}
+ .dcont{grid-template-columns:1fr;padding:20px}
+ .contact{grid-template-columns:1fr;padding:26px}
+ .hero{padding:44px 0 110px}
+ .feat-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap"><a class="logo" href="#inicio"><i><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6"/></svg></i><span id="agN"></span></a><span class="sp"></span><a class="l" href="#propiedades">Propiedades</a><a class="l" href="#contacto">Contacto</a><a class="btn wa" id="hdrWa" target="_blank" rel="noopener"></a></div></header>
+<div class="hero" id="inicio"><div class="wrap"><span class="eyebrow" id="eyb"></span><h1 id="h1"></h1><p id="slog"></p></div></div>
+<div class="wrap"><div class="searchbox">
+ <div class="tabs" id="tabs"></div>
+ <div class="sfields">
+  <label>Tipo<select id="fTipo"></select></label>
+  <label>Zona / colonia<select id="fCol"></select></label>
+  <label>Precio máximo<input id="fMax" type="number" inputmode="numeric" placeholder="Sin límite"></label>
+  <label>Crédito<select id="fCre"><option value="">Cualquiera</option></select></label>
+  <label>Recámaras<select id="fRec"><option value="0">Cualquiera</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option></select></label>
+  <button class="btn pri" id="go"><svg class="i" viewBox="0 0 24 24"><path d="M11 18a7 7 0 100-14 7 7 0 000 14zM21 21l-4.3-4.3"/></svg>Buscar</button>
+ </div>
+ <div class="achips" id="achips"></div>
+</div></div>
+<div class="wrap">
+ <section id="destacadas" hidden><div class="sh"><div><h2>Destacadas</h2><p>Nuestra selección de la semana</p></div></div><div class="feat-row" id="featGrid"></div></section>
+ <section id="propiedades"><div class="sh"><div><h2>Propiedades</h2><p class="count" id="cnt"></p></div><span class="sp"></span><select id="sort"><option value="rec">Más recientes</option><option value="asc">Menor precio</option><option value="desc">Mayor precio</option><option value="m2">Más amplias</option></select></div><div class="grid" id="grid"></div></section>
+ <div class="contact" id="contacto"><div><h2>¿Buscas algo en especial?</h2><p>Cuéntanos qué necesitas y te ayudamos a encontrarlo. También recibimos tu propiedad para venderla o rentarla.</p><div class="cl" id="cl"></div></div>
+ <form class="cform" id="cform"><input id="cfN" placeholder="Tu nombre"><select id="cfT"><option>Quiero comprar</option><option>Quiero rentar</option><option>Quiero vender mi propiedad</option><option>Quiero rentar mi propiedad</option></select><textarea id="cfM" rows="4" placeholder="Zona, presupuesto, recámaras…"></textarea><a class="btn wa" id="cfGo" target="_blank" rel="noopener">Enviar por WhatsApp</a></form></div>
+</div>
+<footer><span id="ftA"></span> · Actualizado <span id="ftD"></span><br>Sitio por <b>@cybercadtm</b></footer>
+<div id="det"></div><div id="toast"></div>
+<script>
+const DATA={"cfg":{"agencia":"Inmobiliaria","ciudad":"Tijuana","whatsapp":"","telefono":"","email":"","eslogan":""},"generado":"2026-11-21","props":[]};
+const D=DATA||{cfg:{agencia:'Inmobiliaria',ciudad:'Tijuana',whatsapp:'',telefono:'',email:'',eslogan:''},props:[],generado:''};
+const C=D.cfg;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>(+n||0).toLocaleString('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});
+const IC={home:'M3 11l9-8 9 8M5 10v10h14V10',land:'M3 20l6-9 4 5 3-4 5 8zM16 6a2 2 0 100-4 2 2 0 000 4',pin:'M12 21s-7-6.2-7-11.5A7 7 0 0119 9.5C19 14.8 12 21 12 21zM12 12a2.5 2.5 0 100-5 2.5 2.5 0 000 5',bed:'M3 18V7M3 14h18v4M21 14v-3a3 3 0 00-3-3h-7v6M7 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3',bath:'M4 12h16v3a4 4 0 01-4 4H8a4 4 0 01-4-4v-3zM6 12V5a2 2 0 014 0M7 19l-1 2M17 19l1 2',area:'M4 4h16v16H4zM4 9h5V4M20 15h-5v5',car:'M5 16h14M6 16l1.5-5h9L18 16M5 16v3M19 16v3M8 13.5h.01M16 13.5h.01',wa:'M3 21l1.7-5A8.5 8.5 0 1112 20.5a8.5 8.5 0 01-4.2-1.1L3 21z',phone:'M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2',mail:'M3 6h18v12H3zM3 7l9 6 9-6',layers:'M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5',share:'M8.6 13.5l6.8 4M15.4 6.5l-6.8 4M18 8a3 3 0 100-6 3 3 0 000 6zM6 15a3 3 0 100-6 3 3 0 000 6zM18 22a3 3 0 100-6 3 3 0 000 6z'};
+const ic=k=>`<svg class="i" viewBox="0 0 24 24"><path d="${IC[k]}"/></svg>`;
+const GRAD={Casa:'#0f766e,#1e3a8a',Departamento:'#5b21b6,#1e40af',Terreno:'#3f6212,#0f766e',Local:'#9a3412,#7c2d12',Oficina:'#1e3a8a,#312e81',Bodega:'#3f3f46,#1f2937'};
+const cov=p=>(p.fotos||[])[0]||'';const bg=p=>cov(p)?`background-image:url(${cov(p)})`:`background-image:linear-gradient(135deg,${GRAD[p.tipo]||GRAD.Casa})`;
+const ph=p=>cov(p)?'':`<div class="ph">${ic(p.tipo==='Terreno'?'land':'home')}${esc(p.tipo)}</div>`;
+const waNum=String(C.whatsapp||'').replace(/\D/g,'');const waFull=waNum.length===10?'52'+waNum:waNum;
+const wa=t=>waFull?`https://wa.me/${waFull}?text=${encodeURIComponent(t)}`:'#contacto';
+let st={op:'',tipo:'',col:'',max:0,rec:0,cre:'',am:[],sort:'rec'};
+const plTxt=n=>n?(n>=4?'4 o más plantas':n+(n==1?' planta':' plantas')):'';
+const isV=p=>p.operacion!=='Renta',isR=p=>p.operacion!=='Venta';
+const priceFor=p=>st.op==='Renta'?(+p.renta||0):st.op==='Venta'?(+p.precio||0):(isV(p)?+p.precio:+p.renta);
+
+function init(){
+ document.title=`${C.agencia} · Propiedades en venta y renta en ${C.ciudad||'tu ciudad'}`;
+ $('#agN').textContent=C.agencia;$('#ftA').textContent='© '+new Date().getFullYear()+' '+C.agencia;
+ $('#ftD').textContent=D.generado?new Date(D.generado+'T00:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}):'—';
+ $('#eyb').textContent=D.props.length?`● ${D.props.length} propiedad${D.props.length===1?'':'es'} disponible${D.props.length===1?'':'s'}`:'● Nuevas propiedades muy pronto';document.querySelector('meta[name=description]').content=`${C.agencia}: casas, departamentos, terrenos y locales en venta y renta en ${C.ciudad||''}.`;
+ $('#h1').innerHTML=`Encuentra tu próximo hogar en <em>${esc(C.ciudad||'la ciudad')}</em>`;
+ $('#slog').textContent=C.eslogan||'Casas, departamentos, terrenos y locales en venta y renta, con asesoría de principio a fin.';
+ const hw=$('#hdrWa');hw.href=wa(`Hola ${C.agencia}, me interesa información sobre sus propiedades.`);hw.innerHTML=ic('wa')+'<span>WhatsApp</span>';
+ $('#tabs').innerHTML=[['','Todas'],['Venta','Comprar'],['Renta','Rentar']].map(([k,l])=>`<button data-op="${k}" class="${st.op===k?'on':''}">${l}</button>`).join('');
+ $('#tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;st.op=b.dataset.op;[...$('#tabs').children].forEach(x=>x.classList.toggle('on',x===b));draw()};
+ const tipos=[...new Set(D.props.map(p=>p.tipo))].sort(),cols=[...new Set(D.props.map(p=>p.colonia).filter(Boolean))].sort();
+ $('#fTipo').innerHTML='<option value="">Todos</option>'+tipos.map(t=>`<option>${esc(t)}</option>`).join('');
+ $('#fCol').innerHTML='<option value="">Todas</option>'+cols.map(t=>`<option>${esc(t)}</option>`).join('');
+ const cres=[...new Set(D.props.flatMap(p=>p.creditos||[]))].filter(x=>x!=='Contado');$('#fCre').innerHTML='<option value="">Cualquiera</option>'+cres.map(t=>`<option>${esc(t)}</option>`).join('');if(!cres.length)$('#fCre').closest('label').style.display='none';
+ const cnt={};D.props.forEach(p=>(p.amen||[]).forEach(a=>cnt[a]=(cnt[a]||0)+1));const top=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).slice(0,10);
+ $('#achips').innerHTML=top.map(a=>`<button data-a="${esc(a)}">${esc(a)}</button>`).join('');
+ $('#achips').onclick=e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a;st.am=st.am.includes(a)?st.am.filter(x=>x!==a):[...st.am,a];b.classList.toggle('on');draw()};
+ const apply=()=>{st.tipo=$('#fTipo').value;st.col=$('#fCol').value;st.max=+$('#fMax').value||0;st.rec=+$('#fRec').value;st.cre=$('#fCre').value;draw()};
+ ['#fTipo','#fCol','#fRec','#fCre'].forEach(s=>$(s).onchange=apply);$('#fMax').oninput=apply;
+ $('#go').onclick=()=>{apply();document.getElementById('propiedades').scrollIntoView({behavior:'smooth'})};
+ $('#sort').onchange=e=>{st.sort=e.target.value;draw()};
+ const cl=[];if(C.whatsapp)cl.push(`<div>${ic('wa')}WhatsApp: ${esc(C.whatsapp)}</div>`);if(C.telefono)cl.push(`<div>${ic('phone')}Teléfono: ${esc(C.telefono)}</div>`);if(C.email)cl.push(`<div>${ic('mail')}${esc(C.email)}</div>`);cl.push(`<div>${ic('pin')}${esc(C.ciudad||'')}</div>`);$('#cl').innerHTML=cl.join('');
+ const upd=()=>{$('#cfGo').href=wa(`Hola ${C.agencia}, soy ${$('#cfN').value||'—'}. ${$('#cfT').value}. ${$('#cfM').value}`)};['#cfN','#cfT','#cfM'].forEach(s=>$(s).addEventListener('input',upd));upd();
+ const F=D.props.filter(p=>p.destacada);if(F.length){$('#destacadas').hidden=false;$('#featGrid').innerHTML=F.slice(0,3).map(card).join('')}
+ document.body.addEventListener('click',e=>{const c=e.target.closest('[data-id]');if(c){open(c.dataset.id)}});
+ $('#det').addEventListener('click',e=>{if(e.target.id==='det'||e.target.closest('.dclose'))closeD()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeD();if($('#det').classList.contains('on')&&gp&&(gp.fotos||[]).length>1){if(e.key==='ArrowRight')setG(gi+1);if(e.key==='ArrowLeft')setG(gi-1)}});
+ window.addEventListener('hashchange',route);
+ draw();route();
+}
+function card(p){
+ const pr=st.op==='Renta'||!isV(p)?`<div class="price">${money(p.renta)} <small>/ mes</small></div>`:`<div class="price">${money(p.precio)}</div>${isR(p)&&st.op!=='Venta'?`<div class="price2">o renta ${money(p.renta)}/mes</div>`:''}`;
+ const f=[];if(p.m2)f.push(`<span>${ic('area')}${p.m2} m²</span>`);if(p.plantas)f.push(`<span>${ic('layers')}${p.plantas>=4?'4+':p.plantas} pl.</span>`);if(p.rec)f.push(`<span>${ic('bed')}${p.rec} rec.</span>`);if(p.banos)f.push(`<span>${ic('bath')}${p.banos} baños</span>`);if(p.est)f.push(`<span>${ic('car')}${p.est}</span>`);
+ return `<div class="card" data-id="${p.id}"><div class="img" style="${bg(p)}">${ph(p)}<div class="badges">${isV(p)?'<span class="b v">Venta</span>':''}${isR(p)?'<span class="b r">Renta</span>':''}${p.estado==='Apartada'?'<span class="b s">Apartada</span>':''}${p.destacada?'<span class="b d">★ Destacada</span>':''}</div>${(p.fotos||[]).length>1?`<span class="pc">📷 ${p.fotos.length}</span>`:''}</div><div class="cbody">${pr}<div class="ct">${esc(p.titulo)}</div><div class="loc">${ic('pin')}${esc(p.colonia)}${p.ciudad?', '+esc(p.ciudad):''}</div>${f.length?`<div class="feats">${f.join('')}</div>`:''}</div></div>`;
+}
+function draw(){
+ let L=D.props.filter(p=>(!st.op||(st.op==='Venta'?isV(p):isR(p)))&&(!st.tipo||p.tipo===st.tipo)&&(!st.col||p.colonia===st.col)&&(!st.rec||(+p.rec||0)>=st.rec)&&(!st.max||priceFor(p)<=st.max)&&(!st.cre||(p.creditos||[]).includes(st.cre))&&st.am.every(a=>(p.amen||[]).includes(a)));
+ if(st.sort==='asc')L.sort((a,b)=>priceFor(a)-priceFor(b));else if(st.sort==='desc')L.sort((a,b)=>priceFor(b)-priceFor(a));else if(st.sort==='m2')L.sort((a,b)=>(b.m2||0)-(a.m2||0));
+ $('#cnt').textContent=`${L.length} resultado${L.length===1?'':'s'}`;
+ $('#grid').innerHTML=L.length?L.map(card).join(''):(D.props.length?'':`<div class="empty">Muy pronto publicaremos nuestras propiedades aquí.<br>Mientras tanto, cuéntanos qué buscas.<br><br><a class="btn wa" href="${wa('Hola, busco una propiedad.')}" target="_blank" rel="noopener">${ic('wa')}Escríbenos</a></div>`)||`<div class="empty">No encontramos propiedades con esos filtros.<br><br><a class="btn wa" href="${wa('Hola, busco una propiedad y no encontré opciones en el sitio.')}" target="_blank" rel="noopener">${ic('wa')}Pídenos opciones</a></div>`;
+}
+let gi=0,gp=null;
+function setG(i){const fs=gp.fotos||[];if(!fs.length)return;gi=(i+fs.length)%fs.length;$('#dimg').style.backgroundImage=`url(${fs[gi]})`;$('#gc').textContent=`${gi+1} / ${fs.length}`;[...document.querySelectorAll('.thumbs div')].forEach((t,k)=>t.classList.toggle('on',k===gi))}
+function open(id){const p=D.props.find(x=>x.id===id);if(!p)return;gp=p;gi=0;if(location.hash!=='#p-'+id)history.replaceState(null,'','#p-'+id);
+ const s=[];const add=(a,b)=>{if(b!==''&&b!==0&&b!=null&&b!==undefined)s.push([a,b])};
+ add('Construcción',p.m2?p.m2+' m²':'');add('Terreno',p.m2t?p.m2t+' m²':'');add('Plantas',plTxt(p.plantas));add('Recámaras',p.rec);add('Baños',p.banos);add('Estacionamiento',p.est?p.est+(p.est==1?' cajón':' cajones'):'');add('Tipo',p.tipo);
+ add('Antigüedad',p.antig?p.antig+(p.antig==1?' año':' años'):(p.conserv==='A estrenar'?'Nueva':''));add('Conservación',p.conserv);add('Mantenimiento',p.mant?money(p.mant)+'/mes':'');add('Situación legal',p.legal);
+ if(isV(p)&&p.m2&&p.precio)add('Precio por m²',money(p.precio/p.m2));
+ const req=[];if(p.depMeses)req.push(`Depósito: ${p.depMeses} ${p.depMeses==1?'mes':'meses'}`);if(p.aval)req.push(`Garantía: ${p.aval}`);if(p.plazo)req.push(`Plazo mínimo: ${p.plazo} meses`);
+ const fs=p.fotos||[];
+ $('#det').innerHTML=`<div class="dbox"><div class="dimg" id="dimg" style="${bg(p)}">${ph(p)}<button class="dclose" aria-label="Cerrar">✕</button>${fs.length>1?`<button class="gnav l" onclick="setG(gi-1)">‹</button><button class="gnav r" onclick="setG(gi+1)">›</button><span class="gcount" id="gc">1 / ${fs.length}</span>`:''}</div>${fs.length>1?`<div class="thumbs">${fs.map((f,i)=>`<div class="${i?'':'on'}" style="background-image:url(${f})" onclick="setG(${i})"></div>`).join('')}</div>`:''}<div class="dcont"><div><div class="badges" style="position:static">${isV(p)?'<span class="b v">Venta</span>':''}${isR(p)?'<span class="b r">Renta</span>':''}${p.estado==='Apartada'?'<span class="b s">Apartada</span>':''}</div><h2>${esc(p.titulo)}</h2><div class="loc">${ic('pin')}${esc(p.colonia)}${p.ciudad?', '+esc(p.ciudad):''}</div><div class="specs">${s.map(([a,b])=>`<div><span>${a}</span><b>${esc(b)}</b></div>`).join('')}</div>${p.notas?`<div class="desc">${esc(p.notas)}</div>`:''}
+ ${(p.amen||[]).length?`<div class="h4">Amenidades y servicios</div><div class="amen">${p.amen.map(a=>`<span>${esc(a)}</span>`).join('')}</div>`:''}
+ ${isV(p)&&(p.creditos||[]).length?`<div class="h4">Formas de pago</div><div class="amen">${p.creditos.map(a=>`<span>💳 ${esc(a)}</span>`).join('')}</div>`:''}
+ ${isR(p)&&req.length?`<div class="h4">Requisitos para rentar</div><div class="amen">${req.map(a=>`<span>📝 ${esc(a)}</span>`).join('')}</div>`:''}</div>
+ <div class="side">${isV(p)?`<div><div style="font-size:13px;color:var(--mu)">Precio de venta</div><div class="price">${money(p.precio)}</div></div>`:''}${isR(p)?`<div><div style="font-size:13px;color:var(--mu)">Renta mensual</div><div class="price" style="color:var(--violet)">${money(p.renta)}</div></div>`:''}<a class="btn wa" href="${wa(`Hola ${C.agencia}, me interesa la propiedad "${p.titulo}" en ${p.colonia} (ref. ${p.id.slice(0,6).toUpperCase()}). ¿Sigue disponible?`)}" target="_blank" rel="noopener">${ic('wa')}Me interesa</a><a class="btn out" href="${wa(`Hola ${C.agencia}, quiero agendar una visita a "${p.titulo}" en ${p.colonia} (ref. ${p.id.slice(0,6).toUpperCase()}).`)}" target="_blank" rel="noopener">📅 Agendar visita</a>${p.tour?`<a class="btn out" href="${esc(p.tour)}" target="_blank" rel="noopener">🎬 Ver recorrido</a>`:''}${p.mapa?`<a class="btn out" href="${esc(p.mapa)}" target="_blank" rel="noopener">🗺 Ver en mapa</a>`:''}<button class="btn out" id="shr">${ic('share')}Compartir</button><div style="font-size:12px;color:var(--mu)">Ref. ${p.id.slice(0,6).toUpperCase()}</div></div></div></div>`;
+ $('#det').classList.add('on');$('#det').scrollTop=0;document.body.style.overflow='hidden';
+ $('#shr').onclick=async()=>{const t=`${p.titulo} · ${p.colonia}\n${isV(p)?'Venta '+money(p.precio):''}${isV(p)&&isR(p)?' · ':''}${isR(p)?'Renta '+money(p.renta)+'/mes':''}\n${location.href}`;try{await navigator.clipboard.writeText(t);toast('Enlace copiado ✓')}catch(e){toast('No se pudo copiar')}};
+}
+function closeD(){$('#det').classList.remove('on');document.body.style.overflow='';if(location.hash.startsWith('#p-'))history.replaceState(null,'','#propiedades')}
+function route(){const h=location.hash;if(h.startsWith('#p-'))open(h.slice(3))}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2200)}
+init();
+</script>
+</body>
+</html>
