@@ -454,7 +454,9 @@ const AVATARS={
   boo:{n:'Fanti',e:'👻',d:'Fantasmita travieso',body:0xf1f3ff,head:0xf1f3ff,belly:0xf1f3ff,kind:'ghost'},
   jupi:{n:'Jupi',e:'🪐',d:'Alien de Júpiter',body:0xe39a5a,head:0xf0c18c,belly:0xfbe6c8,kind:'jupi'},
   astro:{n:'Astro',e:'🧑‍🚀',d:'Astronauta valiente',body:0xf2f4f8,head:0xf2f4f8,belly:0xd8dde6,kind:'astro'},
-  monti:{n:'Monti',e:'🚜',d:'Montacargas chambeador',body:0xffc21a,head:0xffd23f,belly:0x222222,kind:'fork'}
+  monti:{n:'Monti',e:'🚜',d:'Montacargas chambeador',body:0xffc21a,head:0xffd23f,belly:0x222222,kind:'fork'},
+  fel:{n:'Fel',e:'🦺',d:'El chambeador del almacén',human:true,kind:'fel',skin:0xc68a5e,body:0x1b2a4a,sleeve:0xf2f2f2,hair:0x16110d,eye:0x3a2416,lip:0x7a3a30,head:0xc68a5e,belly:0},
+  jupiter:{n:'Júpiter',e:'👩‍🚀',d:'La reina del planeta',human:true,kind:'jupiterH',skin:0xd9a07a,body:0xe39a5a,sleeve:0xf3dcb2,hair:0x2a1810,eye:0x4a2a14,lip:0xc2456a,head:0xd9a07a,belly:0}
 };
 
 /* =================== THREE: ESCENA =================== */
@@ -656,7 +658,52 @@ function createPiece(p,sq){const g=new THREE.Group();const model=buildModel(p.t,
 /* ---------- avatares 3D (diseños propios) ---------- */
 function M(c,o){const m=new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.55,envMapIntensity:.5},o||{}));m.color.convertSRGBToLinear();if(o&&o.emissive!==undefined)m.emissive.convertSRGBToLinear();return m;}
 function mesh(g,m,x,y,z,parent){const o=new THREE.Mesh(g,m);o.position.set(x||0,y||0,z||0);o.castShadow=true;(parent).add(o);return o;}
-function buildAvatar(key){const A=AVATARS[key];const g=new THREE.Group();const R={g,key,A};
+function buildHuman(key){const A=AVATARS[key];const g=new THREE.Group();const R={g,key,A};const inner=new THREE.Group();g.add(inner);R.inner=inner;
+  const skin=M(A.skin,{roughness:.6}),shirt=M(A.body),sleeve=M(A.sleeve),hairM=M(A.hair,{roughness:.55});
+  mesh(new THREE.CylinderGeometry(.6,.74,1.45,28),shirt,0,1.0,0,inner);
+  const sh=mesh(new THREE.SphereGeometry(.64,28,14,0,Math.PI*2,0,Math.PI/2),shirt,0,1.71,0,inner);sh.scale.y=.42;
+  mesh(new THREE.CylinderGeometry(.19,.22,.32,16),skin,0,1.93,0,inner);
+  const head=new THREE.Group();head.position.y=2.44;inner.add(head);R.head=head;
+  const hm=mesh(new THREE.SphereGeometry(.6,32,24),skin,0,0,0,head);hm.scale.set(.95,1.08,.98);
+  for(const sx of[-1,1]){const ear=mesh(new THREE.SphereGeometry(.12,12,10),skin,sx*.57,-.02,0,head);ear.scale.set(.45,.8,.6);}
+  const nose=mesh(new THREE.SphereGeometry(.075,12,10),skin,0,-.06,.6,head);nose.scale.set(.9,1.2,1);
+  const eyes=new THREE.Group();head.add(eyes);R.eyes=eyes;
+  for(const sx of[-1,1]){const w=mesh(new THREE.SphereGeometry(.115,16,12),M(0xffffff,{roughness:.2}),sx*.2,.07,.5,eyes);w.scale.z=.55;
+    mesh(new THREE.SphereGeometry(.07,14,10),M(A.eye,{roughness:.1}),sx*.2,.06,.555,eyes);
+    mesh(new THREE.SphereGeometry(.024,8,6),M(0xffffff,{emissive:0xffffff}),sx*.2+.025,.09,.6,eyes);
+    const br=mesh(new THREE.BoxGeometry(.22,.045,.05),hairM,sx*.2,.25,.54,head);br.rotation.z=-sx*.12;
+    if(A.kind==='jupiterH'){const ls=mesh(new THREE.BoxGeometry(.2,.025,.03),M(0x1a0e08),sx*.21,.15,.555,head);ls.rotation.z=-sx*.18;}}
+  const mouth=new THREE.Mesh(new THREE.TorusGeometry(.1,.026,8,20,Math.PI),M(A.lip));mouth.position.set(0,-.27,.54);mouth.rotation.z=Math.PI;head.add(mouth);R.mouth=mouth;
+  for(const sx of[-1,1]){const ch=mesh(new THREE.SphereGeometry(.08,12,10),M(0xff7f8f,{transparent:true,opacity:.35}),sx*.35,-.12,.47,head);ch.scale.z=.3;}
+  // cabello
+  const cap=mesh(new THREE.SphereGeometry(.645,30,16,0,Math.PI*2,0,Math.PI*.45),hairM,0,.04,-.05,head);cap.rotation.x=-.55;cap.scale.set(.99,1.07,1.04);
+  if(A.kind==='fel'){const q=mesh(new THREE.SphereGeometry(.3,18,12),hairM,0,.55,.2,head);q.scale.set(1.5,.45,1.1);q.rotation.x=-.3;
+    for(const sx of[-1,1]){const sd=mesh(new THREE.BoxGeometry(.08,.3,.4),hairM,sx*.56,.2,-.05,head);}}
+  else{const back=mesh(new THREE.CylinderGeometry(.56,.7,1.5,28,1,true,Math.PI*.55,Math.PI*.9),M(A.hair,{roughness:.55,side:THREE.DoubleSide}),0,-.5,-.05,head);
+    for(const sx of[-1,1]){const st=mesh(new THREE.CylinderGeometry(.13,.2,1.15,14),hairM,sx*.55,-.45,.12,head);st.rotation.z=sx*.08;}
+    const bang=mesh(new THREE.SphereGeometry(.32,20,12,0,Math.PI*2,0,Math.PI/2),hairM,-.16,.43,.36,head);bang.scale.set(1.15,.32,.55);bang.rotation.z=.35;bang.rotation.x=.25;}
+  // brazos
+  R.arms=[];for(const sx of[-1,1]){const piv=new THREE.Group();piv.position.set(sx*.78,1.62,0);inner.add(piv);
+    mesh(new THREE.CylinderGeometry(.15,.16,.75,16),sleeve,0,-.38,0,piv);mesh(new THREE.SphereGeometry(.15,14,12),skin,0,-.82,0,piv);
+    piv.rotation.z=sx*.25;piv.userData.sx=sx;R.arms.push(piv);}
+  if(A.kind==='fel'){const vest=M(0xdcf23a,{roughness:.5,emissive:0x3a4a00,emissiveIntensity:.25});
+    const v=mesh(new THREE.CylinderGeometry(.63,.77,1.2,28,1,true,Math.PI*.1,Math.PI*1.8),M(0xdcf23a,{roughness:.5,side:THREE.DoubleSide,emissive:0x3a4a00,emissiveIntensity:.25}),0,1.08,0,inner);
+    const refl=M(0xe8e8e8,{metalness:.8,roughness:.25,emissive:0x666666,emissiveIntensity:.3});
+    for(const y of[.72,1.12]){const r=mesh(new THREE.CylinderGeometry(.665+(1.4-y)*.06,.675+(1.4-y)*.06,.08,28,1,true,Math.PI*.1,Math.PI*1.8),M(0xe8e8e8,{metalness:.8,roughness:.25,side:THREE.DoubleSide,emissive:0x666666,emissiveIntensity:.3}),0,y,0,inner);}
+    const blk=M(0x111111,{roughness:.6});
+    for(const sx of[-1,1]){const st=mesh(new THREE.BoxGeometry(.09,1.15,.04),blk,sx*.24,1.1,.72,inner);st.rotation.z=sx*.12;st.rotation.x=-.12;}
+    const belt=mesh(new THREE.TorusGeometry(.73,.05,8,32),blk,0,.5,0,inner);belt.rotation.x=Math.PI/2;mesh(new THREE.BoxGeometry(.22,.16,.06),M(0x999999,{metalness:.9,roughness:.3}),0,.5,.76,inner);
+    const hp=mesh(new THREE.TorusGeometry(.27,.045,8,24,Math.PI*1.4),blk,0,1.92,.05,inner);hp.rotation.x=Math.PI/2;hp.rotation.z=Math.PI*.8;
+    for(const sx of[-1,1]){const cup=mesh(new THREE.CylinderGeometry(.11,.11,.08,16),blk,sx*.26,1.88,.14,inner);cup.rotation.z=Math.PI/2;}
+    const wt=mesh(new THREE.BoxGeometry(.2,.1,.2),blk,0,-.66,0,R.arms[0]);mesh(new THREE.BoxGeometry(.1,.11,.1),M(0x33ddff,{emissive:0x1188aa,emissiveIntensity:.8}),0,-.66,.06,R.arms[0]);}
+  if(A.kind==='jupiterH'){for(const[y,c]of[[.55,0xb8693a],[.85,0xf3dcb2],[1.15,0xa9623a],[1.4,0xf0c18c]]){const b=mesh(new THREE.CylinderGeometry(.66-(y-.55)*.08,.68-(y-.55)*.08,.12,28,1,true),M(c,{side:THREE.DoubleSide}),0,y,0,inner);}
+    const spot=mesh(new THREE.SphereGeometry(.14,14,10),M(0xc4462a),.3,.95,.62,inner);spot.scale.set(1.4,.7,.3);
+    const glass=new THREE.Mesh(new THREE.SphereGeometry(.95,32,24),new THREE.MeshPhysicalMaterial({color:0xddeeff,transparent:true,opacity:.16,roughness:.04,metalness:.1,clearcoat:1,depthWrite:false}));glass.position.y=.05;head.add(glass);
+    const rim=mesh(new THREE.TorusGeometry(.62,.07,10,32),M(0xf2f4f8,{metalness:.5,roughness:.3}),0,1.98,0,inner);rim.rotation.x=Math.PI/2;
+    const gold=M(0xffc94a,{metalness:1,roughness:.2,emissive:0x6a4a00,emissiveIntensity:.3});const ti=mesh(new THREE.TorusGeometry(.5,.035,8,32,Math.PI),gold,0,.32,0,head);ti.rotation.x=-.35;
+    const pj=mesh(new THREE.SphereGeometry(.1,16,12),M(0xe39a5a,{emissive:0x5a2a08,emissiveIntensity:.4}),0,.72,.32,head);const pr=mesh(new THREE.TorusGeometry(.16,.015,6,24),gold,0,.72,.32,head);pr.rotation.x=Math.PI/2.4;R.ring=pr;}
+  R.mood='idle';R.moodUntil=0;R.blink=2+Math.random()*3;R.baseY=0;R.lookX=0;return R;}
+function buildAvatar(key){const A=AVATARS[key];if(A.human)return buildHuman(key);const g=new THREE.Group();const R={g,key,A};
   const inner=new THREE.Group();g.add(inner);R.inner=inner;
   const head=new THREE.Group();head.position.y=2.3;inner.add(head);R.head=head;
   const mb=M(A.body),mh=M(A.head),mbel=M(A.belly);
@@ -817,7 +864,10 @@ function voice(key,kind){const sad=kind==='sad';switch(key){
   case 'boo':sweep('sine',sad?220:330,sad?140:220,1.1,.2,0,[5,18]);break;
   case 'jupi':sweep('sine',sad?500:300,sad?200:1200,.6,.16,0,[9,60]);if(!sad)sweep('triangle',1200,600,.3,.1,.55,[12,40]);break;
   case 'astro':sweep('square',1400,1400,.05,.05,0);sweep('sine',sad?700:500,sad?400:900,.35,.14,.08,[4,10]);sweep('square',1400,1400,.05,.05,.48);break;
+  case 'fel':sayV(sad?'¡Ay, no!':['¡Eso!','¡Órale!','¡Ándale!'][Math.random()*3|0],.72);break;
+  case 'jupiter':sayV(sad?'¡Uy, no!':['¡Bravo!','¡Yupi!','¡Bien!'][Math.random()*3|0],1.45);break;
   case 'monti':for(let i=0;i<(sad?2:3);i++)sweep('square',sad?700:1050,sad?650:1050,.16,.07,i*.28,null,2500);if(!sad)sweep('sawtooth',220,180,.35,.1,0,null,800);break;}}
+function sayV(t,pitch){if(!cfg.sound||!window.speechSynthesis)return;try{if(speechSynthesis.speaking&&GAME==='loteria')return;const u=new SpeechSynthesisUtterance(t);u.lang='es-MX';u.pitch=pitch;u.rate=1.08;speechSynthesis.speak(u);}catch(_){}}
 function voiceSide(side,kind){const R=avatars[side];if(R)voice(R.key,kind);}
 
 /* ---------- render / sincronía ---------- */
