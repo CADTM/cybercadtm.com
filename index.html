@@ -250,6 +250,23 @@ input[type=range]::-moz-range-thumb{width:14px;height:22px;background:#e8f1ff;bo
 .msg b{color:var(--lm)}
 
 /* Tarjetas */
+.inm{display:grid;grid-template-columns:1.25fr 1fr;gap:14px;padding:16px;height:100%;align-items:stretch;font-size:13px}
+.inm .ph{position:relative;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#0f766e,#1e3a8a);transition:background .6s;display:flex;flex-direction:column;justify-content:flex-end;padding:12px;cursor:pointer}
+.inm .ph svg{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:86px;height:86px;opacity:.85}
+.inm .bd{position:absolute;top:10px;left:10px;display:flex;gap:5px}
+.inm .bd span{padding:3px 8px;border-radius:20px;font-size:10.5px;font-weight:700;color:#fff}
+.inm .pr{font-size:20px;font-weight:700;color:#fff;text-shadow:0 2px 10px #0008}
+.inm .ti{color:#e8eef8;font-weight:600}.inm .lo{color:#b8c6d8;font-size:11.5px}
+.inm .sd{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.inm .tb{display:flex;gap:4px;background:#ffffff0d;border-radius:9px;padding:3px}
+.inm .tb button{flex:1;border:0;background:transparent;color:#8d9cb8;padding:6px 4px;border-radius:7px;font:inherit;font-size:12px;cursor:pointer}
+.inm .tb button.on{background:#2dd4bf;color:#04201c;font-weight:700}
+.inm .ft{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.inm .ft div{background:#ffffff0a;border:1px solid #ffffff14;border-radius:8px;padding:6px 8px;color:#cfd9e6;font-size:11.5px}
+.inm .ft b{display:block;color:#fff;font-size:13px}
+.inm .am{display:flex;flex-wrap:wrap;gap:4px}.inm .am span{font-size:10.5px;padding:2px 7px;border-radius:20px;background:#2dd4bf1a;color:#5eead4}
+.inm .wa{background:#1fae5b;color:#fff;border-radius:9px;padding:7px;text-align:center;font-weight:600;font-size:12px}
+@media(max-width:560px){.inm{grid-template-columns:1fr}.inm .ph{min-height:130px}.inm .ft,.inm .am{display:none}}
 .tj{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;padding:20px 18px;height:100%;align-items:center}
 .stack{position:relative;height:150px;cursor:pointer}
 .cc{position:absolute;left:0;top:0;width:calc(100% - 46px);max-width:230px;aspect-ratio:1.586;border-radius:14px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;transition:transform .6s cubic-bezier(.2,.9,.2,1),opacity .5s,filter .5s;box-shadow:0 12px 30px -10px rgba(0,0,0,.8);overflow:hidden}
@@ -1068,6 +1085,28 @@ function demoCanal(st,card){
 }
 
 
+// 15 INMOBILIARIA — portal de propiedades en venta y renta
+function demoInmo(st,card){
+  const P=[{t:'Casa en Otay Universidad',l:'Otay Universidad',op:'V',p:2850000,m:160,pl:2,r:3,b:2.5,e:2,a:['Patio','Cochera techada','Infonavit'],g:'#0f766e,#1e3a8a'},
+   {t:'Depto Zona Río',l:'Zona Río',op:'R',p:14500,m:85,pl:1,r:2,b:2,e:1,a:['Amueblado','Gimnasio','Vigilancia 24/7'],g:'#5b21b6,#1e40af'},
+   {t:'Casa en Santa Fe',l:'Santa Fe',op:'A',p:1650000,rp:9500,m:90,pl:2,r:2,b:1.5,e:1,a:['Acepta mascotas','Cisterna'],g:'#0e7490,#14532d'},
+   {t:'Local Av. Revolución',l:'Zona Centro',op:'R',p:22000,m:120,pl:1,r:0,b:1,e:0,a:['Alto flujo','Bodega'],g:'#9a3412,#7c2d12'},
+   {t:'Depto en Cacho',l:'Cacho',op:'V',p:2300000,m:110,pl:1,r:3,b:2,e:1,a:['Fracc. privado','Roof garden','Fovissste'],g:'#312e81,#0f766e'}];
+  const house='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6"/></svg>';
+  st.innerHTML=`<div class="inm"><div class="ph">${house}<div class="bd"></div><div class="pr"></div><div class="ti"></div><div class="lo"></div></div>
+  <div class="sd"><div class="tb"><button data-o="" class="on">Todas</button><button data-o="V">Comprar</button><button data-o="R">Rentar</button></div><div class="ft"></div><div class="am"></div><div class="wa">💬 Me interesa</div><small style="opacity:.55;font-size:10.5px">portal público + admin · datos de ejemplo</small></div></div>`;
+  let f='',i=0,user=0;const L=()=>P.filter(p=>!f||p.op===f||p.op==='A');
+  function show(){const l=L();i%=l.length;const p=l[i];const ph=$('.ph',st);ph.style.background=`linear-gradient(135deg,${p.g})`;
+    $('.bd',st).innerHTML=(p.op!=='R'?'<span style="background:#c8961e">Venta</span>':'')+(p.op!=='V'?'<span style="background:#7c5cd6">Renta</span>':'');
+    $('.pr',st).textContent=p.op==='R'?money(p.p)+' /mes':money(p.p)+(p.rp&&f==='R'?'':'');if(f==='R'&&p.rp)$('.pr',st).textContent=money(p.rp)+' /mes';
+    $('.ti',st).textContent=p.t;$('.lo',st).textContent='📍 '+p.l+', Tijuana';
+    $('.ft',st).innerHTML=[['Construcción',p.m+' m²'],['Plantas',p.pl],['Recámaras',p.r||'—'],['Estac.',p.e?p.e+(p.e==1?' cajón':' cajones'):'—']].map(([a,b])=>`<div>${a}<b>${b}</b></div>`).join('');
+    $('.am',st).innerHTML=p.a.map(x=>`<span>${x}</span>`).join('')}
+  $$('.tb button',st).forEach(b=>b.onclick=()=>{$$('.tb button',st).forEach(x=>x.classList.toggle('on',x===b));f=b.dataset.o;i=0;user=Date.now();show()});
+  $('.ph',st).onclick=()=>{user=Date.now();i++;show()};
+  show();every(card,2800,()=>{if(Date.now()-user<8000)return;i++;show()});
+}
+
 // 13 AJEDREZ 3D — partida automática con golpe al comer
 function demoAjedrez(st,card){
   st.innerHTML=`<canvas></canvas><div class="hud tl mono">🪐 JUPIJEDREZ</div><div class="hud tr mono ajst">blancas juegan</div>`;
@@ -1184,6 +1223,7 @@ const APPS=[
   {id:'pos',n:'Punto de Venta',s:'Jugos, pays y galletas',cat:'vida',ac:'#c6ff3d',url:'',d:'Caja rápida con ticket, cálculo de cambio e inventario que se descuenta solo. Pruébalo: toca productos y cobra.',t:['Ventas','Inventario'],f:demoPOS},
   {id:'idiomas',n:'Cuaderno de Idiomas',s:'Inglés + Italiano',cat:'vida',ac:'#c6ff3d',url:'',d:'Tarjetas de vocabulario en español, inglés e italiano con pronunciación en voz alta.',t:['Flashcards','Voz'],f:demoIdiomas},
   {id:'tarjetas',n:'Control de Tarjetas',s:'Pagos y fechas',cat:'vida',ac:'#ff2bd6',url:'',d:'Todas mis tarjetas en un solo lugar: fechas de pago, mínimos y uso de línea. Toca la pila para cambiar.',t:['Finanzas','Recordatorios'],f:demoTarjetas},
+  {id:'inmobiliaria',n:'Inmobiliaria',s:'Venta y renta de propiedades',cat:'vida',ac:'#2dd4bf',wide:1,url:'https://cybercadtm.com/inmobiliaria/',d:'Portal público con buscador, galería de fotos, créditos (Infonavit, Fovissste) y botón de WhatsApp, más un administrador instalable de propiedades, clientes, ventas, contratos de renta y cobranza que publica a la web con un toque. Toca Comprar o Rentar.',t:['Portal','Admin instalable','WhatsApp'],f:demoInmo},
   {id:'pastillero',n:'Pastillero Familiar',s:'Medicamentos y citas',cat:'vida',ac:'#3cffb4',url:'https://pastillerofamiliar.cybercadtm.com',d:'Horario de tomas con cuenta regresiva, registro de lo tomado y avisos de citas para la familia.',t:['Salud','Avisos'],f:demoPastillero},
   {id:'ia',n:'Servidor de IA',s:'IA local en mi PC',cat:'lab',ac:'#00f0ff',url:'',d:'Mi laptop convertida en servidor de modelos de IA locales, sin depender de la nube.',t:['LLM local','Ollama'],f:demoIA},
   {id:'canal',n:'Canal de Videos',s:'YouTube · TikTok · FB',cat:'lab',ac:'#ff3c5a',url:'',d:'El siguiente proyecto: contenido del día a día rumbo a la monetización. Cambia de plataforma para ver el formato.',t:['Próximamente','Contenido'],f:demoCanal},
