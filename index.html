@@ -359,6 +359,13 @@ footer b{color:var(--cy)}
 /* MINI PLAYER */
 #player{position:fixed;left:18px;bottom:18px;z-index:70;display:flex;align-items:center;gap:12px;padding:8px 14px 8px 8px;background:rgba(6,8,18,.9);border:1px solid rgba(255,43,214,.4);border-radius:16px;backdrop-filter:blur(10px);box-shadow:0 10px 40px -10px rgba(255,43,214,.45);transform:translateY(160%);transition:transform .6s cubic-bezier(.2,.9,.2,1);max-width:calc(100vw - 36px)}
 #player.on{transform:none}
+#player.mini{padding:6px;gap:6px;border-radius:999px;opacity:.75;transition:transform .6s cubic-bezier(.2,.9,.2,1),opacity .3s,padding .3s}
+#player.mini:hover{opacity:1}
+#player.mini .pi,#player.mini canvas,#player.mini .px{display:none}
+#player.mini .pc{width:34px;height:34px;cursor:pointer}
+#player.mini .pb{width:34px;height:34px;font-size:11px}
+#player.mini::after{content:"Popurrí";position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--mu);white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none}
+#player.mini:hover::after{opacity:1}
 #player .pc{width:46px;height:46px;border-radius:50%;background:url(media/fabrica-de-babitas.jpg) center/cover;flex:none;box-shadow:0 0 0 2px #1c1f2e,0 0 14px rgba(255,43,214,.5);animation:spin 6s linear infinite;animation-play-state:paused;position:relative}
 #player .pc::after{content:"";position:absolute;inset:40%;border-radius:50%;background:#03040a}
 #player.playing .pc{animation-play-state:running}
@@ -566,19 +573,8 @@ a.soc:hover{border-color:var(--sc);box-shadow:0 0 20px -4px var(--sc);transform:
 </head>
 <body>
 
-<div id="intro">
-  <div class="bgc"></div><div class="bgg"></div><canvas id="introCv"></canvas>
-  <div class="in-box">
-    <div class="in-k mono">CYBERCADTM PRESENTA</div>
-    <div class="in-cover" id="inCover"></div>
-    <div class="in-t">Popurrí <span>Babitas</span></div>
-    <div class="in-s mono">Fábrica de Babitas · Mi Chica Cocodrilo · La Reata del Envíos · Café en Pasillo Dos · Te Fuiste · Versión Desamor</div>
-    <div class="in-btns"><button id="inPlay">▶ Entrar con música</button><button id="inSkip">Entrar sin sonido</button></div>
-  </div>
-  <div class="in-sig mono">@cybercadtm · cybercadtm.com</div>
-</div>
 <audio id="pop" src="media/popurri-babitas.mp3" preload="auto"></audio>
-<div id="player"><div class="pc"></div><div class="pi"><small class="mono">AHORA SUENA · POPURRÍ</small><b id="plName">Fábrica de Babitas</b><div class="pp" id="plBar"><i></i></div></div><canvas id="plCv"></canvas><button class="pb" id="plBtn">❚❚</button><button class="px" id="plX" title="Cerrar">✕</button></div>
+<div id="player"><div class="pc"></div><div class="pi"><small class="mono">AHORA SUENA · POPURRÍ</small><b id="plName">Fábrica de Babitas</b><div class="pp" id="plBar"><i></i></div></div><canvas id="plCv"></canvas><button class="pb" id="plBtn">▶</button><button class="px" id="plX" title="Cerrar">✕</button></div>
 
 <nav>
   <a href="#top" class="logo"><i></i><span class="lg">cybercadtm</span></a>
@@ -602,7 +598,6 @@ a.soc:hover{border-color:var(--sc);box-shadow:0 0 20px -4px var(--sc);transform:
     <div class="typed-line mono">&gt; construyendo: <span id="typed"></span><span class="caret"></span></div>
     <div class="cta">
       <a href="#lab" class="pri">Explorar demos ↓</a>
-      <a href="https://cabina.cybercadtm.com" class="sec">Cabina en vivo ↗</a>
     </div>
     <div class="stats">
       <div><b data-count="13">0</b><small>Proyectos</small></div>
@@ -1296,18 +1291,18 @@ addEventListener('touchmove',()=>{if(ARC.on)arcStop()},{passive:true});
   const MARKS=[{"t": 0, "n": "Fábrica de Babitas"}, {"t": 16.75, "n": "Mi Chica Cocodrilo"}, {"t": 30.25, "n": "Café en Pasillo Dos"}, {"t": 43.75, "n": "La Reata del Envíos"}, {"t": 57.25, "n": "Babitas · Versión Desamor"}, {"t": 70.75, "n": "Fábrica de Babitas · Multiestilo"}, {"t": 84.25, "n": "Mi Chica Cocodrilo · Cui Cui"}, {"t": 97.75, "n": "La Reata del Envíos · Versión 3"}, {"t": 111.25, "n": "Fábrica de Babitas · Remix"}, {"t": 124.75, "n": "Mi Chica Cocodrilo · Versión 2"}, {"t": 138.25, "n": "Mi Chica Cocodrilo · Versión 3"}, {"t": 151.75, "n": "Te Fuiste, Mi Chica Cocodrilo"}, {"t": 165.25, "n": "Versión Desamor · Instrumental"}];
   const intro=$('#intro'),au=$('#pop'),pl=$('#player'),btn=$('#plBtn'),nm=$('#plName'),bar=$('#plBar i');
   let actx,an,data,started=false;
-  document.body.style.overflow='hidden';
   function setupAudio(){if(actx)return;try{actx=new(window.AudioContext||window.webkitAudioContext)();const src=actx.createMediaElementSource(au);an=actx.createAnalyser();an.fftSize=256;an.smoothingTimeConstant=.8;src.connect(an);an.connect(actx.destination);data=new Uint8Array(an.frequencyBinCount)}catch(e){an=null}}
   function enter(music){if(started)return;started=true;document.body.style.overflow='';
     if(music){setupAudio();try{actx&&actx.resume()}catch(e){}au.volume=0;const p=au.play();if(p&&p.catch)p.catch(()=>{});let v=0;const fi=setInterval(()=>{v=Math.min(1,v+.05);au.volume=v;if(v>=1)clearInterval(fi)},60);pl.classList.add('on')}
     intro.classList.add('out');setTimeout(()=>intro.remove(),1200)}
-  $('#inPlay').onclick=()=>enter(true);$('#inSkip').onclick=()=>enter(false);
-  addEventListener('keydown',e=>{if(started)return;if(e.key==='Escape')enter(false);if(e.key==='Enter')enter(true)});
+  started=true;pl.classList.add('on','mini');
+  
   function sync(){btn.textContent=au.paused?'▶':'❚❚';pl.classList.toggle('playing',!au.paused)}
   au.addEventListener('play',sync);au.addEventListener('pause',sync);
   au.addEventListener('ended',()=>{au.currentTime=0;au.play()});
-  btn.onclick=()=>{setupAudio();try{actx.resume()}catch(e){}au.paused?au.play():au.pause()};
-  $('#plX').onclick=()=>{au.pause();pl.classList.remove('on')};
+  btn.onclick=()=>{setupAudio();try{actx.resume()}catch(e){}pl.classList.remove('mini');au.paused?au.play():au.pause()};
+  pl.querySelector('.pc').onclick=()=>btn.click();
+  $('#plX').onclick=()=>{au.pause();pl.classList.add('mini')};
   $('#plBar').onclick=e=>{const r=e.currentTarget.getBoundingClientRect();au.currentTime=(e.clientX-r.left)/r.width*(au.duration||0)};
   window.popPause=()=>{if(!au.paused)au.pause()};
   au.addEventListener('timeupdate',()=>{const t=au.currentTime;let m=MARKS[0];for(const k of MARKS)if(t>=k.t)m=k;if(nm.textContent!==m.n)nm.textContent=m.n;bar.style.width=(t/(au.duration||1)*100)+'%'});
