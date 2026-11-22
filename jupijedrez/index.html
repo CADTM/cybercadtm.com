@@ -874,7 +874,7 @@ function updateAvatar(R,t,dt){if(!R)return;const now=performance.now();if(now>R.
 
 /* =================== ESTADO DE JUEGO =================== */
 let S=initState(),hist=[],log=[],sel=-1,selMoves=[],busy=false,lastMove=null,over=false;
-const NET={tc:0,ns:null,lobby:null,room:null,active:false,code:'',role:'',myColor:'w',gid:1,opp:null,oppAv:'boo',oppAvc:null,oppAvcS:'',avcS:'',oppVx:null,oppVxS:'',vxS:'',oppNick:'Rival',oppHere:false,unsubs:[]};
+const NET={tc:0,ns:null,lobby:null,room:null,active:false,code:'',role:'',myColor:'w',gid:1,opp:null,oppAv:'boo',oppAvc:null,oppAvcS:'',avcS:'',oppVx:null,oppVxS:'',vxS:'',oppClips:{},blobSent:new Set(),gsN:0,gsSeen:null,gqN:0,gqSeen:null,sayS:{},askS:{},oppNick:'Rival',oppHere:false,unsubs:[]};
 let uci=[];
 const REPLAY={on:false,list:[],i:0,play:true,next:0,g:null};
 const PUZ={on:false,i:0,n:1,side:'w',moved:0,fen:''};
@@ -954,18 +954,38 @@ function kissFx(sd){const R=avatars[sd];if(!R)return;mood(sd,'happy',2400);try{c
   const x=(v.x+1)/2*innerWidth,y=(1-v.y)/2*innerHeight;for(let i=0;i<12;i++){const h=document.createElement('div');h.className='heart';h.textContent=['💋','💕','❤️','💖'][i%4];
     h.style.left=x+'px';h.style.top=y+'px';h.style.setProperty('--dx',(Math.random()*180-90)+'px');h.style.setProperty('--dy',(-110-Math.random()*170)+'px');h.style.setProperty('--rt',(Math.random()*60-30)+'deg');
     h.style.animationDelay=(i*.09)+'s';h.style.fontSize=(18+Math.random()*18)+'px';document.body.appendChild(h);setTimeout(()=>h.remove(),3400);}}catch(_){}}
+const SAY={n:0,askN:0,lastK:{}};
+function mySideNet(){return isCard()?'w':NET.myColor;}
 function talk(key,kind){const L=VLINES[key];if(!L)return;const k=L[kind]?kind:(kind==='think'?'taunt':'happy');const now=performance.now();
-  if((k==='happy'||k==='sad'||k==='taunt')&&now-(VLAST[key]||0)<2200)return;VLAST[key]=now;
   let sd=null;try{sd=Object.keys(avatars).find(x=>avatars[x]&&avatars[x].key===key)||null;}catch(_){}
-  const netOpp=isNetOppSide(sd),clips=netOpp?[]:((CL.m[key]||{})[k]||[]),texts=vxLines(key,k,netOpp);let t;
-  if(clips.length&&(!texts.length||Math.random()<.7)){playClip(clips[Math.random()*clips.length|0].url);t='🔊🎙️';}else{t=texts[Math.random()*texts.length|0];sayAs(key,t);}
-  try{if(sd&&sd===rivalSide())showBubble(/mua|beso/i.test(t)?t+' 💋':t);if(sd&&(/mua|beso|💋/i.test(t)||(key==='jupiter'&&k==='win')))kissFx(sd);}catch(_){}}
+  if(NET.active&&NET.room&&isNetOppSide(sd)){if(NET.oppHere){SAY.askN++;NET.room.presence({ask:{n:SAY.askN,k}}).catch(()=>{});}return;}
+  const lk=key+'|'+k;if(now-(SAY.lastK[lk]||0)<3000)return;
+  if((k==='happy'||k==='sad'||k==='taunt')&&now-(VLAST[key]||0)<2200)return;VLAST[key]=now;SAY.lastK[lk]=now;
+  const clips=(CL.m[key]||{})[k]||[],texts=vxLines(key,k,false);const t=texts[Math.random()*texts.length|0]||'';let cid=null;
+  if(clips.length&&(!texts.length||Math.random()<.7)){const c=clips[Math.random()*clips.length|0];playClip(c.url);cid=c.id;}else sayAs(key,t);
+  try{const shown=cid!=null?'🔊🎙️':t;if(sd&&sd===rivalSide())showBubble(cid==null&&/mua|beso/i.test(t)?t+' 💋':shown);
+    if(sd&&((cid==null&&/mua|beso|💋/i.test(t))||(key==='jupiter'&&k==='win')))kissFx(sd);}catch(_){}
+  if(NET.active&&NET.room&&key===cfg.me&&sd===mySideNet()){SAY.n++;NET.room.presence({say:{n:SAY.n,k,t:t.slice(0,60),c:cid}}).catch(()=>{});}}
+function gotSay(P){if(!P||typeof P!=='object')return;const key=NET.oppAv,sd=isCard()?'b':opp(NET.myColor);const t=String(P.t||'').replace(/[\u0000-\u001f]/g,'').slice(0,60),k=String(P.k||'');
+  let played=false;if(P.c!=null){const oc=NET.oppClips&&NET.oppClips[String(P.c)];if(oc){playClip(oc.url);played=true;}}
+  if(!played&&t)sayAs(VG[key]?key:'jupiter',t);
+  const shown=played?'🔊🎙️':t;if(shown)showBubble(!played&&/mua|beso/i.test(t)?t+' 💋':shown);
+  if((!played&&/mua|beso|💋/i.test(t))||(key==='jupiter'&&k==='win'))kissFx(sd);else mood(sd,k==='sad'||k==='lose'?'sad':'happy',1500);}
+function gotAsk(P){if(!P||typeof P!=='object')return;const k=String(P.k||'');if(!VLINES[cfg.me]||!VLINES[cfg.me][k])return;talk(cfg.me,k);}
+function blobB64(b){return new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(',')[1]||'');fr.onerror=()=>res('');fr.readAsDataURL(b);});}
+async function netShareClips(){const r=NET.room;if(!r||!r.blob||!VLINES[cfg.me]||NET.sharing)return;NET.sharing=true;try{const M=CL.m[cfg.me]||{};NET.blobSent=NET.blobSent||new Set();
+  for(const[kind,arr]of Object.entries(M))for(const c of arr.slice(0,3)){const key='c'+c.id;if(NET.blobSent.has(key)||!c.blob||c.blob.size>200000)continue;
+    const d=await blobB64(c.blob);if(!d||NET.room!==r)continue;if(r.blob(key,JSON.stringify({k:cfg.me,kind,m:c.blob.type||'audio/webm',d})))NET.blobSent.add(key);}}finally{NET.sharing=false;}}
+function gotBlob(id,key,txt){NET.oppClips=NET.oppClips||{};const cid=String(key).replace(/^c/,'');
+  if(!txt){if(NET.oppClips[cid]){try{URL.revokeObjectURL(NET.oppClips[cid].url);}catch(_){}delete NET.oppClips[cid];}return;}
+  try{const o=JSON.parse(txt);if(!o||typeof o.d!=='string'||!/^audio\/[\w.+-]+(;[\w=.,+-]*)?$/i.test(String(o.m||'').replace(/\s/g,'')))return;const bin=atob(o.d);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+    if(NET.oppClips[cid])try{URL.revokeObjectURL(NET.oppClips[cid].url);}catch(_){}NET.oppClips[cid]={url:URL.createObjectURL(new Blob([u],{type:o.m})),kind:String(o.kind||'')};}catch(_){}}
 /* ---- grabaciones (se guardan en este aparato) ---- */
 const CL={db:null,m:{}};
 function clDB(){return new Promise(res=>{if(CL.db)return res(CL.db);try{const r=indexedDB.open('jupijedrez_voz',1);r.onupgradeneeded=()=>r.result.createObjectStore('c',{keyPath:'id',autoIncrement:true});
   r.onsuccess=()=>{CL.db=r.result;res(CL.db);};r.onerror=()=>res(null);}catch(e){res(null);}});}
 async function clLoad(){const db=await clDB();if(!db)return;try{const q=db.transaction('c','readonly').objectStore('c').getAll();q.onsuccess=()=>{for(const k in CL.m)for(const kd in CL.m[k])for(const c of CL.m[k][kd])try{URL.revokeObjectURL(c.url);}catch(_){}
-  CL.m={};for(const c of q.result||[]){if(!c||!c.blob)continue;const o=CL.m[c.k]=CL.m[c.k]||{};(o[c.kind]=o[c.kind]||[]).push({id:c.id,url:URL.createObjectURL(c.blob)});}
+  CL.m={};for(const c of q.result||[]){if(!c||!c.blob)continue;const o=CL.m[c.k]=CL.m[c.k]||{};(o[c.kind]=o[c.kind]||[]).push({id:c.id,url:URL.createObjectURL(c.blob),blob:c.blob});}
   if($('sheetEdit').classList.contains('show'))edVoiceRender();};}catch(_){}}
 async function clAdd(k,kind,blob){const db=await clDB();if(!db){toast('No se pudo guardar la grabación');return;}try{const r=db.transaction('c','readwrite').objectStore('c').add({k,kind,blob,t:Date.now()});r.onsuccess=()=>clLoad();}catch(_){toast('No se pudo guardar la grabación');}}
 async function clDel(id){const db=await clDB();if(!db)return;try{const r=db.transaction('c','readwrite').objectStore('c').delete(id);r.onsuccess=()=>clLoad();}catch(_){}}
@@ -1376,7 +1396,8 @@ const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const sqOf=t=>(8-+t[1])*8+FILES.indexOf(t[0]);
 function findMove(u,st){st=st||S;if(isDam(st))return DM.find(u,st);if(!/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(u))return null;const f=sqOf(u.slice(0,2)),t=sqOf(u.slice(2,4));const pc=st.b[f];if(!pc||pc.c!==st.turn)return null;
   const m=legalFrom(st,f).find(x=>x.to===t);if(!m)return null;return m.promo?Object.assign({},m,{promo:u[4]||'q'}):m;}
-function netPublish(){if(!NET.room)return;{const a=myAvcStr();if(NET.avcS!==a){NET.avcS=a;NET.room.presence({avc:a?JSON.parse(a):null}).catch(()=>{});}const x=myVxStr();if(NET.vxS!==x){NET.vxS=x;NET.room.presence({vx:x?JSON.parse(x):null}).catch(()=>{});}}
+function netPublish(){if(!NET.room)return;{const a=myAvcStr();if(NET.avcS!==a){NET.avcS=a;NET.room.presence({avc:a?JSON.parse(a):null}).catch(()=>{});}const x=myVxStr();if(NET.vxS!==x){NET.vxS=x;NET.room.presence({vx:x?JSON.parse(x):null}).catch(()=>{});}netShareClips();}
+  if(GAME==='oca'){NET.room.presence(Object.assign({v:1,game:'oca',role:NET.role,color:null,av:cfg.me,nick:(cfg.nick||'Jugador').slice(0,16),gid:NET.gid,moves:''},ocaPublic())).catch(()=>{});return;}
   if(GAME==='domino'||GAME==='loteria'){const base={v:1,game:GAME,role:NET.role,color:null,av:cfg.me,nick:(cfg.nick||'Jugador').slice(0,16),gid:NET.gid,moves:''};
     if(GAME==='domino')Object.assign(base,{dm:NET.role==='host'?dmoPublic():null,dma:NET.role==='guest'?DMO.act:null});
     else Object.assign(base,{lot:NET.role==='host'?lotPublic():null,lneed:lotMyNeed(),lc:NET.role==='guest'?LOT.claim:null});
@@ -1392,7 +1413,9 @@ function netSync(){if(isCard()&&NET.active&&GI().netSync){GI().netSync();return;
   if(!pre&&NET.role==='guest'&&th.length){rebuildFrom(th);netPublish();}}
 function onGamePeers(peers){const others=peers.filter(p=>!p.sameTab&&p.presence&&p.presence.v===1);NET.others=others;const mine=peers.find(p=>p.sameTab);if(mine)NET.myPeer=mine.peer;
   const want=NET.role==='host'?'guest':'host';const op=others.find(p=>p.presence.role===want);
-  if(NET.role==='guest'&&op&&['conquian','domino','loteria'].includes(op.presence.game)&&GAME!==op.presence.game){switchGame(op.presence.game,true);GI().netInit();netPublish();}
+  if(op&&NET.role==='guest'){const gs=op.presence.gs;const gn=gs&&typeof gs.n==='number'?gs.n:0;if(NET.gsSeen===null)NET.gsSeen=gn;else if(gn!==NET.gsSeen){NET.gsSeen=gn;if(gs&&GAMES_INFO[gs.g]&&gs.g!==GAME){netFollow(gs.g);toast('🎮 '+NET.oppNick+' cambió a '+GNAME[gs.g]);}}}
+  if(op&&NET.role==='host'){const gq=op.presence.gq;const qn=gq&&typeof gq.n==='number'?gq.n:0;if(NET.gqSeen===null)NET.gqSeen=qn;else if(qn!==NET.gqSeen){NET.gqSeen=qn;if(gq&&GAMES_INFO[gq.g]&&gq.g!==GAME){netGo(gq.g);toast('🎮 '+NET.oppNick+' eligió '+GNAME[gq.g]);}}}
+  if(NET.role==='guest'&&op&&['conquian','domino','loteria','oca'].includes(op.presence.game)&&GAME!==op.presence.game){switchGame(op.presence.game,true);GI().netInit();netPublish();}
   if(NET.role==='guest'&&op&&(op.presence.game==='chess'||op.presence.game==='damas')&&op.presence.game!==GAME&&!uci.length){if(isCard())netCardOff();switchGame(op.presence.game,true);resetBoard();toast(op.presence.game==='damas'?'⛀ Partida de damas':'♟ Partida de ajedrez');}
   if(NET.role==='guest'&&op&&(op.presence.color==='w'||op.presence.color==='b')){const c=opp(op.presence.color);if(c!==NET.myColor){NET.myColor=c;placeAvatars();setCamSide(c);render();}}
   if(NET.role==='guest'&&op&&[0,1,3,5,10].includes(+op.presence.tc)&&+op.presence.tc!==NET.tc&&!uci.length){NET.tc=+op.presence.tc;clockReset(NET.tc);}
@@ -1402,23 +1425,35 @@ function onGamePeers(peers){const others=peers.filter(p=>!p.sameTab&&p.presence&
     if(typeof P.dro==='number'&&P.dro===NET.gid*1000+uci.length&&P.dro!==drawSeen&&!over){drawSeen=P.dro;
       ask('🤝 ¿Aceptas tablas?',NET.oppNick+' te ofrece un empate.').then(y=>{if(y&&!over)endGame('draw',null,false);else if(NET.room){NET.room.presence({drd:P.dro}).catch(()=>{});}});}
     if(typeof P.drd==='number'&&P.drd===drawSent&&drawSent){drawSent=0;toast(NET.oppNick+' rechazó las tablas');}
+    {const sn=P.say&&typeof P.say.n==='number'?P.say.n:0;if(!(key in NET.sayS))NET.sayS[key]=sn;else if(sn!==NET.sayS[key]){NET.sayS[key]=sn;if(sn)gotSay(P.say);}}
+    {const an=P.ask&&typeof P.ask.n==='number'?P.ask.n:0;if(!(key in NET.askS))NET.askS[key]=an;else if(an!==NET.askS[key]){NET.askS[key]=an;if(an)gotAsk(P.ask);}}
     const rn=P.rx&&typeof P.rx.n==='number'?P.rx.n:0;if(!(key in rxSeen))rxSeen[key]=rn;else if(rn!==rxSeen[key]){rxSeen[key]=rn;if(rn)gotReaction(String(P.rx.e));}}
   if(op){const av=AVATARS[op.presence.av]?op.presence.av:'boo';const nk=String(op.presence.nick||'Rival').slice(0,16);
     {const ov=JSON.stringify(vxClean(op.presence.vx));if(ov!==NET.oppVxS){NET.oppVxS=ov;NET.oppVx=JSON.parse(ov);}}
     const oc=avcClean(op.presence.avc),ocs=JSON.stringify(oc);let rb=false;if(ocs!==NET.oppAvcS){NET.oppAvcS=ocs;NET.oppAvc=oc;rb=true;}
     if(av!==NET.oppAv){NET.oppAv=av;rb=true;}if(rb)placeAvatars();NET.oppNick=nk;}
-  if(!had&&op){toast('¡'+NET.oppNick+' se conectó!');setTimeout(()=>mood(opp(NET.myColor),'happy',1600),300);}
+  if(!had&&op){toast('¡'+NET.oppNick+' se conectó!');setTimeout(()=>mood(isCard()?'b':opp(NET.myColor),'happy',1600),300);setTimeout(()=>{if(NET.active&&VLINES[cfg.me]){VLAST[cfg.me]=0;talk(cfg.me,'hi');}},1800+(NET.role==='guest'?2200:0));}
   if(had&&!op)toast('Tu rival se desconectó');
   if(NET.lobby&&NET.role==='host')NET.lobby.presence({open:op?null:{game:GAME,code:NET.code,nick:(cfg.nick||'Jugador').slice(0,16),av:cfg.me,color:NET.myColor}}).catch(()=>{});
   renderHUD();netSync();renderNet();}
 async function netJoin(code,role,color){if(!NET.ns){toast('En línea no disponible aquí');return;}
   await netLeave(true);
   let room;try{room=await NET.ns.join('g-'+code);}catch(e){toast('No se pudo entrar a la sala');return;}
-  Object.assign(NET,{room,active:true,code,role,myColor:color,gid:1,opp:null,oppHere:false,oppAv:'boo',oppAvc:null,oppAvcS:'',avcS:'',oppVx:null,oppVxS:'',vxS:'',oppNick:'Rival',tc:role==='host'?(+$('netTc').value||0):0});rxSeen={};drawSeen=0;
+  Object.assign(NET,{room,active:true,code,role,myColor:color,gid:1,opp:null,oppHere:false,oppAv:'boo',oppAvc:null,oppAvcS:'',avcS:'',oppVx:null,oppVxS:'',vxS:'',oppClips:{},blobSent:new Set(),gsN:0,gsSeen:null,gqN:0,gqSeen:null,sayS:{},askS:{},oppNick:'Rival',tc:role==='host'?(+$('netTc').value||0):0});rxSeen={};drawSeen=0;
   if(isCard()&&GI().net){GI().netInit();setCamSide('w',true);}else{if(isCard())switchGame('chess',true);resetBoard();setCamSide(color);}
+  if(room.onBlob)NET.unsubs.push(room.onBlob(gotBlob));
   NET.unsubs.push(room.onPeers(ch=>onGamePeers(ch.peers)));
   netPublish();renderHUD();renderNet();openSheet(null);toast(role==='host'?'Partida creada: '+code.toUpperCase():'Entrando a '+code.toUpperCase()+'…');}
-function netCardOff(){cqNetOff();DMO.net=DMO.guest=false;LOT.net=LOT.guest=false;}
+function netCardOff(){cqNetOff();DMO.net=DMO.guest=false;LOT.net=LOT.guest=false;OCA.net=false;}
+const GNAME={chess:'♞ Ajedrez',damas:'⛀ Damas',conquian:'🃏 Conquián',domino:'🁫 Dominó',oca:'🪿 Oca',loteria:'🎴 Lotería'};
+function netEnter(g){if(isCard())netCardOff();try{exitModes();}catch(_){}$('endModal').classList.remove('show');switchGame(g,true);
+  if(isCard()){if(GI().net)GI().netInit();setCamSide('w',true);}else{resetBoard();setCamSide(NET.myColor,true);}placeAvatars();}
+function netGo(g){if(!NET.active||NET.role!=='host'||!GAMES_INFO[g])return;NET.gsN=(NET.gsN||0)+1;if(!GAMES_INFO[g].ov)NET.gid++;netEnter(g);
+  NET.room.presence({gs:{n:NET.gsN,g}}).catch(()=>{});netPublish();renderNet();renderHUD();}
+function netFollow(g){netEnter(g);netPublish();renderHUD();}
+function netPick(g){if(!NET.active)return false;if(g===GAME){openSheet(null);return true;}
+  if(NET.role==='host'){netGo(g);toast('🎮 Ahora juegan '+GNAME[g]);}
+  else{NET.gqN=(NET.gqN||0)+1;NET.room.presence({gq:{n:NET.gqN,g}}).catch(()=>{});toast('🎮 Pidiendo '+GNAME[g]+'…');}openSheet(null);return true;}
 async function netLeave(silent){netCardOff();const r=NET.room;NET.unsubs.forEach(f=>{try{f();}catch(_){}});NET.unsubs=[];NET.room=null;
   const was=NET.active;NET.active=false;NET.opp=null;NET.oppHere=false;
   if(NET.lobby)NET.lobby.presence({open:null}).catch(()=>{});
@@ -1438,7 +1473,7 @@ function renderNet(){const box=$('netList');if(!box)return;
     const b=document.createElement('button');b.className='btn';b.style.width='100%';b.style.marginBottom='6px';
     b.innerHTML=`${{damas:'⛀',conquian:'🃏',domino:'🁫',loteria:'🎴'}[o.game]||'♟'} ${A.e} ${esc(String(o.nick).slice(0,16))} · juega con ${o.color==='b'?'negras':'blancas'} — <b>Unirme</b>`;
     b.onclick=()=>netJoin(code,'guest',o.color==='b'?'w':'b');box.appendChild(b);}}
-$('bNet').onclick=()=>{if(isCard()&&!GI().net){toast('En línea: ajedrez, damas, Conquián, dominó y lotería');return;}$('nick').value=cfg.nick||'';renderNet();openSheet('sheetNet');};
+$('bNet').onclick=()=>{$('nick').value=cfg.nick||'';renderNet();openSheet('sheetNet');};
 $('nick').oninput=e=>{cfg.nick=e.target.value.slice(0,16);save();if(NET.active)netPublish();};
 $('netCreate').onclick=()=>netJoin(newCode(),'host',$('netColor').value);
 $('netJoinBtn').onclick=()=>{const c=$('netCode').value.toLowerCase().replace(/[^a-z0-9]/g,'');if(c.length<3){toast('Escribe el código');return;}netJoin(c,'guest','b');};
@@ -1457,7 +1492,9 @@ function mqttNS(){return new Promise(async res=>{
   const BASE='cybercadtm/ajedrez3d/v1/';const myId=Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-3);
   const online=new Set(),rooms=new Map();let client=null,bi=0,settled=false;
   const fireAll=()=>rooms.forEach(r=>r.fire());
-  function mkRoom(name){const r={name,me:{},others:new Map(),subs:new Set(),q:false};
+  function mkRoom(name){const r={name,me:{},others:new Map(),subs:new Set(),q:false,bsubs:new Set(),sentB:new Set()};
+    r.blob=(key,str)=>{if(client&&client.connected){client.publish(BASE+'r/'+name+'/b/'+myId+'/'+key,str,{retain:true,qos:0});r.sentB.add(key);return true;}return false;};
+    r.onBlob=f=>{r.bsubs.add(f);return()=>r.bsubs.delete(f);};
     r.peers=()=>[{peer:myId,isMe:true,sameTab:true,kind:'viewer',guest:false,by:null,presence:r.me},
       ...[...r.others].filter(([id])=>online.has(id)).map(([id,pr])=>({peer:id,isMe:false,sameTab:false,kind:'viewer',guest:false,by:null,presence:pr}))];
     r.fire=()=>{if(r.q)return;r.q=true;setTimeout(()=>{r.q=false;const ps=r.peers();r.subs.forEach(f=>{try{f({peers:ps,joined:[],left:[],updated:[]});}catch(_){}});},30);};
@@ -1465,9 +1502,11 @@ function mqttNS(){return new Promise(async res=>{
     r.presence=async patch=>{const m=Object.assign({},r.me,patch);for(const k in patch)if(patch[k]===null)delete m[k];r.me=m;r.pub();r.fire();};
     r.onPeers=f=>{r.subs.add(f);r.fire();return()=>r.subs.delete(f);};
     r.connected=()=>!!(client&&client.connected);
-    r.leave=async()=>{if(client){client.publish(BASE+'r/'+name+'/p/'+myId,'',{retain:true,qos:1});client.unsubscribe(BASE+'r/'+name+'/p/+');}rooms.delete(name);r.subs.clear();};
-    rooms.set(name,r);if(client)client.subscribe(BASE+'r/'+name+'/p/+',{qos:1});return r;}
-  function onMsg(topic,buf){if(!topic.startsWith(BASE))return;const rest=topic.slice(BASE.length).split('/');const txt=buf&&buf.length<8000?buf.toString():'';
+    r.leave=async()=>{if(client){client.publish(BASE+'r/'+name+'/p/'+myId,'',{retain:true,qos:1});for(const k of r.sentB)client.publish(BASE+'r/'+name+'/b/'+myId+'/'+k,'',{retain:true,qos:0});client.unsubscribe(BASE+'r/'+name+'/p/+');client.unsubscribe(BASE+'r/'+name+'/b/+/+');}rooms.delete(name);r.subs.clear();r.bsubs.clear();};
+    rooms.set(name,r);if(client){client.subscribe(BASE+'r/'+name+'/p/+',{qos:1});if(name!=='lobby')client.subscribe(BASE+'r/'+name+'/b/+/+',{qos:0});}return r;}
+  function onMsg(topic,buf){if(!topic.startsWith(BASE))return;const rest=topic.slice(BASE.length).split('/');
+    if(rest[0]==='r'&&rest[2]==='b'&&rest.length===5){const r=rooms.get(rest[1]);if(!r||rest[3]===myId)return;const t2=buf&&buf.length<400000?buf.toString():'';r.bsubs.forEach(f=>{try{f(rest[3],rest[4],t2);}catch(_){}});return;}
+    const txt=buf&&buf.length<8000?buf.toString():'';
     if(rest[0]==='on'&&rest.length===2){const id=rest[1];if(id===myId)return;if(txt==='1')online.add(id);else online.delete(id);fireAll();return;}
     if(rest[0]==='r'&&rest[2]==='p'&&rest.length===4){const r=rooms.get(rest[1]),id=rest[3];if(!r||id===myId)return;
       if(!txt)r.others.delete(id);else{try{const o=JSON.parse(txt);if(o&&typeof o==='object'&&!Array.isArray(o))r.others.set(id,o);}catch(_){}}r.fire();}}
@@ -1478,7 +1517,7 @@ function mqttNS(){return new Promise(async res=>{
     const to=setTimeout(()=>{if(!ok){try{c.end(true);}catch(_){}tryNext();}},7500);
     c.on('connect',()=>{c.publish(BASE+'on/'+myId,'1',{retain:true,qos:1});
       if(!ok){ok=true;clearTimeout(to);client=c;c.on('message',onMsg);c.subscribe(BASE+'on/+',{qos:1});
-        for(const r of rooms.values()){c.subscribe(BASE+'r/'+r.name+'/p/+',{qos:1});}
+        for(const r of rooms.values()){c.subscribe(BASE+'r/'+r.name+'/p/+',{qos:1});if(r.name!=='lobby')c.subscribe(BASE+'r/'+r.name+'/b/+/+',{qos:0});}
         const lobby=mkRoom('lobby');
         const ns=Object.assign(lobby,{via:'mqtt',join:async n=>rooms.get(n)||mkRoom(n)});
         settled=true;res(ns);}
@@ -1969,22 +2008,37 @@ const DICE_ROT={1:[0,0,0],6:[Math.PI,0,0],2:[-Math.PI/2,0,0],5:[Math.PI/2,0,0],3
 function ocaEmojiSprite(e){const c=document.createElement('canvas');c.width=c.height=128;const y=c.getContext('2d');y.font='96px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';y.textAlign='center';y.textBaseline='middle';y.fillText(e,64,70);
   const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthWrite:false}));s.scale.set(.62,.62,.62);return s;}
 function ocaCellPos(i,k){const sq=OCA.cells[Math.max(0,Math.min(63,i))];const p=sqPos(sq);const off=[[-.2,-.2],[.2,-.2],[-.2,.2],[.2,.2]][k];return{x:p.x+off[0],z:p.z+off[1]};}
-function ocaStart(){ocaBuild();OCA.group.visible=true;for(const t of OCA.tokens)OCA.group.remove(t);OCA.tokens=[];
-  const n=Math.max(2,Math.min(4,+cfg.np||2)),local=cfg.mode==='pvp';const used=new Set([cfg.me,cfg.rival]);const pool=Object.keys(AVATARS).filter(k=>!used.has(k));
+Object.assign(OCA,{net:false,seat:0,gid:0,mine:[],cnt:[0,0],res:null,gap:false});
+function ocaNetInit(){OCA.net=true;OCA.seat=NET.role==='host'?0:1;OCA.gid=0;OCA.mine=[];OCA.res=null;ocaReset();ocaMsg(NET.role==='host'?'Esperando a tu rival… código <b>'+NET.code.toUpperCase()+'</b>':'Conectando con el anfitrión…');}
+function ocaPublic(){return{og:OCA.gid,orl:OCA.mine.slice(0,400),ores:OCA.res};}
+function ocaNetSync(){if(!OCA.net)return;const P=NET.opp;if(!NET.oppHere||!P||P.game!=='oca')return;const og=+P.og||0;
+  if(og>OCA.gid){OCA.gid=og;ocaStart(true);return;}
+  if(!OCA.st&&NET.role==='host'){ocaStart();return;}
+  if(P.ores&&P.ores===OCA.gid&&OCA.st&&OCA.st.phase==='play'){ocaWin(OCA.seat);return;}
+  ocaPump();}
+function ocaPump(){const st=OCA.st;if(!OCA.net||!st||st.phase!=='play'||OCA.busy||OCA.gap)return;const p=st.pl[st.cur];if(p.human||p.skip>0)return;
+  const P=NET.opp;if(!P||+P.og!==OCA.gid)return;const L=Array.isArray(P.orl)?P.orl:[];const v=+L[OCA.cnt[st.cur]];if(v>=1&&v<=6){OCA.cnt[st.cur]++;ocaRoll(v);}}
+function ocaStart(fromNet){if(OCA.net&&!fromNet){OCA.gid=Math.max(OCA.gid,+((NET.opp&&NET.opp.og)||0))+1;}
+  if(OCA.net){OCA.mine=[];OCA.cnt=[0,0];OCA.res=null;OCA.gap=false;}
+  ocaBuild();OCA.group.visible=true;for(const t of OCA.tokens)OCA.group.remove(t);OCA.tokens=[];
+  const n=OCA.net?2:Math.max(2,Math.min(4,+cfg.np||2)),local=cfg.mode==='pvp'&&!OCA.net;const used=new Set([cfg.me,cfg.rival]);const pool=Object.keys(AVATARS).filter(k=>!used.has(k));
   const pl=[];for(let i=0;i<n;i++){const av=i===0?cfg.me:i===1?cfg.rival:pool[(i-2)%pool.length];
     pl.push({name:i===0?(local?'Jugador 1':'Tú'):local?'Jugador '+(i+1):AVATARS[av].n,av,pos:0,skip:0,human:i===0||local,col:OCOL[i]});}
+  if(OCA.net){const hostAv=NET.role==='host'?cfg.me:NET.oppAv,guestAv=NET.role==='host'?NET.oppAv:cfg.me;pl.length=0;
+    for(let i=0;i<2;i++)pl.push({name:i===OCA.seat?'Tú':NET.oppNick,av:AVATARS[i?guestAv:hostAv]?(i?guestAv:hostAv):'boo',pos:0,skip:0,human:i===OCA.seat,col:OCOL[i]});}
   OCA.st={pl,cur:0,phase:'play',turns:0};OCA.busy=false;over=false;recorded=false;
   pl.forEach((p,i)=>{const t=new THREE.Group();const m=new THREE.MeshStandardMaterial({color:p.col,roughness:.35,metalness:.1});
     const base=new THREE.Mesh(new THREE.CylinderGeometry(.16,.2,.1,24),m);base.position.y=.05;const body=new THREE.Mesh(new THREE.ConeGeometry(.13,.36,20),m);body.position.y=.26;
     const head=new THREE.Mesh(new THREE.SphereGeometry(.1,16,12),m);head.position.y=.46;[base,body,head].forEach(o=>{o.castShadow=true;t.add(o);});
     const sp=ocaEmojiSprite(AVATARS[p.av].e);sp.position.y=.85;t.add(sp);const q=ocaCellPos(0,i);t.position.set(q.x,.11,q.z);OCA.group.add(t);OCA.tokens.push(t);});
-  placeAvatars();CAM.view='top';setCamSide('w',true);ocaMsg('¡Que empiece el viaje a Júpiter! 🪐');ocaRender();setTimeout(()=>ocaTurn(),800);}
+  placeAvatars();CAM.view='top';setCamSide('w',true);ocaMsg('¡Que empiece el viaje a Júpiter! 🪐');ocaRender();OCA.gap=true;setTimeout(()=>{OCA.gap=false;ocaTurn();},800);if(OCA.net&&NET.room)netPublish();}
 function ocaMsg(t){const m=$('ocaMsg');if(m)m.innerHTML=t;}
 function ocaTurn(){const st=OCA.st;if(!st||st.phase!=='play')return;const p=st.pl[st.cur];
-  if(p.skip>0){p.skip--;ocaMsg(`${AVATARS[p.av].e} <b>${p.name}</b> pierde este turno${p.skip?` (le faltan ${p.skip})`:''}`);ocaRender();setTimeout(()=>ocaNext(),1300);return;}
-  ocaRender();if(!p.human){mood('b','think',900);setTimeout(()=>ocaRoll(),1000);}else ocaMsg(`${AVATARS[p.av].e} Turno de <b>${p.name}</b>: ¡tira el dado!`);}
+  if(p.skip>0){p.skip--;ocaMsg(`${AVATARS[p.av].e} <b>${esc(p.name)}</b> pierde este turno${p.skip?` (le faltan ${p.skip})`:''}`);ocaRender();OCA.gap=true;setTimeout(()=>{OCA.gap=false;ocaNext();},1300);return;}
+  ocaRender();if(!p.human){if(OCA.net){ocaMsg(`${AVATARS[p.av].e} Turno de <b>${esc(p.name)}</b>…`);ocaPump();return;}mood('b','think',900);setTimeout(()=>ocaRoll(),1000);}else ocaMsg(`${AVATARS[p.av].e} ${p.name==='Tú'?'<b>Tu turno</b>':'Turno de <b>'+esc(p.name)+'</b>'}: ¡tira el dado!`);}
 function ocaNext(){const st=OCA.st;st.cur=(st.cur+1)%st.pl.length;ocaTurn();}
-async function ocaRoll(){const st=OCA.st;if(OCA.busy||!st||st.phase!=='play')return;OCA.busy=true;ocaRender();const p=st.pl[st.cur],k=st.cur;const v=1+Math.floor(Math.random()*6);st.turns++;
+async function ocaRoll(vf){const st=OCA.st;if(OCA.busy||!st||st.phase!=='play')return;const p=st.pl[st.cur],k=st.cur;if(OCA.net&&!vf&&(!p.human||OCA.gap))return;OCA.busy=true;ocaRender();const v=vf||1+Math.floor(Math.random()*6);st.turns++;
+  if(OCA.net&&!vf){OCA.mine.push(v);OCA.cnt[k]++;netPublish();}
   const D=OCA.dice;const sx=3.2+Math.random(),sz=(Math.random()-.5)*3;const r0=[Math.random()*6,Math.random()*6,Math.random()*6];const rf=DICE_ROT[v];
   if(cfg.sound){noise(.25,.25);}
   await tween(900,t=>{D.position.set(5.6+(sx-5.6)*t,.46+Math.sin(Math.PI*t)*2.2*(1-t*.3),2.5+(sz-2.5)*t);
@@ -2004,23 +2058,24 @@ async function ocaRoll(){const st=OCA.st;if(OCA.busy||!st||st.phase!=='play')ret
   else if(i===42){txt='🌀 El laberinto: regresas a la 30';await ocaJump(k,30);p.pos=30;}
   else if(i===58){txt='💀 ¡La calavera! Regresas al inicio';await ocaJump(k,1);p.pos=1;}
   if(txt){ocaMsg(`${AVATARS[p.av].e} <b>${p.name}</b>: ${txt}`);if(again)sweep('sine',600,1200,.25,.12);else sweep('sine',500,200,.4,.12);
-    if(!p.human)mood('b',again?'happy':'sad',1300);}
-  OCA.busy=false;ocaRender();setTimeout(()=>again?ocaTurn():ocaNext(),txt?1500:600);}
+    if(!p.human)mood('b',again?'happy':'sad',1300);voiceSide(p.human&&!local0()?'w':'b',again?'happy':'sad');}
+  OCA.busy=false;OCA.gap=true;ocaRender();setTimeout(()=>{OCA.gap=false;again?ocaTurn():ocaNext();},txt?1500:600);}
 async function ocaWalk(k,from,to,bounceAt){const T=OCA.tokens[k];const path=[];if(bounceAt!==null){for(let i=from+1;i<=bounceAt;i++)path.push(i);for(let i=bounceAt-1;i>=to;i--)path.push(i);}else for(let i=from+1;i<=to;i++)path.push(i);
   for(const i of path){const a={x:T.position.x,z:T.position.z},b=ocaCellPos(i,k);tone(500+i*6,.04,'triangle',.05);
     await tween(170,t=>T.position.set(a.x+(b.x-a.x)*t,.11+Math.sin(Math.PI*t)*.35,a.z+(b.z-a.z)*t),eio);}}
 async function ocaJump(k,to){const T=OCA.tokens[k];const a={x:T.position.x,z:T.position.z},b=ocaCellPos(to,k);sWhoosh();
   await tween(700,t=>{T.position.set(a.x+(b.x-a.x)*t,.11+Math.sin(Math.PI*t)*2,a.z+(b.z-a.z)*t);T.rotation.y=t*Math.PI*2;},eio);T.rotation.y=0;tween(300,k=>{const q=1+Math.sin(k*Math.PI)*.25*(1-k);T.scale.set(q,1/q,q);}).then(()=>T.scale.set(1,1,1));burst(b.x,b.z);}
-function ocaWin(k){const st=OCA.st,p=st.pl[k];st.phase='over';OCA.busy=false;over='fin';ocaRender();const q=ocaCellPos(63,k);burst(q.x,q.z);setTimeout(()=>burst(q.x+.3,q.z-.3),250);
-  const local=cfg.mode==='pvp';if(!local)recordOther('oca',k===0?'w':'l',st.turns);
-  if(k===0||local){mood('b',local?'happy':'sad');showEnd('🪐 ¡Llegó a Júpiter!',`${AVATARS[p.av].e} ${p.name} ${local?'gana':'ganaste'} el Juego de la Oca. 🏆`);}
+function local0(){return cfg.mode==='pvp'&&!OCA.net;}
+function ocaWin(k){const st=OCA.st,p=st.pl[k];if(st.phase==='over')return;st.phase='over';OCA.busy=false;over='fin';ocaRender();const q=ocaCellPos(63,k);burst(q.x,q.z);setTimeout(()=>burst(q.x+.3,q.z-.3),250);
+  const local=local0(),mine=OCA.net?k===OCA.seat:k===0;if(!local)recordOther('oca',mine?'w':'l',st.turns);
+  if(mine||local){mood('b',local?'happy':'sad');showEnd('🪐 ¡Llegó a Júpiter!',`${AVATARS[p.av].e} ${p.name} ${local?'gana':'ganaste'} el Juego de la Oca. 🏆`);}
   else{mood('b','happy');voiceSide('b','win');showEnd('🪐 Ganó '+p.name,`${AVATARS[p.av].e} ${p.name} llegó primero a la casilla 63.`);}}
 function ocaRender(){const st=OCA.st;if(!st||GAME!=='oca')return;const p=st.pl[st.cur];
   $('ocaPl').innerHTML=st.pl.map((q,i)=>`<div class="opl${i===st.cur&&st.phase==='play'?' on':''}" style="--pc:#${q.col.toString(16).padStart(6,'0')}">${AVATARS[q.av].e} ${esc(q.name)} <b>${q.pos}</b>${q.skip?` ⏸${q.skip}`:''}</div>`).join('');
   $('ocaAct').innerHTML=st.phase==='over'?'<button class="btn pri" id="ocaAgain">🪿 Otra partida</button>':p.human&&!OCA.busy?`<button class="btn pri big" id="ocaRollB">🎲 Tirar dado</button>`:`<span class="wait">${OCA.busy?'🎲 …':'⏳ Turno de '+esc(p.name)+'…'}</span>`;
   const bb=(id,f)=>{const e=$(id);if(e)e.onclick=f;};bb('ocaRollB',()=>ocaRoll());bb('ocaAgain',()=>{$('endModal').classList.remove('show');ocaStart();});renderHUD();}
-function ocaHUD(){const st=OCA.st;const p=st&&st.pl[st.cur];$('status').innerHTML=!st?'🪿 Juego de la Oca':st.phase==='over'?'🪿 Fin del juego':'🪿 Turno de '+esc(p.name);
-  $('rivalChip').innerHTML=st?st.pl.map(q=>AVATARS[q.av].e).join(' vs '):'2 a 4 jugadores';
+function ocaHUD(){const st=OCA.st;const p=st&&st.pl[st.cur];$('status').innerHTML=!st?'🪿 Juego de la Oca':st.phase==='over'?'🪿 Fin del juego':(p.name==='Tú'?'🪿 Tu turno':'🪿 Turno de '+esc(p.name));
+  $('rivalChip').innerHTML=st?st.pl.map(q=>AVATARS[q.av].e+(q.name==='Tú'?' Tú':st.pl.length===2?' '+esc(q.name):'')).join(' vs '):'2 a 4 jugadores';
   $('caps').innerHTML=`<small style="letter-spacing:0;font-size:11px;opacity:.85">Llega exacto a la 63 · 🪿 oca = brincas y tiras otra vez</small>`;$('clocks').style.display='none';}
 function ocaReset(){OCA.st=null;if(OCA.group){for(const t of OCA.tokens)OCA.group.remove(t);OCA.tokens=[];}$('ocaPl').innerHTML='';$('ocaAct').innerHTML='';ocaMsg('Toca <b>✨ Nueva → ¡A jugar!</b> para empezar');}
 /* =================== LOTERÍA MEXICANA =================== */
@@ -2151,6 +2206,7 @@ const HELP={
   <li>🏨 Posada: pierdes 1 turno. 🕳️ Pozo y ⛓️ cárcel: pierdes 2.</li><li>🌀 Laberinto: regresas a la 30. 💀 Calavera: regresas al inicio.</li></ul>`],
  loteria:['🎴 Lotería',`<ul><li>El gritón canta cartas al azar.</li><li>Si la carta está en tu tabla, <b>tócala</b> para ponerle un frijolito (o activa "Marcar solo").</li>
   <li>Cuando completes la figura (tabla llena, línea o 4 esquinas), grita <b>¡LOTERÍA!</b> antes que los demás.</li></ul><p>🌐 En línea, el que crea la sala es el gritón y pueden entrar varios amigos.</p>`]};
+HELP.oca[1]+='<p>🌐 También en línea: cada quien tira el dado desde su teléfono.</p>';
 function showHelp(g){const h=HELP[g||GAME]||HELP.chess;$('helpTitle').textContent=h[0];$('helpBody').innerHTML=h[1];$('helpModal').classList.add('show');$('flagTray').classList.remove('show');}
 /* ---- Conquián en línea (el anfitrión reparte y valida) ---- */
 Object.assign(CQ,{net:false,guest:false,act:null,actN:0,sid:'',seenSid:null,seenAct:0,deal:0,seenDeal:-1,winner:null,shownOver:-1,prevOppM:0});
@@ -2194,7 +2250,7 @@ const GAMES_INFO={chess:{},damas:{},
   conquian:{ov:'cq',start:()=>CQ.net?(CQ.guest?cqGuestAct({t:'rematch'}):cqStart()):cqStart(),hud:()=>cqHUD(),reset:()=>{CQ.st=null;['cqOpp','cqMid','cqMine','cqHand','cqAct'].forEach(i=>$(i).innerHTML='');cqMsg('Toca <b>✨ Nueva → ¡A jugar!</b> para repartir');},
     resign:()=>{if(CQ.st&&!CQ.guest)cqEnd('ai','ganó porque te rendiste');},net:true,netInit:()=>cqNetInit(),netSync:()=>cqNetSync()},
   domino:{ov:'dmo',start:()=>{if(DMO.net&&DMO.guest){DMO.actN++;DMO.act={n:DMO.actN,sid:DMO.sid,t:'again'};netPublish();toast('Pediste otra mano');return;}dmoStart();},hud:dmoHUD,reset:dmoReset,resign:()=>{if(DMO.st&&DMO.st.phase==='play'&&!DMO.guest)dmoEnd('B','rendición');},net:true,netInit:()=>dmoNetInit(),netSync:()=>dmoNetSync()},
-  oca:{ov:'ocaUI',start:ocaStart,hud:ocaHUD,reset:ocaReset,resign:()=>{if(OCA.st&&OCA.st.phase==='play')ocaWin(1);}},
+  oca:{ov:'ocaUI',start:()=>ocaStart(),hud:ocaHUD,reset:ocaReset,net:true,netInit:ocaNetInit,netSync:ocaNetSync,resign:()=>{if(OCA.st&&OCA.st.phase==='play'){if(OCA.net){OCA.res=OCA.gid;netPublish();ocaWin(1-OCA.seat);}else ocaWin(1);}}},
   loteria:{ov:'lot',net:true,netInit:()=>lotNetInit(),netSync:()=>lotNetSync(),start:lotStart,hud:lotHUD,reset:lotReset,resign:()=>{const st=LOT.st;if(st&&st.phase==='play'){st.phase='over';lotStop();over='fin';recordOther('loteria','l',st.i);lotRender();showEnd('🎴 Te retiraste','La próxima seguro llenas tu tabla.');}}}};
 const GI=()=>GAMES_INFO[GAME]||GAMES_INFO.chess;
 const isCard=()=>!!GI().ov;
@@ -2218,7 +2274,7 @@ function switchGame(g,silent){if(!GAMES_INFO[g])g='chess';const was=GAME;
   if(ov){for(const gg of pieceObjs.values())scene.remove(gg);pieceObjs.clear();clockReset(0);}
   if(!silent&&was!==g){if(ov){if(info.reset)info.reset();}else{exitModes();resetBoard();setCamSide(isAI()?human():'w');}}
   fillAvatars();renderFabs();renderHUD();}
-document.querySelectorAll('#gsel button').forEach(b=>b.onclick=()=>{if(NET.active)netLeave(true);switchGame(b.dataset.g);});
+document.querySelectorAll('#gsel button').forEach(b=>b.onclick=()=>{if(NET.active&&netPick(b.dataset.g))return;switchGame(b.dataset.g);});
 
 /* =================== INSTALAR COMO APP =================== */
 let instEvt=null;const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
