@@ -1732,15 +1732,22 @@ function cqPass(who){if(CQ.guest&&who==='me'){cqGuestAct({t:'pass'});return;}con
   if(a.flip===who){a.to=otherP(who);cqMsg(who==='me'?`Pasaste. Ahora ${rivalName()} puede usar <b>${cqName(a.card)}</b>`:`${rivalName()} no la quiso. ¿Usas <b>${cqName(a.card)}</b>?`);cqRender();if(a.to==='ai')cqAI();return;}
   st.dead.push(a.card);st.active=null;cqRender();setTimeout(()=>cqFlip(who),550);}
 // usa la carta activa: con cartas de la mano (nueva) o agregándola a un juego propio (idx)
+function cqPartition(pool){const memo=new Map();
+  const rec=rem=>{if(!rem.length)return[];const key=rem.join(',');if(memo.has(key))return memo.get(key);const f=rem[0],rest=rem.slice(1);let res=null;
+    for(let k=2;k<=rest.length&&!res;k++)for(const cb of combos(rest,k)){const m=[f].concat(cb);if(!cqValid(m))continue;const r=rec(rest.filter(x=>!cb.includes(x)));if(r){res=[m].concat(r);break;}}
+    memo.set(key,res);return res;};return rec(pool.slice().sort());}
+function cqRearr(who,cards){const st=CQ.st;const part=cqPartition(st.melds[who].flat().concat(cards));if(!part)return false;st.melds[who]=part.map(sortMeld);return true;}
 function cqTake(who,handCards,idx){const st=CQ.st,a=st.active;const cards=handCards.concat(a.card);
-  if(idx>=0){const nm=st.melds[who][idx].concat(cards);if(!cqValid(nm))return false;st.melds[who][idx]=sortMeld(nm);}
+  if(idx===-2){if(!cqRearr(who,cards))return false;}
+  else if(idx>=0){const nm=st.melds[who][idx].concat(cards);if(!cqValid(nm))return false;st.melds[who][idx]=sortMeld(nm);}
   else{if(!cqValid(cards))return false;st.melds[who].push(sortMeld(cards));}
   st.hand[who]=st.hand[who].filter(c=>!handCards.includes(c));st.active=null;st.phase='discard';st.turn=who;CQ.last=a.card;placeSnd();
   mood(who==='me'?'b':'b',who==='me'?'shock':'happy',1200);if(who==='ai')voiceSide('b','happy');
   if(!st.hand[who].length){cqEnd(who,'bajó sus 9 cartas');return true;}
   cqRender();return true;}
 function cqMeld(who,handCards,idx){const st=CQ.st;
-  if(idx>=0){const nm=st.melds[who][idx].concat(handCards);if(!cqValid(nm))return false;st.melds[who][idx]=sortMeld(nm);}
+  if(idx===-2){if(!cqRearr(who,handCards))return false;}
+  else if(idx>=0){const nm=st.melds[who][idx].concat(handCards);if(!cqValid(nm))return false;st.melds[who][idx]=sortMeld(nm);}
   else{if(!cqValid(handCards))return false;st.melds[who].push(sortMeld(handCards));}
   st.hand[who]=st.hand[who].filter(c=>!handCards.includes(c));placeSnd();
   if(!st.hand[who].length){cqEnd(who,'bajó sus 9 cartas');return true;}cqRender();return true;}
@@ -1768,6 +1775,8 @@ function cqOptions(hand,melds,c){const opts=[];
   const suit=hand.filter(x=>cS(x)===cS(c)).sort((a,b)=>cI(a)-cI(b));
   for(let i=0;i<suit.length;i++)for(let j=i;j<suit.length;j++){const cb=suit.slice(i,j+1);if(cb.length>=2&&cqValid(cb.concat(c)))opts.push({hand:cb,idx:-1,score:cb.length+.6});}
   melds.forEach((m,i)=>{for(const x of hand){if(cqValid(m.concat(c,x)))opts.push({hand:[x],idx:i,score:2.2});}});
+  if(!opts.length&&melds.length){const fl=melds.flat();if(cqPartition(fl.concat(c)))opts.push({hand:[],idx:-2,score:1.4});
+    else for(const x of hand)if(cqPartition(fl.concat(c,x))){opts.push({hand:[x],idx:-2,score:2});break;}}
   return opts.sort((a,b)=>b.score-a.score);}
 function handMelds(hand){for(const k of[4,3])for(const cb of combos(hand,k))if(cqValid(cb))return cb;
   for(let k=5;k<=hand.length;k++)for(const cb of combos(hand,k))if(cqValid(cb))return cb;return null;}
@@ -1786,14 +1795,17 @@ function cqAI(){if(CQ.net)return;const st=CQ.st;if(!st.active||st.active.to!=='a
 /* ---- acciones del jugador ---- */
 function cqUse(){const st=CQ.st;if(!st||CQ.busy||!st.active||st.active.to!=='me')return;const sel=[...CQ.sel];
   if(CQ.guest){let idx=null;if(sel.length&&cqValid(sel.concat(st.active.card)))idx=-1;else for(let i=0;i<st.melds.me.length;i++)if(cqValid(st.melds.me[i].concat(sel,st.active.card))){idx=i;break;}
+    if(idx===null&&cqPartition(st.melds.me.flat().concat(sel,st.active.card)))idx=-2;
     if(idx===null){toast('Esa no forma juego: 3 o 4 del mismo número, o escalera del mismo palo');return;}cqGuestAct({t:'use',cards:sel,idx});return;}
   let ok=false;if(sel.length&&cqValid(sel.concat(st.active.card)))ok=cqTake('me',sel,-1);
   if(!ok)for(let i=0;i<st.melds.me.length&&!ok;i++)if(cqValid(st.melds.me[i].concat(sel,st.active.card)))ok=cqTake('me',sel,i);
+  if(!ok&&st.melds.me.length){ok=cqTake('me',sel,-2);if(ok&&st.phase!=='over')toast('🔀 Acomodé tus juegos para que quepa');}
   if(!ok){toast('Esa no forma juego: 3 o 4 del mismo número, o escalera del mismo palo');return;}
   CQ.sel.clear();if(st.phase!=='over'){cqMsg('¡Bien! Baja más juegos o <b>tira una carta</b>');cqRender();}}
 function cqLay(){const st=CQ.st;if(!st||st.phase!=='discard'||st.turn!=='me')return;const sel=[...CQ.sel];if(!sel.length){toast('Selecciona cartas de tu mano');return;}
-  if(CQ.guest){let idx=null;if(cqValid(sel))idx=-1;else for(let i=0;i<st.melds.me.length;i++)if(cqValid(st.melds.me[i].concat(sel))){idx=i;break;}if(idx===null){toast('Esas cartas no forman juego');return;}cqGuestAct({t:'lay',cards:sel,idx});return;}
+  if(CQ.guest){let idx=null;if(cqValid(sel))idx=-1;else for(let i=0;i<st.melds.me.length;i++)if(cqValid(st.melds.me[i].concat(sel))){idx=i;break;}if(idx===null&&cqPartition(st.melds.me.flat().concat(sel)))idx=-2;if(idx===null){toast('Esas cartas no forman juego');return;}cqGuestAct({t:'lay',cards:sel,idx});return;}
   let ok=cqValid(sel)&&cqMeld('me',sel,-1);for(let i=0;i<st.melds.me.length&&!ok;i++)if(cqValid(st.melds.me[i].concat(sel)))ok=cqMeld('me',sel,i);
+  if(!ok&&st.melds.me.length){ok=cqMeld('me',sel,-2);if(ok&&st.phase!=='over')toast('🔀 Acomodé tus juegos para que quepa');}
   if(!ok){toast('Esas cartas no forman juego');return;}CQ.sel.clear();if(st.phase!=='over')cqRender();}
 function cqThrow(){const st=CQ.st;if(st.phase!=='discard'||st.turn!=='me')return;if(CQ.sel.size!==1){toast('Selecciona 1 carta para tirar');return;}
   const c=[...CQ.sel][0];CQ.sel.clear();if(CQ.guest){cqGuestAct({t:'throw',card:c});return;}cqDiscard('me',c);}
