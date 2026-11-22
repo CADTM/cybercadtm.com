@@ -994,7 +994,12 @@ const REC={mr:null};
 async function recToggle(k,kind){if(REC.mr){try{REC.mr.stop();}catch(_){}return;}
   if(((CL.m[k]||{})[kind]||[]).length>=5){toast('Máximo 5 grabaciones por momento');return;}
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){toast('🎙️ Este navegador no deja grabar aquí');return;}
-  let st;try{st=await navigator.mediaDevices.getUserMedia({audio:true});}catch(e){let fr=false;try{fr=window.top!==window.self;}catch(_){fr=true;}toast('🎙️ Necesito permiso del micrófono'+(fr?'. Ábrelo en cybercadtm.com/jupijedrez para grabar':''));return;}
+  let st;try{st=await navigator.mediaDevices.getUserMedia({audio:true});}catch(e){let fr=false;try{fr=window.top!==window.self;}catch(_){fr=true;}const n=e&&e.name||'';
+    if(fr)toast('🎙️ Aquí dentro no se puede grabar. Ábrelo en cybercadtm.com/jupijedrez');
+    else if(n==='NotReadableError'||n==='AbortError'||n==='TrackStartError')ask('🎙️ El micrófono está ocupado','Otra app lo está usando. Si estás en una llamada, cuelga y vuelve a intentar. También cierra apps de grabación o de voz.');
+    else if(n==='NotFoundError'||n==='DevicesNotFoundError')toast('🎙️ No encontré micrófono en este aparato');
+    else ask('🎙️ Falta el permiso del micrófono','En Chrome: toca los 3 puntitos ⋮ → Configuración → Configuración de sitios → Micrófono → cybercadtm.com → Permitir. Si instalaste la app: mantén presionado el ícono → Información de la app → Más ajustes en el sitio web (o Permisos) → Micrófono → Permitir. Revisa también que Chrome tenga permiso de micrófono en los Ajustes de Android.');
+    return;}
   const ch=[];let mr;try{mr=new MediaRecorder(st);}catch(e){st.getTracks().forEach(t=>t.stop());toast('🎙️ No se pudo grabar');return;}
   REC.mr=mr;REC.k=k;REC.kind=kind;mr.ondataavailable=e=>{if(e.data&&e.data.size)ch.push(e.data);};
   mr.onstop=()=>{st.getTracks().forEach(t=>t.stop());clearTimeout(REC.timer);REC.mr=null;const b=new Blob(ch,{type:mr.mimeType||'audio/webm'});
