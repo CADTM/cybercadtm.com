@@ -240,7 +240,7 @@ body.cqmode #rxTray,body.cqmode #flagTray{bottom:auto;top:148px}
 <!-- Avatares / partida -->
 <div class="sheet" id="sheetAv">
   <div class="logo">🪐 Jupi<span>jedrez</span></div>
-  <div class="gsel" id="gsel"><button data-g="chess"><span>♞</span>Ajedrez<small>3D clásico</small></button><button data-g="damas"><span>⛀</span>Damas<small>españolas</small></button><button data-g="conquian"><span>🃏</span>Conquián<small>baraja española</small></button><button data-g="domino"><span>🁫</span>Dominó<small>doble 6</small></button><button data-g="oca"><span>🪿</span>La Oca<small>2 a 4 jugadores</small></button><button data-g="loteria"><span>🎴</span>Lotería<small>mexicana</small></button></div>
+  <div class="gsel" id="gsel"><button data-g="chess"><span>♞</span>Ajedrez<small>3D clásico</small></button><button data-g="damas"><span>⛀</span>Damas<small>españolas</small></button><button data-g="conquian"><span>🃏</span>Conquián<small>baraja española</small></button><button data-g="domino"><span>🁫</span>Dominó<small>doble 6</small></button><button data-g="oca"><span>🪿</span>La Oca<small>2 a 4 jugadores</small></button><button data-g="loteria"><span>🎴</span>Lotería<small>mexicana</small></button><button data-g="snakes"><span>🐍</span>Serpientes<small>y escaleras</small></button></div>
   <div class="row" style="margin:6px 0 4px"><button class="btn" id="bHelp">❓ Cómo se juega</button><button class="btn pri" id="bDaily" style="font-size:14px;padding:9px 12px">📅 Misión del día</button><button class="btn" id="bPuzMenu">🧩 Retos de mate</button><button class="btn" id="bStatsMenu">🏆 Mis récords</button></div>
   <h2>Elige avatares</h2>
   <div class="row">
@@ -1260,10 +1260,10 @@ function fillAvatars(){for(const[gid,key]of[['avMe','me'],['avRival','rival']]){
     d.innerHTML=`<div class="e">${A.e}</div><div class="n">${A.n}</div><div class="d">${A.d}</div>`;
     d.onclick=()=>{cfg[key]=k;save();fillAvatars();placeAvatars();renderHUD();const s=sideAvatars();
       const side=Object.keys(s).find(x=>s[x]===k&&((key==='me')===(isAI()?x===human():x==='w')))||'b';mood(side,'happy',1200);};box.appendChild(d);}}
-  const pvp=(GAME==='chess'||GAME==='damas'||GAME==='oca')&&cfg.mode==='pvp';$('lblMe').textContent=pvp?'Jugador 1 · blancas (lo verá el jugador 2)':'Tu avatar (lo verá tu rival)';
+  const pvp=(GAME==='chess'||GAME==='damas'||ocaLike())&&cfg.mode==='pvp';$('lblMe').textContent=pvp?'Jugador 1 · blancas (lo verá el jugador 2)':'Tu avatar (lo verá tu rival)';
   $('lblRival').textContent=pvp?'Jugador 2 · negras (lo verá el jugador 1)':'Avatar de la IA (lo verás tú)';
-  const bd=GAME==='chess'||GAME==='damas';$('level').style.display=pvp||GAME==='oca'?'none':'';$('side').style.display=pvp||!bd?'none':'';$('mode').style.display=bd||GAME==='oca'?'':'none';$('tc').style.display=bd?'':'none';
-  $('np').style.display=GAME==='oca'||GAME==='loteria'?'':'none';{const bt=GAME==='domino'||GAME==='conquian';$('bet').style.display=bt?'':'none';$('chipBal').style.display=bt?'':'none';chipFix();chipBalUI();}$('dmode').style.display=GAME==='domino'?'':'none';for(const id of['lpat','lspd','lautoL'])$(id).style.display=GAME==='loteria'?'':'none';}
+  const bd=GAME==='chess'||GAME==='damas';$('level').style.display=pvp||ocaLike()?'none':'';$('side').style.display=pvp||!bd?'none':'';$('mode').style.display=bd||ocaLike()?'':'none';$('tc').style.display=bd?'':'none';
+  $('np').style.display=ocaLike()||GAME==='loteria'?'':'none';{const bt=GAME==='domino'||GAME==='conquian';$('bet').style.display=bt?'':'none';$('chipBal').style.display=bt?'':'none';chipFix();chipBalUI();}$('dmode').style.display=GAME==='domino'?'':'none';for(const id of['lpat','lspd','lautoL'])$(id).style.display=GAME==='loteria'?'':'none';}
 function fillTune(){for(const s of['w','b']){const box=$('sw'+s.toUpperCase());box.innerHTML='';
     for(const c of SW){const d=document.createElement('div');d.className='sw'+(cfg[s+'Color']===c?' on':'');d.style.background=c;d.onclick=()=>{cfg[s+'Color']=c;save();buildMats();fillTune();};box.appendChild(d);}
     const ip=document.createElement('input');ip.type='color';ip.value=cfg[s+'Color'];ip.oninput=()=>{cfg[s+'Color']=ip.value;save();buildMats();};box.appendChild(ip);
@@ -1397,7 +1397,7 @@ const sqOf=t=>(8-+t[1])*8+FILES.indexOf(t[0]);
 function findMove(u,st){st=st||S;if(isDam(st))return DM.find(u,st);if(!/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(u))return null;const f=sqOf(u.slice(0,2)),t=sqOf(u.slice(2,4));const pc=st.b[f];if(!pc||pc.c!==st.turn)return null;
   const m=legalFrom(st,f).find(x=>x.to===t);if(!m)return null;return m.promo?Object.assign({},m,{promo:u[4]||'q'}):m;}
 function netPublish(){if(!NET.room)return;{const a=myAvcStr();if(NET.avcS!==a){NET.avcS=a;NET.room.presence({avc:a?JSON.parse(a):null}).catch(()=>{});}const x=myVxStr();if(NET.vxS!==x){NET.vxS=x;NET.room.presence({vx:x?JSON.parse(x):null}).catch(()=>{});}netShareClips();}
-  if(GAME==='oca'){NET.room.presence(Object.assign({v:1,game:'oca',role:NET.role,color:null,av:cfg.me,nick:(cfg.nick||'Jugador').slice(0,16),gid:NET.gid,moves:''},ocaPublic())).catch(()=>{});return;}
+  if(ocaLike()){NET.room.presence(Object.assign({v:1,game:GAME,role:NET.role,color:null,av:cfg.me,nick:(cfg.nick||'Jugador').slice(0,16),gid:NET.gid,moves:''},ocaPublic())).catch(()=>{});return;}
   if(GAME==='domino'||GAME==='loteria'){const base={v:1,game:GAME,role:NET.role,color:null,av:cfg.me,nick:(cfg.nick||'Jugador').slice(0,16),gid:NET.gid,moves:''};
     if(GAME==='domino')Object.assign(base,{dm:NET.role==='host'?dmoPublic():null,dma:NET.role==='guest'?DMO.act:null});
     else Object.assign(base,{lot:NET.role==='host'?lotPublic():null,lneed:lotMyNeed(),lc:NET.role==='guest'?LOT.claim:null});
@@ -1415,7 +1415,7 @@ function onGamePeers(peers){const others=peers.filter(p=>!p.sameTab&&p.presence&
   const want=NET.role==='host'?'guest':'host';const op=others.find(p=>p.presence.role===want);
   if(op&&NET.role==='guest'){const gs=op.presence.gs;const gn=gs&&typeof gs.n==='number'?gs.n:0;if(NET.gsSeen===null)NET.gsSeen=gn;else if(gn!==NET.gsSeen){NET.gsSeen=gn;if(gs&&GAMES_INFO[gs.g]&&gs.g!==GAME){netFollow(gs.g);toast('🎮 '+NET.oppNick+' cambió a '+GNAME[gs.g]);}}}
   if(op&&NET.role==='host'){const gq=op.presence.gq;const qn=gq&&typeof gq.n==='number'?gq.n:0;if(NET.gqSeen===null)NET.gqSeen=qn;else if(qn!==NET.gqSeen){NET.gqSeen=qn;if(gq&&GAMES_INFO[gq.g]&&gq.g!==GAME){netGo(gq.g);toast('🎮 '+NET.oppNick+' eligió '+GNAME[gq.g]);}}}
-  if(NET.role==='guest'&&op&&['conquian','domino','loteria','oca'].includes(op.presence.game)&&GAME!==op.presence.game){switchGame(op.presence.game,true);GI().netInit();netPublish();}
+  if(NET.role==='guest'&&op&&['conquian','domino','loteria','oca','snakes'].includes(op.presence.game)&&GAME!==op.presence.game){switchGame(op.presence.game,true);GI().netInit();netPublish();}
   if(NET.role==='guest'&&op&&(op.presence.game==='chess'||op.presence.game==='damas')&&op.presence.game!==GAME&&!uci.length){if(isCard())netCardOff();switchGame(op.presence.game,true);resetBoard();toast(op.presence.game==='damas'?'⛀ Partida de damas':'♟ Partida de ajedrez');}
   if(NET.role==='guest'&&op&&(op.presence.color==='w'||op.presence.color==='b')){const c=opp(op.presence.color);if(c!==NET.myColor){NET.myColor=c;placeAvatars();setCamSide(c);render();}}
   if(NET.role==='guest'&&op&&[0,1,3,5,10].includes(+op.presence.tc)&&+op.presence.tc!==NET.tc&&!uci.length){NET.tc=+op.presence.tc;clockReset(NET.tc);}
@@ -1445,7 +1445,7 @@ async function netJoin(code,role,color){if(!NET.ns){toast('En línea no disponib
   NET.unsubs.push(room.onPeers(ch=>onGamePeers(ch.peers)));
   netPublish();renderHUD();renderNet();openSheet(null);toast(role==='host'?'Partida creada: '+code.toUpperCase():'Entrando a '+code.toUpperCase()+'…');}
 function netCardOff(){cqNetOff();DMO.net=DMO.guest=false;LOT.net=LOT.guest=false;OCA.net=false;}
-const GNAME={chess:'♞ Ajedrez',damas:'⛀ Damas',conquian:'🃏 Conquián',domino:'🁫 Dominó',oca:'🪿 Oca',loteria:'🎴 Lotería'};
+const GNAME={chess:'♞ Ajedrez',damas:'⛀ Damas',conquian:'🃏 Conquián',domino:'🁫 Dominó',oca:'🪿 Oca',snakes:'🐍 Serpientes y escaleras',loteria:'🎴 Lotería'};
 function netEnter(g){if(isCard())netCardOff();try{exitModes();}catch(_){}$('endModal').classList.remove('show');switchGame(g,true);
   if(isCard()){if(GI().net)GI().netInit();setCamSide('w',true);}else{resetBoard();setCamSide(NET.myColor,true);}placeAvatars();}
 function netGo(g){if(!NET.active||NET.role!=='host'||!GAMES_INFO[g])return;NET.gsN=(NET.gsN||0)+1;if(!GAMES_INFO[g].ov)NET.gid++;netEnter(g);
@@ -1562,7 +1562,7 @@ function h2hAdd(g){try{if(!ST.h2h||typeof ST.h2h!=='object')ST.h2h={};const me=A
   const lead=E.wa===E.wb?'¡Van empatados!':(E.wa>E.wb?E.a.n:E.b.n)+' va ganando';
   const stk=Math.abs(E.st)>=2?` · ${E.st>0?E.a.n:E.b.n} lleva 🔥${Math.abs(E.st)} seguidas`:'';
   H2H.last={t:Date.now(),txt:`🆚 ${E.a.e} ${E.a.n} ${E.wa} – ${E.wb} ${E.b.n} ${E.b.e} · ${lead}${stk}`};}catch(e){}}
-const GICON={chess:'♞',damas:'⛀',conquian:'🃏',domino:'🁫',oca:'🪿',loteria:'🎴'};
+const GICON={chess:'♞',damas:'⛀',conquian:'🃏',domino:'🁫',oca:'🪿',snakes:'🐍',loteria:'🎴'};
 function h2hHTML(){const L=Object.values(ST.h2h||{}).filter(e=>e&&e.a&&e.b).sort((x,y)=>(y.t||0)-(x.t||0));
   if(!L.length)return '<div style="opacity:.6;font-size:13px">Juega contra alguien y aquí verás quién va ganando.</div>';
   return L.slice(0,10).map(E=>{const tot=E.wa+E.wb;const pc=tot?Math.round(E.wa/tot*100):50;
@@ -1577,7 +1577,7 @@ function chipLock(g){chipFix();const bet=Math.min(+cfg.bet||0,ST.chips);CHIP.g=b
 function chipSettle(g){if(!CHIP.g||CHIP.g!==g.game||!CHIP.cur)return;const d=g.res==='w'?CHIP.cur:g.res==='l'?-CHIP.cur:0;ST.chips=Math.max(0,ST.chips+d);g.chips=d;
   CHIP.last={t:Date.now(),txt:d>0?`🪙 +${d} fichas · ahora tienes ${ST.chips}`:d<0?`🪙 −${-d} fichas · te quedan ${ST.chips}`:`🪙 Empate: recuperas tu apuesta (${ST.chips})`};CHIP.g=null;chipBalUI();}
 function rateLine(){if(lastDelta===null)return '';const t=titleOf(ST.rating);return `${t[2]} ${t[1]} · ${ST.rating} pts (${lastDelta>=0?'+':''}${lastDelta})`;}
-const MODE_TXT={domino1:'Dominó fácil',domino2:'Dominó medio',domino3:'Dominó difícil',oca1:'Oca',oca2:'Oca',oca3:'Oca',loteria1:'Lotería',loteria2:'Lotería',loteria3:'Lotería',ai1:'IA fácil',ai2:'IA media',ai3:'IA difícil',pvp:'2 jugadores',net:'En línea',cq1:'Conquián fácil',cq2:'Conquián medio',cq3:'Conquián difícil'};
+const MODE_TXT={domino1:'Dominó fácil',domino2:'Dominó medio',domino3:'Dominó difícil',oca1:'Oca',oca2:'Oca',oca3:'Oca',snakes1:'Serpientes',snakes2:'Serpientes',snakes3:'Serpientes',loteria1:'Lotería',loteria2:'Lotería',loteria3:'Lotería',ai1:'IA fácil',ai2:'IA media',ai3:'IA difícil',pvp:'2 jugadores',net:'En línea',cq1:'Conquián fácil',cq2:'Conquián medio',cq3:'Conquián difícil'};
 function renderStats(){const t=titleOf(ST.rating),ix=TITLES.indexOf(t),nx=TITLES[ix+1];
   const pct=nx?Math.round((ST.rating-t[0])/(nx[0]-t[0])*100):100;const solved=Object.keys(ST.solved).length;
   let h=`<div class="stTop"><div class="stBadge">${t[2]}</div><div style="flex:1"><div style="font-weight:800;font-size:18px">${t[1]}</div><div style="font-size:13px;opacity:.8">${ST.rating} puntos${nx?` · faltan ${nx[0]-ST.rating} para ${nx[2]} ${nx[1]}`:' · ¡nivel máximo!'}</div><div class="prog"><i style="width:${Math.max(3,Math.min(100,pct))}%"></i></div></div></div>
@@ -1586,7 +1586,7 @@ function renderStats(){const t=titleOf(ST.rating),ix=TITLES.indexOf(t),nx=TITLES
   <h3>🆚 Cara a cara</h3>${h2hHTML()}<div style="margin:8px 0 2px;font-weight:800;color:#ffcc4d">🪙 Fichas: ${ST.chips}</div>
   <h3>Últimas partidas</h3>`;
   if(!ST.games.length)h+='<div style="opacity:.6;font-size:13px">Aún no hay partidas. ¡A jugar!</div>';
-  ST.games.forEach((g,i)=>{const A=AVATARS[g.av]||AVATARS.boo;const gi={damas:'⛀',conquian:'🃏',domino:'🁫',oca:'🪿',loteria:'🎴'}[g.game]||'♟';const ic=g.mode==='pvp'?(g.res==='d'?'🤝':g.res==='w'?'⚪':'⚫'):g.res==='w'?'🏆':g.res==='l'?'💀':'🤝';
+  ST.games.forEach((g,i)=>{const A=AVATARS[g.av]||AVATARS.boo;const gi={damas:'⛀',conquian:'🃏',domino:'🁫',oca:'🪿',snakes:'🐍',loteria:'🎴'}[g.game]||'♟';const ic=g.mode==='pvp'?(g.res==='d'?'🤝':g.res==='w'?'⚪':'⚫'):g.res==='w'?'🏆':g.res==='l'?'💀':'🤝';
     const dt=new Date(g.d);const when=dt.toLocaleDateString('es-MX',{day:'numeric',month:'short'})+' '+dt.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
     h+=`<div class="gRow"><span class="r">${ic}</span><div class="i">${gi} ${A.e} vs ${esc(g.vs)}${g.delta!=null?` <b style="color:${g.delta>=0?'#58d68d':'#ff6b6b'}">${g.delta>=0?'+':''}${g.delta}</b>`:''}<small>${MODE_TXT[g.mode]||''} · ${g.n} jugadas · ${when}</small></div>${g.game==="conquian"?"":`<button data-rp="${i}">▶</button><button data-cp="${i}">📋</button>`}</div>`;});
   if(ST.games.length)h+='<div class="row" style="justify-content:center;margin-top:8px"><button class="btn" id="stClear" style="font-size:12px">Borrar historial</button></div>';
@@ -1983,7 +1983,52 @@ function ocaSpiral(){const out=[];let top=0,bot=7,left=0,right=7;
     for(let c=right;c>=left&&out.length<64;c--)out.push(top*8+c);top++;
     for(let r=top;r<=bot&&out.length<64;r++)out.push(r*8+left);left++;}
   return out;}
-function ocaBuild(){if(OCA.group)return;OCA.cells=ocaSpiral();const g=new THREE.Group();
+function ocaLike(g){g=g||GAME;return g==='oca'||g==='snakes';}
+function ocaVar(){return GAME==='snakes'?'snk':'oca';}
+function ocaShowGroups(g){for(const[k,gr]of Object.entries(OCA.groups||{}))gr.visible=ocaLike(g)&&k===(g==='snakes'?'snk':'oca');}
+/* ---- Serpientes y escaleras ---- */
+const SNL={1:38,4:14,9:31,21:42,28:84,36:44,51:67,71:91,80:100,16:6,47:26,49:11,56:53,62:19,64:60,87:24,93:73,95:75,98:78};
+const SNK={curves:{}};
+function snkXZ(i){if(i<=0)return{x:-4.45,z:3.6};const r=Math.floor((i-1)/10),c0=(i-1)%10,c=r%2?9-c0:c0;return{x:-3.6+c*.8,z:3.6-r*.8};}
+function ocaDice(g){const faceTex=n=>{const c=document.createElement('canvas');c.width=c.height=128;const y=c.getContext('2d');y.fillStyle='#fffaf0';y.fillRect(0,0,128,128);y.strokeStyle='#e0c9a0';y.lineWidth=8;y.strokeRect(4,4,120,120);
+    y.fillStyle=n===1?'#d6211f':'#1a1a1f';const P=[[64,64],[32,32],[96,96],[96,32],[32,96],[32,64],[96,64]];const L={1:[0],2:[1,2],3:[1,0,2],4:[1,2,3,4],5:[1,2,3,4,0],6:[1,2,3,4,5,6]}[n];
+    for(const k of L){y.beginPath();y.arc(P[k][0],P[k][1],n===1?18:12,0,7);y.fill();}return new THREE.CanvasTexture(c);};
+  const vals=[3,4,1,6,2,5];const dice=new THREE.Mesh(new THREE.BoxGeometry(.7,.7,.7),vals.map(v=>new THREE.MeshStandardMaterial({map:faceTex(v),roughness:.4})));dice.castShadow=true;dice.position.set(5.2,.46,2.5);g.add(dice);return dice;}
+function snkBuild(){const g=new THREE.Group();const cv=document.createElement('canvas');cv.width=cv.height=1000;const x=cv.getContext('2d');const cs=100;
+  x.fillStyle='#2a1a3a';x.fillRect(0,0,1000,1000);const band=['#f6e2c0','#e9b98a','#f3d3a8','#d9956a','#f8e8cf','#e4a97c','#f1cfa0','#d48c5e','#f7e4c4','#e8b386'];
+  for(let i=1;i<=100;i++){const r=Math.floor((i-1)/10),c0=(i-1)%10,c=r%2?9-c0:c0;const px=c*cs,py=(9-r)*cs;let f=band[r];if((i%2)===0){x.fillStyle=f;x.fillRect(px+2,py+2,cs-4,cs-4);x.fillStyle='rgba(255,255,255,.18)';x.fillRect(px+2,py+2,cs-4,cs-4);}else{x.fillStyle=f;x.fillRect(px+2,py+2,cs-4,cs-4);}
+    if(i===100){x.fillStyle='#ffcc4d';x.fillRect(px+2,py+2,cs-4,cs-4);}
+    x.strokeStyle='#6a3416';x.lineWidth=3;x.strokeRect(px+2,py+2,cs-4,cs-4);
+    x.fillStyle='#3a1a08';x.font='bold 28px Inter,sans-serif';x.textAlign='left';x.textBaseline='top';x.fillText(String(i),px+8,py+6);
+    const em=i===100?'🪐':i===1?'🚀':'';if(em){x.font='52px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(em,px+cs/2,py+cs/2+8);}}
+  const tex=new THREE.CanvasTexture(cv);tex.anisotropy=4;
+  const plane=new THREE.Mesh(new THREE.PlaneGeometry(8,8),new THREE.MeshBasicMaterial({map:tex,toneMapped:false}));plane.rotation.x=-Math.PI/2;plane.position.y=.11;g.add(plane);
+  const gold=new THREE.MeshStandardMaterial({color:0xffc94a,metalness:.45,roughness:.35}),wood=new THREE.MeshStandardMaterial({color:0xb8742c,roughness:.6});
+  const scols=[[0x3fa34d,0xd8f36a],[0x7b3fa0,0xffb3ec],[0xd94b2b,0xffd166],[0x1f8fbf,0xa8f0ff],[0xe0782a,0x3a1a08]];let si=0;
+  for(const[a0,b0]of Object.entries(SNL)){const a=+a0,b=b0;const A=snkXZ(a),B=snkXZ(b);const dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz);
+    if(b>a){const lg=new THREE.Group();lg.position.set(A.x,0,A.z);lg.rotation.y=Math.atan2(dx,dz);
+      for(const sx of[-.14,.14]){const rail=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,L,8),gold);rail.rotation.x=Math.PI/2;rail.position.set(sx,.24,L/2);rail.castShadow=true;lg.add(rail);}
+      const n=Math.max(2,Math.round(L/.26));for(let j=1;j<n;j++){const rg=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,.28,6),wood);rg.rotation.z=Math.PI/2;rg.position.set(0,.24,j*L/n);lg.add(rg);}
+      g.add(lg);}
+    else{const nx=-dz/L,nz=dx/L;const pts=[];const N=10,amp=Math.min(.38,.12+L*.05);for(let j=0;j<=N;j++){const t=j/N;const w=Math.sin(t*Math.PI*2.5)*amp*(1-t*.4);pts.push(new THREE.Vector3(A.x+dx*t+nx*w,.2,A.z+dz*t+nz*w));}
+      const cur=new THREE.CatmullRomCurve3(pts);SNK.curves[a]=cur;const[c1,c2]=scols[si++%scols.length];
+      const sc=document.createElement('canvas');sc.width=64;sc.height=16;const y=sc.getContext('2d');y.fillStyle='#'+c1.toString(16).padStart(6,'0');y.fillRect(0,0,64,16);y.fillStyle='#'+c2.toString(16).padStart(6,'0');for(let q=0;q<64;q+=16)y.fillRect(q,0,6,16);
+      const st=new THREE.CanvasTexture(sc);st.wrapS=THREE.RepeatWrapping;st.repeat.set(Math.max(3,Math.round(L*3)),1);
+      const sm=new THREE.MeshStandardMaterial({map:st,roughness:.45});const tube=new THREE.Mesh(new THREE.TubeGeometry(cur,64,.085,10,false),sm);tube.castShadow=true;g.add(tube);
+      const tail=new THREE.Mesh(new THREE.ConeGeometry(.085,.3,10),sm);const pe=cur.getPoint(1),pd=cur.getTangent(1);tail.position.copy(pe).add(pd.clone().multiplyScalar(.14));tail.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),pd);g.add(tail);
+      const hd=new THREE.Group();const h=new THREE.Mesh(new THREE.SphereGeometry(.17,16,12),new THREE.MeshStandardMaterial({color:c1,roughness:.4}));h.scale.set(1,.7,1.35);hd.add(h);
+      const wm=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.3}),bm=new THREE.MeshBasicMaterial({color:0x111111});
+      for(const ex of[-.08,.08]){const e=new THREE.Mesh(new THREE.SphereGeometry(.05,10,8),wm);e.position.set(ex,.08,.1);hd.add(e);const pu=new THREE.Mesh(new THREE.SphereGeometry(.025,8,6),bm);pu.position.set(ex,.1,.14);hd.add(pu);}
+      const tg=new THREE.Mesh(new THREE.BoxGeometry(.03,.01,.16),new THREE.MeshBasicMaterial({color:0xe0303a}));tg.position.set(0,-.02,.26);hd.add(tg);
+      const t0=cur.getTangent(0).negate();hd.position.copy(cur.getPoint(0)).add(new THREE.Vector3(0,.06,0));hd.rotation.y=Math.atan2(t0.x,t0.z);g.add(hd);}}
+  const dice=ocaDice(g);g.userData.dice=dice;g.visible=false;scene.add(g);return g;}
+async function snkClimb(k,a,b){const T=OCA.tokens[k];const A={x:T.position.x,z:T.position.z},B=ocaCellPos(b,k);sweep('sine',400,1200,.6,.1);
+  await tween(900,t=>T.position.set(A.x+(B.x-A.x)*t,.11+.35*Math.sin(Math.PI*t)+.15*t*(1-t),A.z+(B.z-A.z)*t),eio);burst(B.x,B.z);}
+async function snkSlide(k,a,b){const T=OCA.tokens[k];const cur=SNK.curves[a];sweep('sawtooth',700,120,.9,.07);if(!cur){await ocaJump(k,b);return;}
+  await tween(1100,t=>{const p=cur.getPoint(t);T.position.set(p.x,.18,p.z);T.rotation.y=t*Math.PI*3;},eio);T.rotation.y=0;const B=ocaCellPos(b,k);await tween(200,t=>T.position.set(T.position.x+(B.x-T.position.x)*t,.11,T.position.z+(B.z-T.position.z)*t));}
+function ocaBuild(){OCA.groups=OCA.groups||{};const v=ocaVar();if(OCA.groups[v]){OCA.group=OCA.groups[v];OCA.dice=OCA.group.userData.dice;return;}
+  if(v==='snk'){const g=snkBuild();OCA.groups.snk=g;OCA.group=g;OCA.dice=g.userData.dice;return;}
+  OCA.cells=ocaSpiral();const g=new THREE.Group();
   const cv=document.createElement('canvas');cv.width=cv.height=1024;const x=cv.getContext('2d');const cs=128;
   x.fillStyle='#2a1a3a';x.fillRect(0,0,1024,1024);
   const pal=['#ffe3b3','#ffd29a','#f8c58c','#ffe9c9'];
@@ -1998,20 +2043,16 @@ function ocaBuild(){if(OCA.group)return;OCA.cells=ocaSpiral();const g=new THREE.
   x.strokeStyle='rgba(90,46,20,.45)';x.lineWidth=5;x.beginPath();OCA.cells.forEach((sq,i)=>{const cx=(sq&7)*cs+cs/2,cy=(sq>>3)*cs+cs/2;if(i)x.lineTo(cx,cy);else x.moveTo(cx,cy);});x.stroke();
   const tex=new THREE.CanvasTexture(cv);tex.anisotropy=4;
   const plane=new THREE.Mesh(new THREE.PlaneGeometry(8,8),new THREE.MeshBasicMaterial({map:tex,toneMapped:false}));plane.rotation.x=-Math.PI/2;plane.position.y=.11;plane.receiveShadow=true;g.add(plane);
-  // dado
-  const faceTex=n=>{const c=document.createElement('canvas');c.width=c.height=128;const y=c.getContext('2d');y.fillStyle='#fffaf0';y.fillRect(0,0,128,128);y.strokeStyle='#e0c9a0';y.lineWidth=8;y.strokeRect(4,4,120,120);
-    y.fillStyle=n===1?'#d6211f':'#1a1a1f';const P=[[64,64],[32,32],[96,96],[96,32],[32,96],[32,64],[96,64]];const L={1:[0],2:[1,2],3:[1,0,2],4:[1,2,3,4],5:[1,2,3,4,0],6:[1,2,3,4,5,6]}[n];
-    for(const k of L){y.beginPath();y.arc(P[k][0],P[k][1],n===1?18:12,0,7);y.fill();}return new THREE.CanvasTexture(c);};
-  const vals=[3,4,1,6,2,5];const dice=new THREE.Mesh(new THREE.BoxGeometry(.7,.7,.7),vals.map(v=>new THREE.MeshStandardMaterial({map:faceTex(v),roughness:.4})));dice.castShadow=true;dice.position.set(5.2,.46,2.5);g.add(dice);OCA.dice=dice;
-  g.visible=false;scene.add(g);OCA.group=g;}
+  const dice=ocaDice(g);g.userData.dice=dice;OCA.dice=dice;
+  g.visible=false;scene.add(g);OCA.group=g;OCA.groups.oca=g;}
 const DICE_ROT={1:[0,0,0],6:[Math.PI,0,0],2:[-Math.PI/2,0,0],5:[Math.PI/2,0,0],3:[0,0,Math.PI/2],4:[0,0,-Math.PI/2]};
 function ocaEmojiSprite(e){const c=document.createElement('canvas');c.width=c.height=128;const y=c.getContext('2d');y.font='96px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';y.textAlign='center';y.textBaseline='middle';y.fillText(e,64,70);
   const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthWrite:false}));s.scale.set(.62,.62,.62);return s;}
-function ocaCellPos(i,k){const sq=OCA.cells[Math.max(0,Math.min(63,i))];const p=sqPos(sq);const off=[[-.2,-.2],[.2,-.2],[-.2,.2],[.2,.2]][k];return{x:p.x+off[0],z:p.z+off[1]};}
+function ocaCellPos(i,k){if(ocaVar()==='snk'){const p=snkXZ(Math.max(0,Math.min(100,i)));const o=[[-.18,-.18],[.18,-.18],[-.18,.18],[.18,.18]][k];return{x:p.x+o[0],z:p.z+o[1]};}const sq=OCA.cells[Math.max(0,Math.min(63,i))];const p=sqPos(sq);const off=[[-.2,-.2],[.2,-.2],[-.2,.2],[.2,.2]][k];return{x:p.x+off[0],z:p.z+off[1]};}
 Object.assign(OCA,{net:false,seat:0,gid:0,mine:[],cnt:[0,0],res:null,gap:false});
 function ocaNetInit(){OCA.net=true;OCA.seat=NET.role==='host'?0:1;OCA.gid=0;OCA.mine=[];OCA.res=null;ocaReset();ocaMsg(NET.role==='host'?'Esperando a tu rival… código <b>'+NET.code.toUpperCase()+'</b>':'Conectando con el anfitrión…');}
 function ocaPublic(){return{og:OCA.gid,orl:OCA.mine.slice(0,400),ores:OCA.res};}
-function ocaNetSync(){if(!OCA.net)return;const P=NET.opp;if(!NET.oppHere||!P||P.game!=='oca')return;const og=+P.og||0;
+function ocaNetSync(){if(!OCA.net)return;const P=NET.opp;if(!NET.oppHere||!P||P.game!==GAME)return;const og=+P.og||0;
   if(og>OCA.gid){OCA.gid=og;ocaStart(true);return;}
   if(!OCA.st&&NET.role==='host'){ocaStart();return;}
   if(P.ores&&P.ores===OCA.gid&&OCA.st&&OCA.st.phase==='play'){ocaWin(OCA.seat);return;}
@@ -2020,7 +2061,7 @@ function ocaPump(){const st=OCA.st;if(!OCA.net||!st||st.phase!=='play'||OCA.busy
   const P=NET.opp;if(!P||+P.og!==OCA.gid)return;const L=Array.isArray(P.orl)?P.orl:[];const v=+L[OCA.cnt[st.cur]];if(v>=1&&v<=6){OCA.cnt[st.cur]++;ocaRoll(v);}}
 function ocaStart(fromNet){if(OCA.net&&!fromNet){OCA.gid=Math.max(OCA.gid,+((NET.opp&&NET.opp.og)||0))+1;}
   if(OCA.net){OCA.mine=[];OCA.cnt=[0,0];OCA.res=null;OCA.gap=false;}
-  ocaBuild();OCA.group.visible=true;for(const t of OCA.tokens)OCA.group.remove(t);OCA.tokens=[];
+  ocaBuild();ocaShowGroups(GAME);for(const t of OCA.tokens)if(t.parent)t.parent.remove(t);OCA.tokens=[];
   const n=OCA.net?2:Math.max(2,Math.min(4,+cfg.np||2)),local=cfg.mode==='pvp'&&!OCA.net;const used=new Set([cfg.me,cfg.rival]);const pool=Object.keys(AVATARS).filter(k=>!used.has(k));
   const pl=[];for(let i=0;i<n;i++){const av=i===0?cfg.me:i===1?cfg.rival:pool[(i-2)%pool.length];
     pl.push({name:i===0?(local?'Jugador 1':'Tú'):local?'Jugador '+(i+1):AVATARS[av].n,av,pos:0,skip:0,human:i===0||local,col:OCOL[i]});}
@@ -2045,11 +2086,13 @@ async function ocaRoll(vf){const st=OCA.st;if(OCA.busy||!st||st.phase!=='play')r
     D.rotation.set(r0[0]*(1-t)*4+rf[0]*t,r0[1]*(1-t)*4+rf[1]*t,r0[2]*(1-t)*4+rf[2]*t);},eout);
   D.rotation.set(rf[0],rf[1],rf[2]);tone(300,.08,'square',.06);
   ocaMsg(`${AVATARS[p.av].e} <b>${p.name}</b> sacó un <b>${v}</b> 🎲`);await wait(450);
-  let to=p.pos+v,bounce=false;if(to>63){to=63-(to-63);bounce=true;}
-  await ocaWalk(k,p.pos,to,bounce?63:null);p.pos=to;
-  let again=false,txt='';const i=p.pos;
-  if(i===63){return ocaWin(k);}
-  if(OCAS.includes(i)){const nx=i===59?63:OCAS[OCAS.indexOf(i)+1];txt='🪿 ¡De oca a oca y tiro porque me toca!';await ocaJump(k,nx);p.pos=nx;if(nx===63)return ocaWin(k);again=true;}
+  const N=ocaVar()==='snk'?100:63;let to=p.pos+v,bounce=false;if(to>N){to=N-(to-N);bounce=true;}
+  await ocaWalk(k,p.pos,to,bounce?N:null);p.pos=to;
+  let again=false,txt='',good=null;const i=p.pos;
+  if(i===N){return ocaWin(k);}
+  if(N===100){const d=SNL[i];if(d){if(d>i){txt=`🪜 ¡Escalera! Sube de la ${i} a la ${d}`;good=true;await snkClimb(k,i,d);}else{txt=`🐍 ¡Serpiente! Baja de la ${i} a la ${d}`;good=false;await snkSlide(k,i,d);}p.pos=d;if(d===100)return ocaWin(k);}
+    if(v===6){again=true;if(good===null)good=true;txt=(txt?txt+' · ':'')+'🎲 Sacó 6: ¡tira otra vez!';}}
+  else if(OCAS.includes(i)){const nx=i===59?63:OCAS[OCAS.indexOf(i)+1];txt='🪿 ¡De oca a oca y tiro porque me toca!';await ocaJump(k,nx);p.pos=nx;if(nx===63)return ocaWin(k);again=true;}
   else if(i===6||i===12){const nx=i===6?12:6;txt='🌉 ¡De puente a puente y tiro porque me lleva la corriente!';await ocaJump(k,nx);p.pos=nx;again=true;}
   else if(i===26||i===53){const nx=i===26?53:26;txt='🎲 ¡De dado a dado y tiro porque me ha tocado!';await ocaJump(k,nx);p.pos=nx;again=true;}
   else if(i===19){p.skip=1;txt='🏨 La posada: pierdes 1 turno';}
@@ -2057,8 +2100,9 @@ async function ocaRoll(vf){const st=OCA.st;if(OCA.busy||!st||st.phase!=='play')r
   else if(i===56){p.skip=2;txt='⛓️ ¡A la cárcel! Pierdes 2 turnos';}
   else if(i===42){txt='🌀 El laberinto: regresas a la 30';await ocaJump(k,30);p.pos=30;}
   else if(i===58){txt='💀 ¡La calavera! Regresas al inicio';await ocaJump(k,1);p.pos=1;}
-  if(txt){ocaMsg(`${AVATARS[p.av].e} <b>${p.name}</b>: ${txt}`);if(again)sweep('sine',600,1200,.25,.12);else sweep('sine',500,200,.4,.12);
-    if(!p.human)mood('b',again?'happy':'sad',1300);voiceSide(p.human&&!local0()?'w':'b',again?'happy':'sad');}
+  if(good===null)good=again;
+  if(txt){ocaMsg(`${AVATARS[p.av].e} <b>${esc(p.name)}</b>: ${txt}`);if(N===63){if(again)sweep('sine',600,1200,.25,.12);else sweep('sine',500,200,.4,.12);}
+    if(!p.human)mood('b',good?'happy':'sad',1300);voiceSide(p.human&&!local0()?'w':'b',good?'happy':'sad');}
   OCA.busy=false;OCA.gap=true;ocaRender();setTimeout(()=>{OCA.gap=false;again?ocaTurn():ocaNext();},txt?1500:600);}
 async function ocaWalk(k,from,to,bounceAt){const T=OCA.tokens[k];const path=[];if(bounceAt!==null){for(let i=from+1;i<=bounceAt;i++)path.push(i);for(let i=bounceAt-1;i>=to;i--)path.push(i);}else for(let i=from+1;i<=to;i++)path.push(i);
   for(const i of path){const a={x:T.position.x,z:T.position.z},b=ocaCellPos(i,k);tone(500+i*6,.04,'triangle',.05);
@@ -2067,17 +2111,17 @@ async function ocaJump(k,to){const T=OCA.tokens[k];const a={x:T.position.x,z:T.p
   await tween(700,t=>{T.position.set(a.x+(b.x-a.x)*t,.11+Math.sin(Math.PI*t)*2,a.z+(b.z-a.z)*t);T.rotation.y=t*Math.PI*2;},eio);T.rotation.y=0;tween(300,k=>{const q=1+Math.sin(k*Math.PI)*.25*(1-k);T.scale.set(q,1/q,q);}).then(()=>T.scale.set(1,1,1));burst(b.x,b.z);}
 function local0(){return cfg.mode==='pvp'&&!OCA.net;}
 function ocaWin(k){const st=OCA.st,p=st.pl[k];if(st.phase==='over')return;st.phase='over';OCA.busy=false;over='fin';ocaRender();const q=ocaCellPos(63,k);burst(q.x,q.z);setTimeout(()=>burst(q.x+.3,q.z-.3),250);
-  const local=local0(),mine=OCA.net?k===OCA.seat:k===0;if(!local)recordOther('oca',mine?'w':'l',st.turns);
-  if(mine||local){mood('b',local?'happy':'sad');showEnd('🪐 ¡Llegó a Júpiter!',`${AVATARS[p.av].e} ${p.name} ${local?'gana':'ganaste'} el Juego de la Oca. 🏆`);}
-  else{mood('b','happy');voiceSide('b','win');showEnd('🪐 Ganó '+p.name,`${AVATARS[p.av].e} ${p.name} llegó primero a la casilla 63.`);}}
-function ocaRender(){const st=OCA.st;if(!st||GAME!=='oca')return;const p=st.pl[st.cur];
+  const local=local0(),mine=OCA.net?k===OCA.seat:k===0;if(!local)recordOther(GAME,mine?'w':'l',st.turns);
+  if(mine||local){mood('b',local?'happy':'sad');showEnd('🪐 ¡Llegó a Júpiter!',`${AVATARS[p.av].e} ${p.name} ${local?'gana':'ganaste'} ${GAME==='snakes'?'Serpientes y escaleras':'el Juego de la Oca'}. 🏆`);}
+  else{mood('b','happy');voiceSide('b','win');showEnd('🪐 Ganó '+p.name,`${AVATARS[p.av].e} ${p.name} llegó primero a la casilla ${GAME==='snakes'?100:63}.`);}}
+function ocaRender(){const st=OCA.st;if(!st||!ocaLike())return;const p=st.pl[st.cur];
   $('ocaPl').innerHTML=st.pl.map((q,i)=>`<div class="opl${i===st.cur&&st.phase==='play'?' on':''}" style="--pc:#${q.col.toString(16).padStart(6,'0')}">${AVATARS[q.av].e} ${esc(q.name)} <b>${q.pos}</b>${q.skip?` ⏸${q.skip}`:''}</div>`).join('');
-  $('ocaAct').innerHTML=st.phase==='over'?'<button class="btn pri" id="ocaAgain">🪿 Otra partida</button>':p.human&&!OCA.busy?`<button class="btn pri big" id="ocaRollB">🎲 Tirar dado</button>`:`<span class="wait">${OCA.busy?'🎲 …':'⏳ Turno de '+esc(p.name)+'…'}</span>`;
+  $('ocaAct').innerHTML=st.phase==='over'?`<button class="btn pri" id="ocaAgain">${GAME==='snakes'?'🐍':'🪿'} Otra partida</button>`:p.human&&!OCA.busy?`<button class="btn pri big" id="ocaRollB">🎲 Tirar dado</button>`:`<span class="wait">${OCA.busy?'🎲 …':'⏳ Turno de '+esc(p.name)+'…'}</span>`;
   const bb=(id,f)=>{const e=$(id);if(e)e.onclick=f;};bb('ocaRollB',()=>ocaRoll());bb('ocaAgain',()=>{$('endModal').classList.remove('show');ocaStart();});renderHUD();}
-function ocaHUD(){const st=OCA.st;const p=st&&st.pl[st.cur];$('status').innerHTML=!st?'🪿 Juego de la Oca':st.phase==='over'?'🪿 Fin del juego':(p.name==='Tú'?'🪿 Tu turno':'🪿 Turno de '+esc(p.name));
+function ocaHUD(){const st=OCA.st;const p=st&&st.pl[st.cur];const ic=GAME==='snakes'?'🐍':'🪿';$('status').innerHTML=!st?(GAME==='snakes'?'🐍 Serpientes y escaleras':'🪿 Juego de la Oca'):st.phase==='over'?ic+' Fin del juego':(p.name==='Tú'?ic+' Tu turno':ic+' Turno de '+esc(p.name));
   $('rivalChip').innerHTML=st?st.pl.map(q=>AVATARS[q.av].e+(q.name==='Tú'?' Tú':st.pl.length===2?' '+esc(q.name):'')).join(' vs '):'2 a 4 jugadores';
-  $('caps').innerHTML=`<small style="letter-spacing:0;font-size:11px;opacity:.85">Llega exacto a la 63 · 🪿 oca = brincas y tiras otra vez</small>`;$('clocks').style.display='none';}
-function ocaReset(){OCA.st=null;if(OCA.group){for(const t of OCA.tokens)OCA.group.remove(t);OCA.tokens=[];}$('ocaPl').innerHTML='';$('ocaAct').innerHTML='';ocaMsg('Toca <b>✨ Nueva → ¡A jugar!</b> para empezar');}
+  $('caps').innerHTML=`<small style="letter-spacing:0;font-size:11px;opacity:.85">${GAME==='snakes'?'Llega exacto a la 100 · 🪜 subes · 🐍 bajas · 6 = tiras otra vez':'Llega exacto a la 63 · 🪿 oca = brincas y tiras otra vez'}</small>`;$('clocks').style.display='none';}
+function ocaReset(){OCA.st=null;for(const t of OCA.tokens)if(t.parent)t.parent.remove(t);OCA.tokens=[];$('ocaPl').innerHTML='';$('ocaAct').innerHTML='';ocaMsg('Toca <b>✨ Nueva → ¡A jugar!</b> para empezar');}
 /* =================== LOTERÍA MEXICANA =================== */
 // Nombres tradicionales; dibujos y versos son propios de Jupijedrez.
 const LOT_CARDS=[
@@ -2207,6 +2251,7 @@ const HELP={
  loteria:['🎴 Lotería',`<ul><li>El gritón canta cartas al azar.</li><li>Si la carta está en tu tabla, <b>tócala</b> para ponerle un frijolito (o activa "Marcar solo").</li>
   <li>Cuando completes la figura (tabla llena, línea o 4 esquinas), grita <b>¡LOTERÍA!</b> antes que los demás.</li></ul><p>🌐 En línea, el que crea la sala es el gritón y pueden entrar varios amigos.</p>`]};
 HELP.oca[1]+='<p>🌐 También en línea: cada quien tira el dado desde su teléfono.</p>';
+HELP.snakes=['🐍 Serpientes y escaleras','<p>Tira el dado y avanza por el tablero del 1 al 100. Gana quien llegue <b>exacto</b> a la 100 (si te pasas, rebotas).</p><ul><li>🪜 Si caes al pie de una <b>escalera</b>, subes hasta arriba.</li><li>🐍 Si caes en la cabeza de una <b>serpiente</b>, bajas hasta su cola.</li><li>🎲 Si sacas <b>6</b>, tiras otra vez.</li></ul><p>2 a 4 jugadores contra la IA, en el mismo teléfono o 🌐 en línea.</p>'];
 function showHelp(g){const h=HELP[g||GAME]||HELP.chess;$('helpTitle').textContent=h[0];$('helpBody').innerHTML=h[1];$('helpModal').classList.add('show');$('flagTray').classList.remove('show');}
 /* ---- Conquián en línea (el anfitrión reparte y valida) ---- */
 Object.assign(CQ,{net:false,guest:false,act:null,actN:0,sid:'',seenSid:null,seenAct:0,deal:0,seenDeal:-1,winner:null,shownOver:-1,prevOppM:0});
@@ -2252,6 +2297,7 @@ const GAMES_INFO={chess:{},damas:{},
   domino:{ov:'dmo',start:()=>{if(DMO.net&&DMO.guest){DMO.actN++;DMO.act={n:DMO.actN,sid:DMO.sid,t:'again'};netPublish();toast('Pediste otra mano');return;}dmoStart();},hud:dmoHUD,reset:dmoReset,resign:()=>{if(DMO.st&&DMO.st.phase==='play'&&!DMO.guest)dmoEnd('B','rendición');},net:true,netInit:()=>dmoNetInit(),netSync:()=>dmoNetSync()},
   oca:{ov:'ocaUI',start:()=>ocaStart(),hud:ocaHUD,reset:ocaReset,net:true,netInit:ocaNetInit,netSync:ocaNetSync,resign:()=>{if(OCA.st&&OCA.st.phase==='play'){if(OCA.net){OCA.res=OCA.gid;netPublish();ocaWin(1-OCA.seat);}else ocaWin(1);}}},
   loteria:{ov:'lot',net:true,netInit:()=>lotNetInit(),netSync:()=>lotNetSync(),start:lotStart,hud:lotHUD,reset:lotReset,resign:()=>{const st=LOT.st;if(st&&st.phase==='play'){st.phase='over';lotStop();over='fin';recordOther('loteria','l',st.i);lotRender();showEnd('🎴 Te retiraste','La próxima seguro llenas tu tabla.');}}}};
+GAMES_INFO.snakes=Object.assign({},GAMES_INFO.oca);
 const GI=()=>GAMES_INFO[GAME]||GAMES_INFO.chess;
 const isCard=()=>!!GI().ov;
 function recordOther(game,res,n){if(recorded)return;if(res==='w')setTimeout(()=>voiceSide('b','lose'),700);recorded=true;lastDelta=null;const lvl=[0,650,1000,1350][+cfg.level]||1000;
@@ -2264,11 +2310,11 @@ function recordOther(game,res,n){if(recorded)return;if(res==='w')setTimeout(()=>
 function setBoardVisible(v){for(const t of tiles)t.visible=v;frame.visible=v;for(const l of labels)l.visible=v;hintGroup.visible=v;if(neonEdges)neonEdges.visible=v;
   for(const g of pieceObjs.values())g.visible=v;}
 function switchGame(g,silent){if(!GAMES_INFO[g])g='chess';const was=GAME;
-  if(was!==g){if(was==='loteria')lotStop();if(was==='oca'&&OCA.group)OCA.group.visible=false;}
+  if(was!==g){if(was==='loteria')lotStop();ocaShowGroups(g);}
   GAME=g;cfg.game=g;save();const info=GI();const ov=!!info.ov;
   CQ.on=g==='conquian';for(const id of['cq','dmo','ocaUI','lot'])$(id).classList.toggle('show',info.ov===id);
-  document.body.classList.toggle('cqmode',ov);setBoardVisible(!ov);if(OCA.group)OCA.group.visible=g==='oca';
-  if(g!=='oca'&&CAM.view==='top'&&was==='oca'){CAM.view='fp';CAM.dirty=true;}
+  document.body.classList.toggle('cqmode',ov);setBoardVisible(!ov);ocaShowGroups(g);
+  if(!ocaLike(g)&&CAM.view==='top'&&ocaLike(was)){CAM.view='fp';CAM.dirty=true;}
   document.querySelectorAll('#gsel button').forEach(b=>b.classList.toggle('on',b.dataset.g===g));
   $('bDraw').style.display=ov?'none':'';$('bPuzMenu').style.display=g==='chess'?'':'none';$('bDaily').style.display=g==='chess'?'':'none';
   if(ov){for(const gg of pieceObjs.values())scene.remove(gg);pieceObjs.clear();clockReset(0);}
