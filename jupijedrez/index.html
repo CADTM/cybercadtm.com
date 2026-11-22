@@ -306,6 +306,7 @@ body.cqmode #rxTray,body.cqmode #flagTray{bottom:auto;top:148px}
     <h3>Partidas abiertas</h3>
     <div id="netList"></div>
     <label class="tg" style="margin:8px 0;display:flex"><input type="checkbox" id="notifOn">🔔 Avisarme cuando me toque (aunque tenga la app minimizada)</label>
+    <div id="clStat" style="font-size:13px;margin:6px 0;opacity:.9"></div>
     <h3>📬 Partidas a distancia</h3>
     <div style="font-size:13px;opacity:.85;margin-bottom:6px">Haces tu jugada cuando puedas y tu rival contesta cuando pueda, aunque no estén conectados al mismo tiempo. Ajedrez y damas.</div>
     <div class="row" id="distBtns"><button class="btn" id="distNewC">♞ Nueva de ajedrez</button><button class="btn" id="distNewD">⛀ Nueva de damas</button></div>
@@ -931,7 +932,7 @@ function updateAvatar(R,t,dt){if(!R)return;const now=performance.now();if(now>R.
 
 /* =================== ESTADO DE JUEGO =================== */
 let S=initState(),hist=[],log=[],sel=-1,selMoves=[],busy=false,lastMove=null,over=false;
-const NET={tc:0,ns:null,lobby:null,room:null,active:false,code:'',role:'',myColor:'w',gid:1,opp:null,oppAv:'boo',oppAvc:null,oppAvcS:'',avcS:'',surS:null,oppSurS:'',oppVx:null,oppVxS:'',vxS:'',oppClips:{},blobSent:new Set(),gsN:0,gsSeen:null,gqN:0,gqSeen:null,sayS:{},askS:{},oppNick:'Rival',oppHere:false,unsubs:[]};
+const NET={tc:0,ns:null,lobby:null,room:null,active:false,code:'',role:'',myColor:'w',gid:1,opp:null,oppAv:'boo',oppAvc:null,oppAvcS:'',avcS:'',surS:null,oppSurS:'',clmS:null,oppClmS:'',sentN:0,chunks:{},oppVx:null,oppVxS:'',vxS:'',oppClips:{},blobSent:new Set(),gsN:0,gsSeen:null,gqN:0,gqSeen:null,sayS:{},askS:{},oppNick:'Rival',oppHere:false,unsubs:[]};
 let uci=[];
 const REPLAY={on:false,list:[],i:0,play:true,next:0,g:null};
 const PUZ={on:false,i:0,n:1,side:'w',moved:0,fen:''};
@@ -1031,14 +1032,21 @@ function gotSay(P){if(!P||typeof P!=='object')return;const key=NET.oppAv,sd=isCa
   if((!played&&/mua|beso|💋/i.test(t))||(key==='jupiter'&&k==='win'))kissFx(sd);else mood(sd,k==='sad'||k==='lose'?'sad':'happy',1500);}
 function gotAsk(P){if(!P||typeof P!=='object')return;const k=String(P.k||'');if(!VLINES[cfg.me]||!VLINES[cfg.me][k])return;talk(cfg.me,k);}
 function blobB64(b){return new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(',')[1]||'');fr.onerror=()=>res('');fr.readAsDataURL(b);});}
-async function netShareClips(){const r=NET.room;if(!r||!r.blob||!VLINES[cfg.me]||NET.sharing)return;NET.sharing=true;try{const M=CL.m[cfg.me]||{};NET.blobSent=NET.blobSent||new Set();
-  for(const[kind,arr0]of Object.entries(M)){const arr=arr0.filter(c=>!c.net);for(const c of arr.slice(0,3)){const key='c'+c.id;if(NET.blobSent.has(key)||!c.blob||c.blob.size>200000)continue;
-    const d=await blobB64(c.blob);if(!d||NET.room!==r)continue;if(r.blob(key,JSON.stringify({k:cfg.me,n:(cfg.nick||AVATARS[cfg.me].n).slice(0,16),kind,m:c.blob.type||'audio/webm',d})))NET.blobSent.add(key);}}}finally{NET.sharing=false;}}
-function gotBlob(id,key,txt){NET.oppClips=NET.oppClips||{};const cid=String(key).replace(/^c/,'');
-  if(!txt){if(NET.oppClips[cid]){try{URL.revokeObjectURL(NET.oppClips[cid].url);}catch(_){}delete NET.oppClips[cid];}clNetDel(NET.oppAv+':'+cid);return;}
-  try{const o=JSON.parse(txt);if(!o||typeof o.d!=='string'||!/^audio\/[\w.+-]+(;[\w=.,+-]*)?$/i.test(String(o.m||'').replace(/\s/g,'')))return;const bin=atob(o.d);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+function myClips(){const out=[];for(const ak of Object.keys(AVC_DEF)){const M=CL.m[ak]||{};for(const[kind,arr]of Object.entries(M))for(const c of arr.filter(c=>!c.net).slice(0,3))out.push({ak,kind,c});}return out;}
+function clmStr(){const o={};for(const{ak,c}of myClips())(o[ak]=o[ak]||[]).push(String(c.id));return JSON.stringify(o);}
+async function netShareClips(){const r=NET.room;if(!r||!r.blob||NET.sharing)return;NET.sharing=true;try{NET.blobSent=NET.blobSent||new Set();const nick=(cfg.nick||AVATARS[cfg.me].n||'').slice(0,16);
+  for(const{ak,kind,c}of myClips()){const key='c'+c.id;if(NET.blobSent.has(key)||!c.blob||c.blob.size>600000)continue;const d=await blobB64(c.blob);if(!d||NET.room!==r)continue;
+    const CH=24000,t=Math.ceil(d.length/CH);let ok=true;for(let i=0;i<t&&ok;i++)ok=r.blob(key+'_'+i+'_'+t,JSON.stringify({k:ak,n:nick,kind,m:c.blob.type||'audio/webm',i,t,d:d.slice(i*CH,(i+1)*CH)}));
+    if(ok){NET.blobSent.add(key);NET.sentN=(NET.sentN||0)+1;renderNet();}}}finally{NET.sharing=false;}}
+function gotBlob(id,key,txt){NET.oppClips=NET.oppClips||{};NET.chunks=NET.chunks||{};const mm=/^c(\d+)(?:_(\d+)_(\d+))?$/.exec(String(key));if(!mm)return;const cid=mm[1];
+  if(!txt)return; // el dueño salió de la sala: lo guardado se queda
+  try{const o=JSON.parse(txt);if(!o||typeof o.d!=='string'||!/^audio\/[\w.+-]+(;[\w=.,+-]*)?$/i.test(String(o.m||'').replace(/\s/g,'')))return;
+    let d=o.d;if(mm[2]!==undefined){const t=+mm[3],i=+mm[2];if(!(t>0&&t<40&&i<t))return;const B=NET.chunks[id+':'+cid]=NET.chunks[id+':'+cid]||{t,p:{}};B.p[i]=o.d;if(Object.keys(B.p).length<t)return;d='';for(let j=0;j<t;j++)d+=B.p[j];delete NET.chunks[id+':'+cid];}
+    const bin=atob(d);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
     if(NET.oppClips[cid])try{URL.revokeObjectURL(NET.oppClips[cid].url);}catch(_){}const bl=new Blob([u],{type:o.m});NET.oppClips[cid]={url:URL.createObjectURL(bl),kind:String(o.kind||'')};
-    const ak=AVATARS[o.k]&&VLINES[o.k]?o.k:null,kd=String(o.kind||'');if(ak&&VLINES[ak][kd]&&ak!==cfg.me)clNetAdd(ak,kd,bl,ak+':'+cid,String(o.n||NET.oppNick||'').replace(/[\u0000-\u001f]/g,'').slice(0,16));}catch(_){}}
+    const ak=AVATARS[o.k]&&VLINES[o.k]?o.k:null,kd=String(o.kind||'');if(ak&&VLINES[ak][kd])clNetAdd(ak,kd,bl,ak+':'+cid,String(o.n||NET.oppNick||'').replace(/[\u0000-\u001f]/g,'').slice(0,16));}catch(_){}}
+async function clNetPrune(clm){if(!clm||typeof clm!=='object')return;const db=await clDB();if(!db)return;try{const st=db.transaction('c','readwrite').objectStore('c');const q=st.getAll();
+  q.onsuccess=()=>{let n=0;for(const c of q.result||[]){if(!c.rk)continue;const[ak,cid]=String(c.rk).split(':');if(!(ak in clm))continue;const L=Array.isArray(clm[ak])?clm[ak].map(String):[];if(!L.includes(cid)){st.delete(c.id);n++;}}if(n)st.transaction.oncomplete=()=>clLoad();};}catch(_){}}
 let clQ=Promise.resolve();
 function clNetAdd(...a){clQ=clQ.then(()=>clNetAdd0(...a)).catch(()=>{});return clQ;}
 async function clNetAdd0(k,kind,blob,rk,from){const db=await clDB();if(!db)return;try{const st=db.transaction('c','readwrite').objectStore('c');const q=st.getAll();
@@ -1051,7 +1059,7 @@ function clDB(){return new Promise(res=>{if(CL.db)return res(CL.db);try{const r=
   r.onsuccess=()=>{CL.db=r.result;res(CL.db);};r.onerror=()=>res(null);}catch(e){res(null);}});}
 async function clLoad(){const db=await clDB();if(!db)return;try{const q=db.transaction('c','readonly').objectStore('c').getAll();q.onsuccess=()=>{for(const k in CL.m)for(const kd in CL.m[k])for(const c of CL.m[k][kd])try{URL.revokeObjectURL(c.url);}catch(_){}
   CL.m={};for(const c of q.result||[]){if(!c||!c.blob)continue;const o=CL.m[c.k]=CL.m[c.k]||{};(o[c.kind]=o[c.kind]||[]).push({id:c.id,url:URL.createObjectURL(c.blob),blob:c.blob,net:!!c.rk,from:c.from||''});}
-  if($('sheetEdit').classList.contains('show'))edVoiceRender();};}catch(_){}}
+  if($('sheetEdit').classList.contains('show'))edVoiceRender();if(NET.active&&NET.room)netPublish();try{renderNet();}catch(_){}};}catch(_){}}
 async function clAdd(k,kind,blob){const db=await clDB();if(!db){toast('No se pudo guardar la grabación');return;}try{const r=db.transaction('c','readwrite').objectStore('c').add({k,kind,blob,t:Date.now()});r.onsuccess=()=>clLoad();}catch(_){toast('No se pudo guardar la grabación');}}
 async function clDel(id){const db=await clDB();if(!db)return;try{const r=db.transaction('c','readwrite').objectStore('c').delete(id);r.onsuccess=()=>clLoad();}catch(_){}}
 clLoad();
@@ -1076,7 +1084,7 @@ function edVoiceRender(){const box=$('edVox');if(!box)return;const k=ED.k,V=vxGe
     h+=`<div class="vxk"><div class="vxh">${lb}</div><div class="vxl">`+
       def.map((t,i)=>`<span class="vxc${off.includes(i)?' off':''}"><b data-say="${esc(t)}">${esc(t)}</b><i data-tg="${kind}|${i}">${off.includes(i)?'↺':'✖'}</i></span>`).join('')+
       add.map((t,i)=>`<span class="vxc mine"><b data-say="${esc(t)}">${esc(t)}</b><i data-rm="${kind}|${i}">✖</i></span>`).join('')+
-      cl.map((c,i)=>`<span class="vxc rec"${c.net?' style="background:rgba(255,140,200,.25)"':''}><b data-play="${c.id}">🔊 ${c.net?'Voz de '+esc(c.from||'tu rival'):'Grabación '+(i+1)}</b><i data-del="${c.id}">✖</i></span>`).join('')+
+      cl.map((c,i)=>`<span class="vxc rec"${c.net?' style="background:rgba(255,140,200,.25)"':''}><b data-play="${c.id}">🔊 ${c.net?'Voz de '+esc(c.from||'tu rival'):'Grabación '+(i+1)}</b>${c.net?'<i title="Solo quien la grabó la puede borrar" style="cursor:default">🔒</i>':`<i data-del="${c.id}">✖</i>`}</span>`).join('')+
       `</div><div class="row" style="gap:6px;margin-top:6px"><input class="txt" maxlength="50" placeholder="Nueva frase…" data-in="${kind}" style="flex:1;min-width:110px"><button class="hsb" data-add="${kind}">➕</button><button class="hsb${on?' on':''}" data-rec="${kind}">${on?'⏹ Parar':'🎙️ Grabar'}</button></div></div>`;}
   box.innerHTML=h;const svx=()=>{save();if(NET.active)netPublish();};
   box.querySelectorAll('[data-say]').forEach(e=>e.onclick=()=>{const was=cfg.sound;cfg.sound=true;sayAs(k,e.dataset.say);cfg.sound=was;});
@@ -1087,7 +1095,7 @@ function edVoiceRender(){const box=$('edVox');if(!box)return;const k=ED.k,V=vxGe
     const a=V.add[kd]=V.add[kd]||[];if(a.length>=8){toast('Máximo 8 frases tuyas por momento');return;}a.push(t);svx();edVoiceRender();const was=cfg.sound;cfg.sound=true;sayAs(k,t);cfg.sound=was;});
   box.querySelectorAll('[data-in]').forEach(e=>e.onkeydown=ev=>{if(ev.key==='Enter'){const b=box.querySelector(`[data-add="${e.dataset.in}"]`);b&&b.click();}});
   box.querySelectorAll('[data-rec]').forEach(e=>e.onclick=()=>recToggle(k,e.dataset.rec));
-  box.querySelectorAll('[data-del]').forEach(e=>e.onclick=async()=>{if(await ask('¿Borrar grabación?','Se borra de este aparato.'))clDel(+e.dataset.del);});}
+  box.querySelectorAll('[data-del]').forEach(e=>e.onclick=async()=>{const c=Object.values(CL.m[k]||{}).flat().find(x=>String(x.id)===e.dataset.del);if(!c||c.net){toast('🔒 Solo quien la grabó la puede borrar');return;}if(await ask('¿Borrar grabación?','También se le borra a tu rival la próxima vez que jueguen en línea.')){await clDel(+e.dataset.del);if(NET.active)setTimeout(netPublish,600);}});}
 function voiceEnd(w){voiceSide(w,'win');setTimeout(()=>voiceSide(opp(w),'lose'),250);}
 function voice(key,kind){const sad=kind==='sad'||kind==='lose';if(kind==='hi'||kind==='taunt'||kind==='think'){if(!VLINES[key])return;}switch(key){
   case 'robi':(sad?[660,440,294]:[784,1047,1319,1568]).forEach((f,i)=>sweep('square',f,f*(sad?.92:1.02),.09,.07,i*.09));break;
@@ -1479,7 +1487,7 @@ const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const sqOf=t=>(8-+t[1])*8+FILES.indexOf(t[0]);
 function findMove(u,st){st=st||S;if(isDam(st))return DM.find(u,st);if(!/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(u))return null;const f=sqOf(u.slice(0,2)),t=sqOf(u.slice(2,4));const pc=st.b[f];if(!pc||pc.c!==st.turn)return null;
   const m=legalFrom(st,f).find(x=>x.to===t);if(!m)return null;return m.promo?Object.assign({},m,{promo:u[4]||'q'}):m;}
-function netPublish(){if(!NET.room)return;{const a=myAvcStr();if(NET.avcS!==a){NET.avcS=a;NET.room.presence({avc:a?JSON.parse(a):null}).catch(()=>{});}const x=myVxStr();if(NET.vxS!==x){NET.vxS=x;NET.room.presence({vx:x?JSON.parse(x):null}).catch(()=>{});}const su=surStr();if(NET.surS!==su){NET.surS=su;NET.room.presence({sur:su?JSON.parse(su):null}).catch(()=>{});}netShareClips();}
+function netPublish(){if(!NET.room)return;{const a=myAvcStr();if(NET.avcS!==a){NET.avcS=a;NET.room.presence({avc:a?JSON.parse(a):null}).catch(()=>{});}const x=myVxStr();if(NET.vxS!==x){NET.vxS=x;NET.room.presence({vx:x?JSON.parse(x):null}).catch(()=>{});}const cm=clmStr();if(NET.clmS!==cm){NET.clmS=cm;NET.room.presence({clm:JSON.parse(cm)}).catch(()=>{});}const su=surStr();if(NET.surS!==su){NET.surS=su;NET.room.presence({sur:su?JSON.parse(su):null}).catch(()=>{});}netShareClips();}
   if(ocaLike()){NET.room.presence(Object.assign({v:1,game:GAME,role:NET.role,color:null,av:cfg.me,nick:(cfg.nick||'Jugador').slice(0,16),gid:NET.gid,moves:''},ocaPublic())).catch(()=>{});return;}
   if(GAME==='domino'||GAME==='loteria'){const base={v:1,game:GAME,role:NET.role,color:null,av:cfg.me,nick:(cfg.nick||'Jugador').slice(0,16),gid:NET.gid,moves:''};
     if(GAME==='domino')Object.assign(base,{dm:NET.role==='host'?dmoPublic():null,dma:NET.role==='guest'?DMO.act:null});
@@ -1512,6 +1520,7 @@ function onGamePeers(peers){const others=peers.filter(p=>!p.sameTab&&p.presence&
     {const an=P.ask&&typeof P.ask.n==='number'?P.ask.n:0;if(!(key in NET.askS))NET.askS[key]=an;else if(an!==NET.askS[key]){NET.askS[key]=an;if(an)gotAsk(P.ask);}}
     const rn=P.rx&&typeof P.rx.n==='number'?P.rx.n:0;if(!(key in rxSeen))rxSeen[key]=rn;else if(rn!==rxSeen[key]){rxSeen[key]=rn;if(rn)gotReaction(String(P.rx.e));}}
   if(op){const av=AVATARS[op.presence.av]?op.presence.av:'boo';const nk=String(op.presence.nick||'Rival').slice(0,16);
+    {const cj=JSON.stringify(op.presence.clm||null);if(cj!==NET.oppClmS){NET.oppClmS=cj;if(op.presence.clm)setTimeout(()=>clNetPrune(op.presence.clm),4000);}}
     {const sj=JSON.stringify(op.presence.sur||null);if(sj!==NET.oppSurS){NET.oppSurS=sj;if(op.presence.sur)surGot(op.presence.sur);}}
     {const ov=JSON.stringify(vxClean(op.presence.vx));if(ov!==NET.oppVxS){NET.oppVxS=ov;NET.oppVx=JSON.parse(ov);}}
     const oc=avcClean(op.presence.avc),ocs=JSON.stringify(oc);let rb=false;if(ocs!==NET.oppAvcS){NET.oppAvcS=ocs;NET.oppAvc=oc;rb=true;}
@@ -1523,7 +1532,7 @@ function onGamePeers(peers){const others=peers.filter(p=>!p.sameTab&&p.presence&
 async function netJoin(code,role,color){if(!NET.ns){toast('En línea no disponible aquí');return;}
   await netLeave(true);
   let room;try{room=await NET.ns.join('g-'+code);}catch(e){toast('No se pudo entrar a la sala');return;}
-  Object.assign(NET,{room,active:true,code,role,myColor:color,gid:1,opp:null,oppHere:false,oppAv:'boo',oppAvc:null,oppAvcS:'',avcS:'',surS:null,oppSurS:'',oppVx:null,oppVxS:'',vxS:'',oppClips:{},blobSent:new Set(),gsN:0,gsSeen:null,gqN:0,gqSeen:null,sayS:{},askS:{},oppNick:'Rival',tc:role==='host'?(+$('netTc').value||0):0});rxSeen={};drawSeen=0;
+  Object.assign(NET,{room,active:true,code,role,myColor:color,gid:1,opp:null,oppHere:false,oppAv:'boo',oppAvc:null,oppAvcS:'',avcS:'',surS:null,oppSurS:'',clmS:null,oppClmS:'',sentN:0,chunks:{},oppVx:null,oppVxS:'',vxS:'',oppClips:{},blobSent:new Set(),gsN:0,gsSeen:null,gqN:0,gqSeen:null,sayS:{},askS:{},oppNick:'Rival',tc:role==='host'?(+$('netTc').value||0):0});rxSeen={};drawSeen=0;
   if(isCard()&&GI().net){GI().netInit();setCamSide('w',true);}else{if(isCard())switchGame('chess',true);resetBoard();setCamSide(color);}
   if(room.onBlob)NET.unsubs.push(room.onBlob(gotBlob));
   NET.unsubs.push(room.onPeers(ch=>onGamePeers(ch.peers)));
@@ -1612,7 +1621,7 @@ async function netLeave(silent){netCardOff();const r=NET.room;NET.unsubs.forEach
   if(was&&!silent){resetBoard();setCamSide(isAI()?human():'w');}renderNet();renderHUD();}
 function netRematch(){NET.gid++;resetBoard();netPublish();toast('Revancha enviada');}
 function newCode(){const a='abcdefghjkmnpqrstuvwxyz23456789';let c='';for(let i=0;i<5;i++)c+=a[Math.random()*a.length|0];return c;}
-function renderNet(){try{distRender();}catch(_){}try{$('notifOn').checked=!!cfg.notif&&window.Notification&&Notification.permission==='granted';}catch(_){}const box=$('netList');if(!box)return;
+function renderNet(){try{distRender();}catch(_){}try{const mine=myClips().length,got=Object.values(CL.m).flatMap(o=>Object.values(o).flat()).filter(c=>c.net).length;$('clStat').innerHTML=`🎙️ Tus grabaciones: <b>${mine}</b>${NET.active?' · enviadas: <b>'+(NET.sentN||0)+'</b>':''} · De tu rival guardadas: <b>${got}</b>`;}catch(_){}try{$('notifOn').checked=!!cfg.notif&&window.Notification&&Notification.permission==='granted';}catch(_){}const box=$('netList');if(!box)return;
   $('netNo').style.display=NET.ns?'none':'';$('netYes').style.display=NET.ns?'':'none';
   $('netState').innerHTML=NET.active?(NET.oppHere?`🟢 Jugando contra <b>${esc(NET.oppNick)}</b> · sala <b>${NET.code.toUpperCase()}</b>`:`🟡 Esperando rival en la sala <b>${NET.code.toUpperCase()}</b> — compártele el código`):'⚪ Sin conectar';
   $('netLeave').style.display=NET.active?'':'none';
