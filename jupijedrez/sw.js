@@ -12,3 +12,5 @@ self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;c
   if(SHELL.some(s=>r.url.endsWith(s.replace('./','')))||/fonts\.(googleapis|gstatic)\.com/.test(u.hostname)){
     e.respondWith(caches.match(r).then(m=>m||fetch(r).then(res=>{const cp=res.clone();caches.open(CACHE).then(c=>c.put(r,cp));return res;})));}
 });
+// aviso "¡te toca!": al tocar la notificación abre/enfoca el juego
+self.addEventListener('notificationclick',e=>{e.notification.close();e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(l=>{for(const c of l){if('focus' in c)return c.focus();}return self.clients.openWindow('./');}));});
