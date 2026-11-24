@@ -70,7 +70,8 @@ label.tg input{accent-color:#ffcc4d;width:17px;height:17px}
 .fab{position:fixed;z-index:6;bottom:calc(84px + env(safe-area-inset-bottom));width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.18);
   background:rgba(12,18,38,.8);backdrop-filter:blur(8px);color:#fff;font-size:22px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 .fab:active{transform:scale(.92)}
-#fabRx{right:12px}#fabFlag{left:12px}
+#fabRx{right:12px}#fabFlag{left:12px}#fabTalk{right:12px;bottom:calc(140px + env(safe-area-inset-bottom));display:none;touch-action:none;user-select:none;-webkit-user-select:none}#fabTalk.rec{background:#e0304a;box-shadow:0 0 0 6px rgba(224,48,74,.35),0 6px 18px rgba(0,0,0,.4);transform:scale(1.15)}
+#talkInd{position:fixed;z-index:9;left:50%;top:34%;transform:translate(-50%,-50%);background:rgba(20,10,30,.9);border:2px solid #e0304a;border-radius:18px;padding:12px 18px;font-weight:800;display:none;text-align:center}
 .tray{position:fixed;z-index:7;bottom:calc(138px + env(safe-area-inset-bottom));display:none;flex-wrap:wrap;gap:6px;max-width:300px;padding:8px;border-radius:18px;
   background:rgba(12,18,38,.92);border:1px solid rgba(255,255,255,.16);box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .tray.show{display:flex;animation:pop .25s}
@@ -142,7 +143,7 @@ textarea.copy{width:100%;height:160px;border-radius:12px;background:#0f1730;colo
 #cqAct{display:flex;gap:8px;min-height:40px;align-items:center}#cqAct .wait{font-size:13px;opacity:.85;font-weight:700}
 #cqHand{display:flex;justify-content:center;padding-top:16px;max-width:100vw}
 @media (max-width:380px){.cd{width:48px;height:72px}.cd.hand{margin-left:-17px}.cd .sv{width:28px;height:28px}}
-body.cqmode #fabRx,body.cqmode #fabFlag{bottom:auto;top:96px}
+body.cqmode #fabRx,body.cqmode #fabFlag{bottom:auto;top:96px}body.cqmode #fabTalk{bottom:auto;top:152px}
 body.cqmode #rxTray,body.cqmode #flagTray{bottom:auto;top:148px}
 .ovl{position:fixed;left:0;right:0;top:100px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:4;display:none;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;pointer-events:none;padding:0 6px}
 .ovl.show{display:flex}.ovl>*{pointer-events:auto}
@@ -228,7 +229,7 @@ body.cqmode #rxTray,body.cqmode #flagTray{bottom:auto;top:148px}
     <button id="bStats"><span>🏆</span>Récords</button>
   </div>
 </div>
-<button class="fab" id="fabRx" title="Reacciones">💬</button>
+<button class="fab" id="fabRx" title="Reacciones">💬</button><button class="fab" id="fabTalk" title="Mantén presionado para hablar">🎤</button><div id="talkInd">🔴 Grabando… <span id="talkT">0</span> s<br><small style="font-weight:600;opacity:.8">Suelta para enviar · desliza fuera para cancelar</small></div>
 <button class="fab" id="fabFlag" title="Tablas o rendirse">🏳️</button>
 <button class="fab" id="fabHint" title="Pista">💡<b id="hintN">3</b></button>
 <div class="pbar" id="pzBar"><span id="pzLbl"></span><button id="pzHint">💡</button><button id="pzRetry">↺</button><button id="pzNext">▶</button><button id="pzExit">✖</button></div>
@@ -361,6 +362,9 @@ body.cqmode #rxTray,body.cqmode #flagTray{bottom:auto;top:148px}
 <div class="sheet" id="sheetStats">
   <h2>🏆 Mis récords</h2>
   <div id="stBody"></div>
+  <h3>💾 Respaldo</h3>
+  <div style="font-size:13px;opacity:.85;margin-bottom:6px">Todo se guarda solo en este teléfono. Haz un respaldo para no perder fichas, accesorios, marcador, frases, sorpresas, grabaciones y fotos si cambias de teléfono o borras datos.</div>
+  <div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn" id="bkExp">💾 Hacer respaldo</button><button class="btn" id="bkImp">📂 Restaurar</button><input type="file" id="bkFile" accept=".json,application/json" style="display:none"></div>
   <div class="row" style="margin-top:12px;justify-content:center"><button class="btn" id="stPuz">🧩 Retos de mate</button><button class="btn pri" id="stClose">Cerrar</button></div>
 </div>
 <div class="sheet" id="sheetPuz">
@@ -375,7 +379,7 @@ body.cqmode #rxTray,body.cqmode #flagTray{bottom:auto;top:148px}
 <div class="modal" id="askModal"><div class="mbox"><h2 id="askTitle"></h2><div id="askText" style="margin-bottom:14px"></div><div class="row" style="justify-content:center"><button class="btn" id="askNo">No</button><button class="btn pri" id="askYes">Sí</button></div></div></div>
 <div class="modal" id="endModal"><div class="mbox"><h2 id="endTitle"></h2><div id="endText" style="margin-bottom:8px"></div><div id="endRate" style="margin-bottom:6px;font-size:14px;color:#ffcc4d;font-weight:700"></div><div id="endH2H" style="margin-bottom:12px;font-size:14px;font-weight:700"></div><div id="endSur"></div><div class="row" id="endExtra" style="justify-content:center;margin-bottom:10px"><button class="btn" id="endReplay">▶ Repetición</button><button class="btn" id="endCopy">📋 Copiar</button><button class="btn" id="endSnap">📸 Recuerdo</button></div><div class="row" style="justify-content:center"><button class="btn" id="endClose">Ver tablero</button><button class="btn pri" id="endNew">Revancha</button></div></div></div>
 
-<script src="vendor/three-0.128.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script>
 (()=>{
 /* =================== MOTOR DE AJEDREZ =================== */
@@ -1038,7 +1042,7 @@ async function netShareClips(){const r=NET.room;if(!r||!r.blob||NET.sharing)retu
   for(const{ak,kind,c}of myClips()){const key='c'+c.id;if(NET.blobSent.has(key)||!c.blob||c.blob.size>600000)continue;const d=await blobB64(c.blob);if(!d||NET.room!==r)continue;
     const CH=24000,t=Math.ceil(d.length/CH);let ok=true;for(let i=0;i<t&&ok;i++)ok=r.blob(key+'_'+i+'_'+t,JSON.stringify({k:ak,n:nick,kind,m:c.blob.type||'audio/webm',i,t,d:d.slice(i*CH,(i+1)*CH)}));
     if(ok){NET.blobSent.add(key);NET.sentN=(NET.sentN||0)+1;renderNet();}}}finally{NET.sharing=false;}}
-function gotBlob(id,key,txt){NET.oppClips=NET.oppClips||{};NET.chunks=NET.chunks||{};const mm=/^c(\d+)(?:_(\d+)_(\d+))?$/.exec(String(key));if(!mm)return;const cid=mm[1];
+function gotBlob(id,key,txt){if(/^w\d+_\d+_\d+$/.test(String(key)))return gotTalk(id,key,txt);NET.oppClips=NET.oppClips||{};NET.chunks=NET.chunks||{};const mm=/^c(\d+)(?:_(\d+)_(\d+))?$/.exec(String(key));if(!mm)return;const cid=mm[1];
   if(!txt)return; // el dueño salió de la sala: lo guardado se queda
   try{const o=JSON.parse(txt);if(!o||typeof o.d!=='string'||!/^audio\/[\w.+-]+(;[\w=.,+-]*)?$/i.test(String(o.m||'').replace(/\s/g,'')))return;
     let d=o.d;if(mm[2]!==undefined){const t=+mm[3],i=+mm[2];if(!(t>0&&t<40&&i<t))return;const B=NET.chunks[id+':'+cid]=NET.chunks[id+':'+cid]||{t,p:{}};B.p[i]=o.d;if(Object.keys(B.p).length<t)return;d='';for(let j=0;j<t;j++)d+=B.p[j];delete NET.chunks[id+':'+cid];}
@@ -1484,13 +1488,6 @@ function placeBubble(now){const b=$('bubble');if(!b.classList.contains('show'))r
 
 /* =================== EN LÍNEA (sala de Claude) =================== */
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-/* Seguridad: todo lo que llega de otros jugadores pasa por aquí. Quita caracteres que permitirían inyectar HTML
-   y descarta claves peligrosas (prototype pollution). Los audios en base64 y las jugadas no usan estos caracteres. */
-function netClean(o,d){d=d||0;if(d>8)return null;if(typeof o==='string')return o.replace(/[<>"'`]/g,'');
-  if(typeof o==='number')return isFinite(o)?o:0;if(typeof o==='boolean'||o==null)return o;
-  if(Array.isArray(o))return o.slice(0,2000).map(x=>netClean(x,d+1));
-  if(typeof o==='object'){const r={};for(const k of Object.keys(o)){if(k==='__proto__'||k==='constructor'||k==='prototype')continue;r[k.replace(/[<>"'`]/g,'')]=netClean(o[k],d+1);}return r;}
-  return null;}
 const sqOf=t=>(8-+t[1])*8+FILES.indexOf(t[0]);
 function findMove(u,st){st=st||S;if(isDam(st))return DM.find(u,st);if(!/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(u))return null;const f=sqOf(u.slice(0,2)),t=sqOf(u.slice(2,4));const pc=st.b[f];if(!pc||pc.c!==st.turn)return null;
   const m=legalFrom(st,f).find(x=>x.to===t);if(!m)return null;return m.promo?Object.assign({},m,{promo:u[4]||'q'}):m;}
@@ -1509,7 +1506,7 @@ function netSync(){if(isCard()&&NET.active&&GI().netSync){GI().netSync();return;
   const th=String(o.moves||'').split(' ').filter(Boolean);const n=Math.min(th.length,uci.length);let pre=true;for(let i=0;i<n;i++)if(th[i]!==uci[i]){pre=false;break;}
   if(pre&&th.length>uci.length){const m=findMove(th[uci.length]);if(m){const oc=S.turn;doMove(m,true);if(CLK.on&&o.tm&&typeof o.tm[oc]==='number'&&th.length===uci.length){CLK[oc]=Math.max(0,Math.min(CLK.min*60000,o.tm[oc]));renderClock();}return;}}
   if(!pre&&NET.role==='guest'&&th.length){rebuildFrom(th);netPublish();}}
-function onGamePeers(peers){peers=(peers||[]).map(p=>p&&p.presence?Object.assign({},p,{presence:netClean(p.presence)}):p);const others=peers.filter(p=>!p.sameTab&&p.presence&&p.presence.v===1);NET.others=others;const mine=peers.find(p=>p.sameTab);if(mine)NET.myPeer=mine.peer;
+function onGamePeers(peers){const others=peers.filter(p=>!p.sameTab&&p.presence&&p.presence.v===1);NET.others=others;const mine=peers.find(p=>p.sameTab);if(mine)NET.myPeer=mine.peer;
   const want=NET.role==='host'?'guest':'host';const op=others.find(p=>p.presence.role===want);
   if(op&&NET.role==='guest'){const gs=op.presence.gs;const gn=gs&&typeof gs.n==='number'?gs.n:0;if(NET.gsSeen===null)NET.gsSeen=gn;else if(gn!==NET.gsSeen){NET.gsSeen=gn;if(gs&&GAMES_INFO[gs.g]&&gs.g!==GAME){netFollow(gs.g);toast('🎮 '+NET.oppNick+' cambió a '+GNAME[gs.g]);}}}
   if(op&&NET.role==='host'){const gq=op.presence.gq;const qn=gq&&typeof gq.n==='number'?gq.n:0;if(NET.gqSeen===null)NET.gqSeen=qn;else if(qn!==NET.gqSeen){NET.gqSeen=qn;if(gq&&GAMES_INFO[gq.g]&&gq.g!==GAME){netGo(gq.g);toast('🎮 '+NET.oppNick+' eligió '+GNAME[gq.g]);}}}
@@ -1589,7 +1586,7 @@ function distOpen(code){const it=distList().find(x=>x.code===code),d=DIST.docs[c
   placeAvatars();setCamSide(it.color,true);render();renderHUD();if(d.res&&!over)endGame('resign',d.res,true);
   const st=distStatus(it);toast('📬 '+(d.g==='damas'?'Damas':'Ajedrez')+' a distancia · '+st.t.replace(/<[^>]+>/g,''));}
 function distOppInfo(d){const op=d[DIST.color==='w'?'b':'w'];if(op){DIST.oppNick=op.nick;DIST.oppAv=op.av;DIST.oppAvc=op.avc;}else{DIST.oppNick='Esperando…';DIST.oppAv='boo';DIST.oppAvc=null;}}
-function distApply(d){d=netClean(d)||{};const oldAv=DIST.oppAv+JSON.stringify(DIST.oppAvc);DIST.doc=d;distOppInfo(d);if(oldAv!==DIST.oppAv+JSON.stringify(DIST.oppAvc))placeAvatars();
+function distApply(d){const oldAv=DIST.oppAv+JSON.stringify(DIST.oppAvc);DIST.doc=d;distOppInfo(d);if(oldAv!==DIST.oppAv+JSON.stringify(DIST.oppAvc))placeAvatars();
   if(busy)return setTimeout(()=>{if(DIST.on&&DIST.doc===d)distApply(d);},400);
   const th=d.moves.split(' ').filter(Boolean);const n=Math.min(th.length,uci.length);let pre=true;for(let i=0;i<n;i++)if(th[i]!==uci[i]){pre=false;break;}
   if(pre&&th.length===uci.length+1){const m=findMove(th[uci.length]);if(m)doMove(m,true);}else if(!pre||th.length>uci.length+1){rebuildFrom(th);render();renderHUD();}
@@ -1598,6 +1595,54 @@ function distPush(force){if(!DIST.on||!DIST.doc||!distOK())return;const d=DIST.d
 $('distNewC').onclick=()=>distNew('chess');$('distNewD').onclick=()=>distNew('damas');
 addEventListener('hashchange',()=>{const m=/^#dist-(d[a-z0-9]{5})$/.exec(location.hash);if(m&&distOK()){history.replaceState(null,'',location.pathname+location.search);distJoin(m[1]);}});
 setTimeout(function distHash(){const m=/^#dist-(d[a-z0-9]{5})$/.exec(location.hash);if(!m)return;if(!distOK())return setTimeout(distHash,800);history.replaceState(null,'',location.pathname+location.search);distJoin(m[1]);},900);
+/* ---------- walkie-talkie ---------- */
+const TALK={rec:null,st:null,ch:[],t0:0,cancel:false,timer:null,q:[],playing:false,parts:{},seen:new Set()};
+function talkOK(){return !!(NET.active&&NET.room&&NET.room.blob&&NET.oppHere);}
+async function talkStart(e){if(TALK.rec||!talkOK())return;TALK.cancel=false;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){toast('🎤 Este navegador no deja grabar');return;}
+  let st;try{st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});}catch(err){const n=err&&err.name||'';
+    if(n==='NotReadableError'||n==='AbortError')toast('🎤 El micrófono está ocupado (¿estás en llamada?)');else ask('🎤 Falta el permiso del micrófono','En Chrome: ⋮ → Configuración → Configuración de sitios → Micrófono → cybercadtm.com → Permitir.');return;}
+  if(TALK.cancel||!TALK.down){st.getTracks().forEach(t=>t.stop());return;}
+  let mr;try{mr=new MediaRecorder(st,MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?{mimeType:'audio/webm;codecs=opus',audioBitsPerSecond:32000}:undefined);}catch(_){mr=new MediaRecorder(st);}
+  TALK.rec=mr;TALK.st=st;TALK.ch=[];TALK.t0=performance.now();mr.ondataavailable=ev=>{if(ev.data&&ev.data.size)TALK.ch.push(ev.data);};
+  mr.onstop=()=>{st.getTracks().forEach(t=>t.stop());const dur=performance.now()-TALK.t0;const b=new Blob(TALK.ch,{type:mr.mimeType||'audio/webm'});TALK.rec=null;
+    if(TALK.cancel){toast('🎤 Cancelado');return;}if(dur<500||b.size<500){toast('🎤 Mantén presionado mientras hablas');return;}talkSend(b);};
+  mr.start(250);$('fabTalk').classList.add('rec');$('talkInd').style.display='block';try{navigator.vibrate&&navigator.vibrate(40);}catch(_){}
+  clearInterval(TALK.timer);TALK.timer=setInterval(()=>{const t=(performance.now()-TALK.t0)/1000;$('talkT').textContent=Math.floor(t);if(t>=20)talkStop();},200);}
+function talkStop(cancel){TALK.down=false;if(cancel)TALK.cancel=true;clearInterval(TALK.timer);$('fabTalk').classList.remove('rec');$('talkInd').style.display='none';if(TALK.rec)try{TALK.rec.stop();}catch(_){}}
+async function talkSend(b){const r=NET.room;if(!talkOK()){toast('🎤 Tu rival no está conectado');return;}const d=await blobB64(b);if(!d)return;const key='w'+Date.now();const CH=24000,t=Math.ceil(d.length/CH);
+  const nick=(cfg.nick||AVATARS[cfg.me].n||'').slice(0,16);let ok=true;for(let i=0;i<t&&ok;i++)ok=r.blob(key+'_'+i+'_'+t,JSON.stringify({n:nick,k:cfg.me,m:b.type||'audio/webm',ts:Date.now(),d:d.slice(i*CH,(i+1)*CH)}),false);
+  toast(ok?'🎤 Enviado ✓':'🎤 No se pudo enviar');}
+function gotTalk(id,key,txt){if(!txt)return;const m=/^(w\d+)_(\d+)_(\d+)$/.exec(key);const base=id+':'+m[1];if(TALK.seen.has(base))return;
+  try{const o=JSON.parse(txt);if(!o||typeof o.d!=='string'||!/^audio\/[\w.+-]+(;[\w=.,+-]*)?$/i.test(String(o.m||'').replace(/\s/g,'')))return;if(Date.now()-(+o.ts||0)>120000)return;
+    const t=+m[3],i=+m[2];if(!(t>0&&t<60&&i<t))return;const B=TALK.parts[base]=TALK.parts[base]||{t,p:{},o};B.p[i]=o.d;if(Object.keys(B.p).length<t)return;delete TALK.parts[base];TALK.seen.add(base);
+    let d='';for(let j=0;j<t;j++)d+=B.p[j];const bin=atob(d);const u=new Uint8Array(bin.length);for(let j=0;j<bin.length;j++)u[j]=bin.charCodeAt(j);
+    TALK.q.push({url:URL.createObjectURL(new Blob([u],{type:o.m})),n:String(o.n||NET.oppNick||'Tu rival').replace(/[\u0000-\u001f]/g,'').slice(0,16)});talkPump();}catch(_){}}
+function talkPump(){if(TALK.playing||!TALK.q.length)return;const it=TALK.q.shift();TALK.playing=true;const sd=isCard()?'b':opp(NET.myColor);
+  showBubble('🎤 '+it.n+' te habla…');try{mood(sd,'happy',2500);}catch(_){}try{navigator.vibrate&&navigator.vibrate([60,40,60]);}catch(_){}
+  try{speechSynthesis.cancel();}catch(_){}const a=new Audio(it.url);a.volume=1;const done=()=>{TALK.playing=false;try{URL.revokeObjectURL(it.url);}catch(_){}setTimeout(talkPump,250);};
+  a.onended=done;a.onerror=done;a.play().catch(()=>{toast('🎤 '+it.n+' te mandó un mensaje: toca la pantalla para oírlo');const go=()=>{document.removeEventListener('pointerdown',go,true);a.play().catch(done);};document.addEventListener('pointerdown',go,true);});}
+(function(){const b=$('fabTalk');b.addEventListener('pointerdown',e=>{e.preventDefault();TALK.down=true;try{b.setPointerCapture(e.pointerId);}catch(_){}talkStart(e);});
+  b.addEventListener('pointerup',e=>{const r=b.getBoundingClientRect();const out=e.clientX<r.left-40||e.clientX>r.right+40||e.clientY<r.top-60||e.clientY>r.bottom+40;talkStop(out);});
+  b.addEventListener('pointercancel',()=>talkStop(true));b.addEventListener('contextmenu',e=>e.preventDefault());})();
+/* ---------- respaldo ---------- */
+function b64ToBlob(d,m){const bin=atob(d);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new Blob([u],{type:m});}
+async function bkExport(){toast('💾 Preparando respaldo…');try{const out={v:1,app:'jupijedrez',t:Date.now(),cfg:JSON.parse(JSON.stringify(cfg)),st:JSON.parse(JSON.stringify(ST)),clips:[],album:[]};
+  const cdb=await clDB();if(cdb){const all=await new Promise(r=>{const q=cdb.transaction('c','readonly').objectStore('c').getAll();q.onsuccess=()=>r(q.result||[]);q.onerror=()=>r([]);});
+    for(const c of all)if(c.blob)out.clips.push({k:c.k,kind:c.kind,t:c.t,rk:c.rk||null,from:c.from||'',m:c.blob.type,d:await blobB64(c.blob)});}
+  for(const o of await albAll())if(o.img)out.album.push({t:o.t,title:o.title,sub:o.sub,d:await blobB64(o.img)});
+  const blob=new Blob([JSON.stringify(out)],{type:'application/json'});const name='jupijedrez-respaldo-'+new Date().toISOString().slice(0,10)+'.json';const f=new File([blob],name,{type:'application/json'});
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Respaldo Jupijedrez'});toast('💾 Respaldo listo');return;}}catch(e){if(e&&e.name==='AbortError')return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},4000);
+  toast('💾 Respaldo descargado ('+(blob.size/1048576).toFixed(1)+' MB) · guárdalo en Drive o WhatsApp');}catch(e){toast('No se pudo hacer el respaldo');}}
+async function bkImport(file){let o;try{o=JSON.parse(await file.text());}catch(_){toast('Ese archivo no es un respaldo de Jupijedrez');return;}
+  if(!o||o.app!=='jupijedrez'||!o.cfg||!o.st){toast('Ese archivo no es un respaldo de Jupijedrez');return;}
+  if(!await ask('📂 ¿Restaurar respaldo?','Del '+new Date(+o.t||0).toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'})+': '+(o.st.chips??'?')+' fichas, '+(o.clips||[]).length+' grabaciones y '+(o.album||[]).length+' fotos. Reemplaza lo que hay ahora en este teléfono.'))return;
+  try{localStorage.setItem('ajedrez3d_cfg',JSON.stringify(o.cfg));localStorage.setItem('jupijedrez_stats',JSON.stringify(o.st));
+    const cdb=await clDB();if(cdb&&Array.isArray(o.clips)){const st=cdb.transaction('c','readwrite').objectStore('c');st.clear();for(const c of o.clips)if(c&&typeof c.d==='string'&&/^audio\//.test(String(c.m||'')))st.add(Object.assign({k:c.k,kind:c.kind,t:+c.t||Date.now(),blob:b64ToBlob(c.d,c.m)},c.rk?{rk:String(c.rk),from:String(c.from||'')}:{}));await new Promise(r=>{st.transaction.oncomplete=r;st.transaction.onerror=r;});}
+    const adb=await albDB();if(adb&&Array.isArray(o.album)){const st=adb.transaction('p','readwrite').objectStore('p');st.clear();for(const a of o.album)if(a&&typeof a.d==='string')st.add({t:+a.t||Date.now(),title:String(a.title||''),sub:String(a.sub||''),img:b64ToBlob(a.d,'image/jpeg')});await new Promise(r=>{st.transaction.oncomplete=r;st.transaction.onerror=r;});}
+    toast('✅ Respaldo restaurado, reiniciando…');setTimeout(()=>location.reload(),900);}catch(e){toast('No se pudo restaurar completo');}}
+$('bkExp').onclick=bkExport;$('bkImp').onclick=()=>$('bkFile').click();$('bkFile').onchange=e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(f)bkImport(f);};
 const TURN={was:false};
 function myTurnNow(){try{if(!NET.active&&!(typeof DIST!=='undefined'&&DIST.on))return false;
   if(GAME==='chess'||GAME==='damas')return !over&&!busy&&S.turn===(NET.active?NET.myColor:DIST.color);
@@ -1609,7 +1654,7 @@ function turnAlert(){try{navigator.vibrate&&navigator.vibrate([140,70,140]);}cat
     const body=(who?who+' ya jugó. ':'')+'¡Te toca en '+(GNAME[GAME]||'Jupijedrez')+'!';const opt={body,icon:'icon-192.png',badge:'icon-192.png',tag:'turno',renotify:true,vibrate:[140,70,140]};
     const p=navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration():Promise.resolve(null);
     p.then(r=>{if(r&&r.showNotification)return r.showNotification('🔔 ¡Te toca!',opt);try{new Notification('🔔 ¡Te toca!',opt);}catch(_){}}).catch(()=>{});}}}
-setInterval(()=>{const now=myTurnNow();if(now&&!TURN.was)turnAlert();TURN.was=now;},700);
+setInterval(()=>{const now=myTurnNow();if(now&&!TURN.was)turnAlert();TURN.was=now;const tk=talkOK();$('fabTalk').style.display=tk?'block':'none';if(!tk&&TALK.rec)talkStop(true);},700);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)document.title='Jupijedrez';});
 function netCardOff(){cqNetOff();DMO.net=DMO.guest=false;LOT.net=LOT.guest=false;OCA.net=false;}
 const GNAME={chess:'♞ Ajedrez',damas:'⛀ Damas',conquian:'🃏 Conquián',domino:'🁫 Dominó',oca:'🪿 Oca',snakes:'🐍 Serpientes y escaleras',loteria:'🎴 Lotería'};
@@ -1630,7 +1675,7 @@ function netRematch(){NET.gid++;resetBoard();netPublish();toast('Revancha enviad
 function newCode(){const a='abcdefghjkmnpqrstuvwxyz23456789';let c='';for(let i=0;i<5;i++)c+=a[Math.random()*a.length|0];return c;}
 function renderNet(){try{distRender();}catch(_){}try{const mine=myClips().length,got=Object.values(CL.m).flatMap(o=>Object.values(o).flat()).filter(c=>c.net).length;$('clStat').innerHTML=`🎙️ Tus grabaciones: <b>${mine}</b>${NET.active?' · enviadas: <b>'+(NET.sentN||0)+'</b>':''} · De tu rival guardadas: <b>${got}</b>`;}catch(_){}try{$('notifOn').checked=!!cfg.notif&&window.Notification&&Notification.permission==='granted';}catch(_){}const box=$('netList');if(!box)return;
   $('netNo').style.display=NET.ns?'none':'';$('netYes').style.display=NET.ns?'':'none';
-  $('netState').innerHTML=NET.active?(NET.oppHere?`🟢 Jugando contra <b>${esc(NET.oppNick)}</b> · sala <b>${esc(NET.code.toUpperCase())}</b>`:`🟡 Esperando rival en la sala <b>${esc(NET.code.toUpperCase())}</b> — compártele el código`):'⚪ Sin conectar';
+  $('netState').innerHTML=NET.active?(NET.oppHere?`🟢 Jugando contra <b>${esc(NET.oppNick)}</b> · sala <b>${NET.code.toUpperCase()}</b>`:`🟡 Esperando rival en la sala <b>${NET.code.toUpperCase()}</b> — compártele el código`):'⚪ Sin conectar';
   $('netLeave').style.display=NET.active?'':'none';
   $('netShare').style.display=NET.active&&!NET.oppHere?'':'none';
   if(!NET.lobby){box.innerHTML='';return;}
@@ -1653,7 +1698,7 @@ $('notifOn').onchange=async e=>{if(!e.target.checked){cfg.notif=false;save();ret
   cfg.notif=p==='granted';e.target.checked=cfg.notif;save();toast(cfg.notif?'🔔 Listo, te aviso cuando te toque':'Sin permiso de notificaciones: actívalo en Ajustes del sitio');};
 $('netClose').onclick=()=>openSheet(null);
 /* ---- transporte fuera de claude.ai: MQTT público (misma interfaz que la sala) ---- */
-const MQTT_LIB='vendor/mqtt-5.16.1.min.js';
+const MQTT_LIB='https://unpkg.com/mqtt@5.16.1/dist/mqtt.min.js';
 const BROKERS=['wss://broker.hivemq.com:8884/mqtt','wss://broker.emqx.io:8084/mqtt','wss://test.mosquitto.org:8081/mqtt'];
 function loadScript(src){return new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src=src;sc.onload=ok;sc.onerror=ko;document.head.appendChild(sc);});}
 function mqttNS(){return new Promise(async res=>{
@@ -1663,7 +1708,7 @@ function mqttNS(){return new Promise(async res=>{
   const online=new Set(),rooms=new Map(),dsubs=new Map();let client=null,bi=0,settled=false;
   const fireAll=()=>rooms.forEach(r=>r.fire());
   function mkRoom(name){const r={name,me:{},others:new Map(),subs:new Set(),q:false,bsubs:new Set(),sentB:new Set()};
-    r.blob=(key,str)=>{if(client&&client.connected){client.publish(BASE+'r/'+name+'/b/'+myId+'/'+key,str,{retain:true,qos:0});r.sentB.add(key);return true;}return false;};
+    r.blob=(key,str,keep=true)=>{if(client&&client.connected){client.publish(BASE+'r/'+name+'/b/'+myId+'/'+key,str,{retain:keep,qos:keep?0:1});if(keep)r.sentB.add(key);return true;}return false;};
     r.onBlob=f=>{r.bsubs.add(f);return()=>r.bsubs.delete(f);};
     r.peers=()=>[{peer:myId,isMe:true,sameTab:true,kind:'viewer',guest:false,by:null,presence:r.me},
       ...[...r.others].filter(([id])=>online.has(id)).map(([id,pr])=>({peer:id,isMe:false,sameTab:false,kind:'viewer',guest:false,by:null,presence:pr}))];
@@ -1677,10 +1722,10 @@ function mqttNS(){return new Promise(async res=>{
   function onMsg(topic,buf){if(!topic.startsWith(BASE))return;const rest=topic.slice(BASE.length).split('/');
     if(rest[0]==='r'&&rest[2]==='b'&&rest.length===5){const r=rooms.get(rest[1]);if(!r||rest[3]===myId)return;const t2=buf&&buf.length<400000?buf.toString():'';r.bsubs.forEach(f=>{try{f(rest[3],rest[4],t2);}catch(_){}});return;}
     const txt=buf&&buf.length<8000?buf.toString():'';
-    if(rest[0]==='d'&&rest.length===2){const set=dsubs.get(rest[1]);if(!set)return;let o=null;try{o=txt?netClean(JSON.parse(txt)):null;}catch(_){}set.forEach(f=>{try{f(o);}catch(_){}});return;}
+    if(rest[0]==='d'&&rest.length===2){const set=dsubs.get(rest[1]);if(!set)return;let o=null;try{o=txt?JSON.parse(txt):null;}catch(_){}set.forEach(f=>{try{f(o);}catch(_){}});return;}
     if(rest[0]==='on'&&rest.length===2){const id=rest[1];if(id===myId)return;if(txt==='1')online.add(id);else online.delete(id);fireAll();return;}
     if(rest[0]==='r'&&rest[2]==='p'&&rest.length===4){const r=rooms.get(rest[1]),id=rest[3];if(!r||id===myId)return;
-      if(!txt)r.others.delete(id);else{try{const o=netClean(JSON.parse(txt));if(o&&typeof o==='object'&&!Array.isArray(o))r.others.set(id,o);}catch(_){}}r.fire();}}
+      if(!txt)r.others.delete(id);else{try{const o=JSON.parse(txt);if(o&&typeof o==='object'&&!Array.isArray(o))r.others.set(id,o);}catch(_){}}r.fire();}}
   function tryNext(){if(bi>=BROKERS.length){if(!settled){settled=true;res(null);}return;}
     const url=BROKERS[bi++];let ok=false;
     const c=mqtt.connect(url,{clientId:'cc_'+myId,clean:true,keepalive:20,reconnectPeriod:3000,connectTimeout:6000,
@@ -2332,7 +2377,7 @@ function ocaWin(k){const st=OCA.st,p=st.pl[k];if(st.phase==='over')return;st.pha
   if(mine||local){mood('b',local?'happy':'sad');showEnd('🪐 ¡Llegó a Júpiter!',`${AVATARS[p.av].e} ${p.name} ${local?'gana':'ganaste'} ${GAME==='snakes'?'Serpientes y escaleras':'el Juego de la Oca'}. 🏆`);}
   else{mood('b','happy');voiceSide('b','win');showEnd('🪐 Ganó '+p.name,`${AVATARS[p.av].e} ${p.name} llegó primero a la casilla ${GAME==='snakes'?100:63}.`);}}
 function ocaRender(){const st=OCA.st;if(!st||!ocaLike())return;const p=st.pl[st.cur];
-  $('ocaPl').innerHTML=st.pl.map((q,i)=>`<div class="opl${i===st.cur&&st.phase==='play'?' on':''}" style="--pc:#${((+q.col)>>>0&0xffffff).toString(16).padStart(6,'0')}">${AVATARS[q.av].e} ${esc(q.name)} <b>${+q.pos||0}</b>${q.skip?` ⏸${+q.skip||0}`:''}</div>`).join('');
+  $('ocaPl').innerHTML=st.pl.map((q,i)=>`<div class="opl${i===st.cur&&st.phase==='play'?' on':''}" style="--pc:#${q.col.toString(16).padStart(6,'0')}">${AVATARS[q.av].e} ${esc(q.name)} <b>${q.pos}</b>${q.skip?` ⏸${q.skip}`:''}</div>`).join('');
   $('ocaAct').innerHTML=st.phase==='over'?`<button class="btn pri" id="ocaAgain">${GAME==='snakes'?'🐍':'🪿'} Otra partida</button>`:p.human&&!OCA.busy?`<button class="btn pri big" id="ocaRollB">🎲 Tirar dado</button>`:`<span class="wait">${OCA.busy?'🎲 …':'⏳ Turno de '+esc(p.name)+'…'}</span>`;
   const bb=(id,f)=>{const e=$(id);if(e)e.onclick=f;};bb('ocaRollB',()=>ocaRoll());bb('ocaAgain',()=>{$('endModal').classList.remove('show');ocaStart();});renderHUD();}
 function ocaHUD(){const st=OCA.st;const p=st&&st.pl[st.cur];const ic=GAME==='snakes'?'🐍':'🪿';$('status').innerHTML=!st?(GAME==='snakes'?'🐍 Serpientes y escaleras':'🪿 Juego de la Oca'):st.phase==='over'?ic+' Fin del juego':(p.name==='Tú'?ic+' Tu turno':ic+' Turno de '+esc(p.name));
@@ -2410,7 +2455,7 @@ function beanSnd(){if(!cfg.sound)return;noise(.03,.22);tone(240,.05,'sine',.16,1
 function beanHTML(c){if(!LOT.beanSeen||LOT.beanSt!==LOT.st){LOT.beanSeen=new Set();LOT.beanSt=LOT.st;}const h=(c*2654435761>>>0);const r=(h%70)-35,x=((h>>7)%9)-4,y=((h>>11)%7)-3;
   const nw=!LOT.beanSeen.has(c);if(nw){LOT.beanSeen.add(c);LOT.beanNew=1;}return `<span class="bean${nw?' drop':''}" style="--r:${r}deg;--x:${x}px;--y:${y}px"></span>`;}
 function lotRender(){const st=LOT.st;if(!st||GAME!=='loteria')return;const me=st.pl[0];
-  if(LOT.net){$('lotOpp').innerHTML=lotOthers().map(o=>`<div class="opl${o.need!=null&&o.need<=2?' hot':''}">${AVATARS[o.av].e} ${esc(o.name)}${o.role==='host'?' 🎤':''} · ${o.need==null?'…':'le faltan <b>'+(+o.need||0)+'</b>'}</div>`).join('')||'<div class="opl">Nadie más en la sala</div>';}
+  if(LOT.net){$('lotOpp').innerHTML=lotOthers().map(o=>`<div class="opl${o.need!=null&&o.need<=2?' hot':''}">${AVATARS[o.av].e} ${esc(o.name)}${o.role==='host'?' 🎤':''} · ${o.need==null?'…':'le faltan <b>'+o.need+'</b>'}</div>`).join('')||'<div class="opl">Nadie más en la sala</div>';}
   else $('lotOpp').innerHTML=st.pl.slice(1).map(p=>{const need=lotNeed(p.board,p.marks,st.pat);return `<div class="opl${need<=2?' hot':''}">${AVATARS[p.av].e} ${esc(p.name)} · le ${need===1?'falta':'faltan'} <b>${need}</b></div>`;}).join('');
   $('lotCur').innerHTML=st.cur>=0?`${lotCardHTML(st.cur,'big new',`<small>${st.i}/54</small>`)}<div class="hist">${st.hist.slice(1).map(c=>lotCardHTML(c,'mini')).join('')}</div>`:'<div class="lc big back">🎴</div>';
   $('lotBoard').innerHTML=me.board.map(c=>lotCardHTML(c,'cell'+(me.marks.has(c)?' mk':'')+([0,3,12,15].includes(me.board.indexOf(c))&&st.pat==='esquinas'?' cor':''),me.marks.has(c)?beanHTML(c):'')).join('');if(LOT.beanNew){LOT.beanNew=0;beanSnd();}
