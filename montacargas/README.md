@@ -1,6 +1,6 @@
-# Montacargas MX3 · Servidor y clientes
+# Montacargas · Servidor y clientes
 
-Control de montacargas, cargadores, arneses, escáneres, radios, insumos y consumibles del almacén MX3.
+Control de montacargas, cargadores, arneses, escáneres, radios, insumos y consumibles del almacén.
 
 | App | Archivo | Para quién |
 |---|---|---|

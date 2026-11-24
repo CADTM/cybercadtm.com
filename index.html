@@ -1189,7 +1189,7 @@ function demoCalcTarimas(st,card){
   <div class="ct"><canvas></canvas><div class="lst"><div class="rows"></div><div class="dst"><div>MX-DC<b class="d0">0</b></div><div>USA<b class="d1">0</b></div><div>NZ<b class="d2">0</b></div></div></div></div>
   <div class="hud bc"><button class="btn sm sc">▣ Escanear caja</button></div>`;
   const cv=$('canvas',st),rows=$('.rows',st),DC=['#00f0ff','#ffb020','#c6ff3d'];
-  const PN=['900PT-4410','RT-232 KIT','MR850-A','F&P 4 MASK','AIR-ST 3'];
+  const PN=['PN-4410','KIT-232','HM-850A','MASK-04','AIR-03'];
   let boxes=[],tar=1,tot=[0,0,0],pz=0,user=0;
   function scan(){const d=Math.random()*3|0,q=[24,36,48,12][Math.random()*4|0];
     if(boxes.length>=24){boxes=[];tar++;$('.tn',st).textContent='#'+tar}

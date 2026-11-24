@@ -1,6 +1,6 @@
 // Service worker: permite instalar las apps y abrirlas sin internet.
 // Los datos de cada dispositivo viven en su propio navegador (localStorage), no aquí.
-const CACHE = 'mx3-montacargas-v1';
+const CACHE = 'mx3-montacargas-v2';
 const FILES = [
   './', './index.html', './cliente.html',
   './manifest-servidor.json', './manifest-cliente.json',

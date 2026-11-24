@@ -2,7 +2,7 @@
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="MX3 Montacargas">
+<meta name="apple-mobile-web-app-title" content="Montacargas">
 <title>Control de Montacargas</title>
 <link rel="manifest" href="manifest-servidor.json"><meta name="theme-color" content="#0067b1"><link rel="icon" href="icon-servidor-192.png"><link rel="apple-touch-icon" href="icon-servidor-192.png">
 <style>
@@ -116,13 +116,13 @@ footer b{color:var(--cy);font-weight:500}
 @media(pointer:coarse){input,select,textarea,button.b{font-size:16px}button.b,select,input{min-height:40px}nav button{padding:10px 14px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body>
-<header><div class="hb"><div class="hl" id="hl"></div><h1>Almacén MX3</h1><span class="pill" id="role"></span></div>
+<header><div class="hb"><div class="hl" id="hl"></div><h1>Almacén</h1><span class="pill" id="role"></span></div>
 <nav id="nav"></nav><div class="hr"><button class="ic" id="sc" title="Agregar acceso directo" aria-label="Agregar acceso directo" onclick="addSc()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></button><div class="clock" id="clk"></div></div></header>
 <main id="m"></main>
-<footer>© <span id="yr"></span> Almacén MX3, Fisher &amp; Paykel. <b>@cybercadtm</b></footer>
+<footer>© <span id="yr"></span> Control de almacén. <b>@cybercadtm</b></footer>
 <div id="dlg" class="ov"><form id="fm" class="md"></form></div>
 <script>
-const LOGO='<svg viewBox="0 0 190 46" xmlns="http://www.w3.org/2000/svg"><text x="0" y="25" font-family="Segoe UI,Arial,sans-serif" font-size="25" font-weight="600" fill="#0067b1">Fisher &amp; Paykel</text><text x="1" y="42" font-family="Segoe UI,Arial,sans-serif" font-size="11" letter-spacing="3.6" fill="#0067b1">HEALTHCARE</text></svg>';
+const LOGO='<svg viewBox="0 0 190 46" xmlns="http://www.w3.org/2000/svg"><text x="0" y="25" font-family="Segoe UI,Arial,sans-serif" font-size="25" font-weight="600" fill="#0067b1">Almacén</text><text x="1" y="42" font-family="Segoe UI,Arial,sans-serif" font-size="11" letter-spacing="3.6" fill="#0067b1">MONTACARGAS</text></svg>';
 const CLIENT=false,FN=CLIENT?'cliente.html':'index.html',SK=CLIENT?'mx3c':'mc2';
 const $=s=>document.querySelector(s),H=new Date;
 const day=d=>(d||new Date()).toLocaleDateString('sv');
@@ -201,7 +201,7 @@ const rng=(a,b)=>a==b?fD(a,{weekday:'long',day:'numeric',month:'long',year:'nume
 const bar=(t,a,b,x='')=>`<div class="top np"><div class="act" style="margin:0;align-items:center">${x}${a?`<label class="dl">Desde <input type="date" value="${R[a]}" onchange="R.${a}=this.value||day();draw()"></label><label class="dl">Hasta <input type="date" value="${R[b]}" onchange="R.${b}=this.value||day();draw()"></label>`:''}<input placeholder="Elaboró" value="${R.by}" onchange="R.by=this.value;draw()"><button class="b p" onclick="print()">Imprimir o guardar PDF</button></div></div>`;
 const pre=(a,b)=>`<button class="b" onclick="R.${a}=R.${b}=day();draw()">Hoy</button><button class="b" onclick="wk(0,'${a}','${b}')">Esta semana</button><button class="b" onclick="wk(-1,'${a}','${b}')">Semana pasada</button>`;
 window.wk=(o,a,b)=>{const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7)+7*o);R[a]=day(d);d.setDate(d.getDate()+6);R[b]=day(d);draw()};
-const head=(t,sub)=>`<div class="ph"><div class="logo">${lg()}</div><div><h1>${t}</h1><p class="sub">Almacén MX3, ${sub}</p></div></div>`;
+const head=(t,sub)=>`<div class="ph"><div class="logo">${lg()}</div><div><h1>${t}</h1><p class="sub">Almacén, ${sub}</p></div></div>`;
 const sig=()=>`<div class="sig"><div>${R.by||'&nbsp;'}<span>Elaboró</span></div><div>&nbsp;<span>Supervisor</span></div><div>&nbsp;<span>Vo. Bo.</span></div></div>`;
 const note=()=>`<p class="note">Estado de las unidades, baterías y existencias corresponden al momento de la impresión: ${new Date().toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'})}. Checklists y movimientos son los del periodo indicado.</p>`;
 const mrow=k=>`<td>${k.t}</td><td class="l">${k.o||'—'}</td><td>${k.u}</td>${ITEMS.map(i=>k.fails.includes(i)?'<td class="bd">✗</td>':'<td class="ok">✓</td>').join('')}<td class="l">${k.n||''}</td>`;
@@ -294,7 +294,7 @@ else if(dro)st=['Abre el menú <b>⋮</b> de Chrome.','Toca <b>Instalar app</b> 
 else if(loc)st=mac?['Busca el archivo <b>'+FN+'</b> en Finder.','Arrástralo al Escritorio mientras mantienes <b>Opción + Comando</b> para crear un alias.']:['Busca el archivo <b>'+FN+'</b> en el Explorador.','Clic derecho, <b>Enviar a</b> y luego <b>Escritorio (crear acceso directo)</b>.'];
 else st=mac?['En Safari: menú <b>Archivo</b> y luego <b>Añadir al Dock</b>.','En Chrome o Edge: menú <b>⋮</b>, <b>Guardar y compartir</b> y luego <b>Instalar página como aplicación</b>.']:['En Chrome o Edge abre el menú <b>⋮</b>.','En Chrome elige <b>Guardar y compartir</b> y luego <b>Crear acceso directo</b>. En Edge elige <b>Aplicaciones</b> y luego <b>Instalar este sitio como aplicación</b>.','Marca <b>Abrir como ventana</b> para que se abra como app.'];
 dlgOpen(`<h3 style="margin-bottom:12px">Agregar acceso directo</h3><ol class="st">${st.map(x=>`<li>${x}</li>`).join('')}</ol><div class="act">${dp?'<button class="b p" type="submit">Instalar ahora</button>':''}<button class="b" type="button" id="cx">Cerrar</button></div>`,()=>{if(dp){dp.prompt();dp=null}})};
-(()=>{try{const b=$('#sc');if(b&&b.style&&(navigator.standalone||matchMedia('(display-mode: standalone)').matches))b.style.display='none';const c=document.createElement('canvas');c.width=c.height=180;const x=c.getContext('2d'),g=x.createLinearGradient(0,0,180,180);g.addColorStop(0,'#33a3ee');g.addColorStop(1,'#0067b1');x.fillStyle=g;x.fillRect(0,0,180,180);x.fillStyle='#fff';x.textAlign='center';x.font='bold 66px Arial,sans-serif';x.fillText('MX3',90,100);x.font='20px Arial,sans-serif';x.fillText('Montacargas',90,136);const l=document.createElement('link');l.rel='apple-touch-icon';l.href=c.toDataURL('image/png');document.head.appendChild(l)}catch(e){}})();
+(()=>{try{const b=$('#sc');if(b&&b.style&&(navigator.standalone||matchMedia('(display-mode: standalone)').matches))b.style.display='none';const c=document.createElement('canvas');c.width=c.height=180;const x=c.getContext('2d'),g=x.createLinearGradient(0,0,180,180);g.addColorStop(0,'#33a3ee');g.addColorStop(1,'#0067b1');x.fillStyle=g;x.fillRect(0,0,180,180);x.fillStyle='#fff';x.textAlign='center';x.font='bold 66px Arial,sans-serif';x.fillText('MC',90,100);x.font='20px Arial,sans-serif';x.fillText('Montacargas',90,136);const l=document.createElement('link');l.rel='apple-touch-icon';l.href=c.toDataURL('image/png');document.head.appendChild(l)}catch(e){}})();
 window.ask=ask;draw();
 </script>
 <!-- Asistente IA local (Ollama) · @cybercadtm -->
@@ -336,7 +336,7 @@ window.ask=ask;draw();
 (()=>{
 function limpia(o,d){if(d>7)return'…';if(typeof o==='string')return o.startsWith('data:')?'[foto]':(o.length>200?o.slice(0,200)+'…':o);if(Array.isArray(o))return o.map(x=>limpia(x,d+1));if(o&&typeof o==='object'){const r={};for(const k in o){const v=o[k];if(typeof v!=='function')r[k]=limpia(v,d+1)}return r}return o}
 const APP={nombre:'Panel',
-sistema:'Eres el asistente del Panel de control de montacargas del almacén MX3 de Fisher & Paykel en Tijuana. Ayudas con el estado de los montacargas (swing reach, order picker y hombre parado), los checklists diarios (quién elaboró, fallas, extintor, limpieza), el mantenimiento según el horómetro, los cargadores (revisión y funcionamiento), los arneses (fecha de compra e inspecciones), los escáneres, radios y baterías, y los insumos y consumibles (aserrín, mopas, navajas, lapiceros, guantes, lentes, trapo, windex, bolsas, papel).',
+sistema:'Eres el asistente del Panel de control de montacargas del almacén. Ayudas con el estado de los montacargas (swing reach, order picker y hombre parado), los checklists diarios (quién elaboró, fallas, extintor, limpieza), el mantenimiento según el horómetro, los cargadores (revisión y funcionamiento), los arneses (fecha de compra e inspecciones), los escáneres, radios y baterías, y los insumos y consumibles (aserrín, mopas, navajas, lapiceros, guantes, lentes, trapo, windex, bolsas, papel).',
 sug:['¿Qué montacargas reportaron fallas?','¿Falta algún checklist hoy?','¿Qué consumibles están bajos?','¿Cuál necesita mantenimiento pronto?'],
 datos:()=>{let s={};try{if(typeof S!=='undefined'&&S)s=S}catch(e){}return JSON.stringify(limpia(s,0))}};
 const g=i=>document.getElementById(i),P=g('iaP'),M=g('iaM');
