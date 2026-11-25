@@ -1,0 +1,16 @@
+{
+  "name": "Control de empacado",
+  "short_name": "Empacado",
+  "description": "Control de empacado por delivery: pallets en 3D, pesos, andenes y reporte — @cybercadtm",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#14181f",
+  "theme_color": "#14181f",
+  "lang": "es-MX",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
