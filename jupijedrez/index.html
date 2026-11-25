@@ -71,6 +71,9 @@ label.tg input{accent-color:#ffcc4d;width:17px;height:17px}
   background:rgba(12,18,38,.8);backdrop-filter:blur(8px);color:#fff;font-size:22px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 .fab:active{transform:scale(.92)}
 #fabRx{right:12px}#fabFlag{left:12px}#fabTalk{right:12px;bottom:calc(140px + env(safe-area-inset-bottom));display:none;touch-action:none;user-select:none;-webkit-user-select:none}#fabTalk.rec{background:#e0304a;box-shadow:0 0 0 6px rgba(224,48,74,.35),0 6px 18px rgba(0,0,0,.4);transform:scale(1.15)}
+#immBar{display:flex;gap:6px;justify-content:center;margin-top:6px}#immBar button{font:inherit;font-size:12px;font-weight:800;border:1px solid rgba(255,255,255,.2);background:rgba(12,18,38,.75);color:#fff;border-radius:12px;padding:6px 10px;cursor:pointer}#immBar button.on{background:#ffcc4d;color:#2a1a08}
+#immDice{position:fixed;z-index:8;left:50%;top:38%;transform:translate(-50%,-50%);font-size:64px;font-weight:900;color:#fff;text-shadow:0 4px 18px rgba(0,0,0,.7);pointer-events:none;display:none}#immDice.go{display:block;animation:immD 1.2s ease-out forwards}@keyframes immD{0%{transform:translate(-50%,-50%) scale(.3) rotate(-40deg);opacity:0}20%{transform:translate(-50%,-50%) scale(1.25);opacity:1}70%{opacity:1}100%{transform:translate(-50%,-90%) scale(1);opacity:0}}
+body.imm .hud.top,body.imm #caps{opacity:.55}
 #talkInd{position:fixed;z-index:9;left:50%;top:34%;transform:translate(-50%,-50%);background:rgba(20,10,30,.9);border:2px solid #e0304a;border-radius:18px;padding:12px 18px;font-weight:800;display:none;text-align:center}
 .tray{position:fixed;z-index:7;bottom:calc(138px + env(safe-area-inset-bottom));display:none;flex-wrap:wrap;gap:6px;max-width:300px;padding:8px;border-radius:18px;
   background:rgba(12,18,38,.92);border:1px solid rgba(255,255,255,.16);box-shadow:0 10px 30px rgba(0,0,0,.5)}
@@ -236,7 +239,7 @@ body.cqmode #rxTray,body.cqmode #flagTray{bottom:auto;top:148px}
 <div class="pbar" id="rpBar"><span id="rpLbl"></span><button id="rpStart">⏮</button><button id="rpPlay">⏸</button><button id="rpStep">⏭</button><button id="rpExit">✖ Salir</button></div>
 <div id="cq"><div id="cqOpp"></div><div id="cqMid"></div><div id="cqMsg"></div><div id="cqMine"></div><div id="cqAct"></div><div id="cqHand"></div></div>
 <div class="ovl" id="dmo"><div id="dmoOpp"></div><div id="dmoTable"></div><div class="msg" id="dmoMsg"></div><div class="act" id="dmoAct"></div><div id="dmoHand"></div></div>
-<div class="ovl" id="ocaUI"><div id="ocaPl"></div><div class="msg" id="ocaMsg"></div><div class="act" id="ocaAct"></div></div>
+<div class="ovl" id="ocaUI"><div id="ocaPl"></div><div class="msg" id="ocaMsg"></div><div class="act" id="ocaAct"></div><div id="immBar"></div></div><div id="immDice"></div>
 <div class="ovl" id="lot"><div id="lotOpp"></div><div id="lotCur"></div><div class="msg" id="lotMsg"></div><div id="lotBoard"></div><div class="act" id="lotAct"></div></div>
 <div class="tray" id="rxTray"></div>
 <div class="tray" id="flagTray"><button id="bHelp2">❓ Cómo se juega</button><button id="bDraw">🤝 Ofrecer tablas</button><button id="bResign">🏳️ Rendirme</button></div>
@@ -246,7 +249,7 @@ body.cqmode #rxTray,body.cqmode #flagTray{bottom:auto;top:148px}
 <!-- Avatares / partida -->
 <div class="sheet" id="sheetAv">
   <div class="logo">🪐 Jupi<span>jedrez</span></div>
-  <div class="gsel" id="gsel"><button data-g="chess"><span>♞</span>Ajedrez<small>3D clásico</small></button><button data-g="damas"><span>⛀</span>Damas<small>españolas</small></button><button data-g="conquian"><span>🃏</span>Conquián<small>baraja española</small></button><button data-g="domino"><span>🁫</span>Dominó<small>doble 6</small></button><button data-g="oca"><span>🪿</span>La Oca<small>2 a 4 jugadores</small></button><button data-g="loteria"><span>🎴</span>Lotería<small>mexicana</small></button><button data-g="snakes"><span>🐍</span>Serpientes<small>y escaleras</small></button></div>
+  <div class="gsel" id="gsel"><button data-g="chess"><span>♞</span>Ajedrez<small>3D clásico</small></button><button data-g="damas"><span>⛀</span>Damas<small>españolas</small></button><button data-g="conquian"><span>🃏</span>Conquián<small>baraja española</small></button><button data-g="domino"><span>🁫</span>Dominó<small>doble 6</small></button><button data-g="loteria"><span>🎴</span>Lotería<small>mexicana</small></button><button data-g="snakes"><span>🐍</span>Serpientes<small>y escaleras</small></button></div>
   <div class="row" style="margin:6px 0 4px"><button class="btn" id="bHelp">❓ Cómo se juega</button><button class="btn pri" id="bDaily" style="font-size:14px;padding:9px 12px">📅 Misión del día</button><button class="btn" id="bPuzMenu">🧩 Retos de mate</button><button class="btn" id="bStatsMenu">🏆 Mis récords</button></div>
   <h2>Elige avatares</h2>
   <div class="row">
@@ -1329,10 +1332,10 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/
   for(const h of hintGroup.children){const s=h.userData.cap?1+Math.sin(t*6)*.1:.85+Math.sin(t*5)*.15;h.scale.set(s,s,s);if(h.userData.cap)h.rotation.z=t;}
   for(const tl of tiles)if(tl.userData.check)tl.material.emissiveIntensity=.5+Math.abs(Math.sin(t*5))*.7;
   // avatares: se ve el del otro lado
-  if(avatars.w){avatars.w.g.visible=camera.position.z<1.5;avatars.b.g.visible=camera.position.z>-1.5;}
+  if(avatars.w){const im=immActive();avatars.w.g.visible=!im&&camera.position.z<1.5;avatars.b.g.visible=!im&&camera.position.z>-1.5;}
   updateAvatar(avatars.w,t,dt);updateAvatar(avatars.b,t,dt);
   if(CAM.dirty)computeCam();const kk=CAM.snap?1:1-Math.exp(-dt*5);CAM.snap=false;
-  CAM.pos.lerp(CAM.goalPos,kk);CAM.tgt.lerp(CAM.goalTgt,kk);camera.position.copy(CAM.pos);camera.lookAt(CAM.tgt);
+  if(immActive())immCam(dt);else{IMM.init=false;CAM.pos.lerp(CAM.goalPos,kk);CAM.tgt.lerp(CAM.goalTgt,kk);camera.position.copy(CAM.pos);camera.lookAt(CAM.tgt);}
   if(shake>0){const o=new THREE.Vector3((Math.random()-.5)*shake,(Math.random()-.5)*shake,(Math.random()-.5)*shake);camera.position.add(o);renderer.render(scene,camera);camera.position.sub(o);shake*=Math.pow(.004,dt);if(shake<.005)shake=0;}
   else renderer.render(scene,camera);
 }
@@ -1643,6 +1646,25 @@ async function bkImport(file){let o;try{o=JSON.parse(await file.text());}catch(_
     const adb=await albDB();if(adb&&Array.isArray(o.album)){const st=adb.transaction('p','readwrite').objectStore('p');st.clear();for(const a of o.album)if(a&&typeof a.d==='string')st.add({t:+a.t||Date.now(),title:String(a.title||''),sub:String(a.sub||''),img:b64ToBlob(a.d,'image/jpeg')});await new Promise(r=>{st.transaction.oncomplete=r;st.transaction.onerror=r;});}
     toast('✅ Respaldo restaurado, reiniciando…');setTimeout(()=>location.reload(),900);}catch(e){toast('No se pudo restaurar completo');}}
 $('bkExp').onclick=bkExport;$('bkImp').onclick=()=>$('bkFile').click();$('bkFile').onchange=e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(f)bkImport(f);};
+/* ---------- modo inmersivo (serpientes y escaleras) ---------- */
+const IMM={on:!!cfg.imm,fp:!!cfg.immFp,p:new THREE.Vector3(),t:new THREE.Vector3(),init:false,yaw0:0,lastCur:-1};
+function immActive(){return IMM.on&&GAME==='snakes'&&!!OCA.st&&OCA.tokens.length>0;}
+function immCam(dt){const st=OCA.st;const k=st.cur;if(k!==IMM.lastCur){IMM.lastCur=k;IMM.yaw0=CAM.yaw;}
+  OCA.tokens.forEach((X,i)=>{const P=st.pl[i];if(!P||P.pos>=100)return;const c=ocaCellPos(P.pos,i);if(Math.hypot(X.position.x-c.x,X.position.z-c.z)>.03||X.position.y>.13)return;
+    const n=ocaCellPos(P.pos+1,i);const tg=Math.atan2(n.x-c.x,n.z-c.z);let d=tg-X.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));X.rotation.y+=d*Math.min(1,dt*5);});
+  const T=OCA.tokens[k]||OCA.tokens[0];
+  const a=T.rotation.y+(CAM.yaw-IMM.yaw0);const f=new THREE.Vector3(Math.sin(a),0,Math.cos(a)),up=new THREE.Vector3(0,1,0),b=T.position;let eye,look;
+  if(IMM.fp){eye=b.clone().addScaledVector(up,.5).addScaledVector(f,.1);look=eye.clone().addScaledVector(f,1.8).addScaledVector(up,-.62);}
+  else{eye=b.clone().addScaledVector(f,-1.75).addScaledVector(up,1.05);look=b.clone().addScaledVector(f,1.1).addScaledVector(up,.12);}
+  const kk=IMM.init?1-Math.exp(-dt*4.2):1;IMM.init=true;IMM.p.lerp(eye,kk);IMM.t.lerp(look,kk);camera.position.copy(IMM.p);camera.lookAt(IMM.t);
+  OCA.tokens.forEach((x,i)=>{const mine=i===k;if(x.userData.sp)x.userData.sp.visible=!x.userData.R;if(x.userData.R)x.userData.R.g.visible=!(IMM.fp&&(mine||Math.hypot(x.position.x-b.x,x.position.z-b.z)<.45));});}
+function immSet(on,fp){IMM.on=on;if(fp!==undefined)IMM.fp=fp;cfg.imm=IMM.on;cfg.immFp=IMM.fp;save();IMM.init=false;IMM.lastCur=-1;document.body.classList.toggle('imm',immActive());
+  if(!IMM.on){OCA.tokens.forEach(x=>{if(x.userData.sp)x.userData.sp.visible=true;if(x.userData.R)x.userData.R.g.visible=true;});CAM.view='top';setCamSide('w',true);}
+  else toast(IMM.fp?'👁️ Primera persona: desliza para mirar alrededor':'🎮 Modo inmersivo: la cámara sigue a quien tira · desliza para girar');immBarRender();}
+function immBarRender(){const e=$('immBar');if(!e)return;if(GAME!=='snakes'||!OCA.st){e.innerHTML='';document.body.classList.remove('imm');return;}
+  e.innerHTML=`<button id="immT" class="${IMM.on?'on':''}">${IMM.on?'🗺️ Ver tablero':'🎮 Modo inmersivo'}</button>${IMM.on?`<button id="immV">${IMM.fp?'🎥 3ª persona':'👁️ 1ª persona'}</button>`:''}`;
+  $('immT').onclick=()=>immSet(!IMM.on);const v=$('immV');if(v)v.onclick=()=>immSet(true,!IMM.fp);document.body.classList.toggle('imm',immActive());}
+function immDice(v,p){const e=$('immDice');e.classList.remove('go');void e.offsetWidth;e.innerHTML=`🎲 ${v}<div style="font-size:16px;text-align:center">${esc(p?p.name:'')}</div>`;e.classList.add('go');}
 const TURN={was:false};
 function myTurnNow(){try{if(!NET.active&&!(typeof DIST!=='undefined'&&DIST.on))return false;
   if(GAME==='chess'||GAME==='damas')return !over&&!busy&&S.turn===(NET.active?NET.myColor:DIST.color);
@@ -2284,10 +2306,10 @@ function snkBuild(){const g=new THREE.Group();const cv=document.createElement('c
       const tg=new THREE.Mesh(new THREE.BoxGeometry(.03,.01,.16),new THREE.MeshBasicMaterial({color:0xe0303a}));tg.position.set(0,-.02,.26);hd.add(tg);
       const t0=cur.getTangent(0).negate();hd.position.copy(cur.getPoint(0)).add(new THREE.Vector3(0,.06,0));hd.rotation.y=Math.atan2(t0.x,t0.z);g.add(hd);}}
   const dice=ocaDice(g);g.userData.dice=dice;g.visible=false;scene.add(g);return g;}
-async function snkClimb(k,a,b){const T=OCA.tokens[k];const A={x:T.position.x,z:T.position.z},B=ocaCellPos(b,k);sweep('sine',400,1200,.6,.1);
-  await tween(900,t=>T.position.set(A.x+(B.x-A.x)*t,.11+.35*Math.sin(Math.PI*t)+.15*t*(1-t),A.z+(B.z-A.z)*t),eio);burst(B.x,B.z);}
+async function snkClimb(k,a,b){const T=OCA.tokens[k];const A={x:T.position.x,z:T.position.z},B=ocaCellPos(b,k);sweep('sine',400,1200,.6,.1);T.rotation.y=Math.atan2(B.x-A.x,B.z-A.z);
+  await tween(immActive()?1500:900,t=>T.position.set(A.x+(B.x-A.x)*t,.11+.35*Math.sin(Math.PI*t)+.15*t*(1-t),A.z+(B.z-A.z)*t),eio);burst(B.x,B.z);}
 async function snkSlide(k,a,b){const T=OCA.tokens[k];const cur=SNK.curves[a];sweep('sawtooth',700,120,.9,.07);if(!cur){await ocaJump(k,b);return;}
-  await tween(1100,t=>{const p=cur.getPoint(t);T.position.set(p.x,.18,p.z);T.rotation.y=t*Math.PI*3;},eio);T.rotation.y=0;const B=ocaCellPos(b,k);await tween(200,t=>T.position.set(T.position.x+(B.x-T.position.x)*t,.11,T.position.z+(B.z-T.position.z)*t));}
+  const im=immActive();await tween(im?1700:1100,t=>{const p=cur.getPoint(t);T.position.set(p.x,.18,p.z);if(im){const tg=cur.getTangent(t);T.rotation.y=Math.atan2(tg.x,tg.z);}else T.rotation.y=t*Math.PI*3;},eio);if(!im)T.rotation.y=0;const B=ocaCellPos(b,k);await tween(200,t=>T.position.set(T.position.x+(B.x-T.position.x)*t,.11,T.position.z+(B.z-T.position.z)*t));}
 function ocaBuild(){OCA.groups=OCA.groups||{};const v=ocaVar();if(OCA.groups[v]){OCA.group=OCA.groups[v];OCA.dice=OCA.group.userData.dice;return;}
   if(v==='snk'){const g=snkBuild();OCA.groups.snk=g;OCA.group=g;OCA.dice=g.userData.dice;return;}
   OCA.cells=ocaSpiral();const g=new THREE.Group();
@@ -2330,17 +2352,19 @@ function ocaStart(fromNet){if(OCA.net&&!fromNet){OCA.gid=Math.max(OCA.gid,+((NET
   if(OCA.net){const hostAv=NET.role==='host'?cfg.me:NET.oppAv,guestAv=NET.role==='host'?NET.oppAv:cfg.me;pl.length=0;
     for(let i=0;i<2;i++)pl.push({name:i===OCA.seat?'Tú':NET.oppNick,av:AVATARS[i?guestAv:hostAv]?(i?guestAv:hostAv):'boo',pos:0,skip:0,human:i===OCA.seat,col:OCOL[i]});}
   OCA.st={pl,cur:0,phase:'play',turns:0};OCA.busy=false;over=false;recorded=false;
-  pl.forEach((p,i)=>{const t=new THREE.Group();const m=new THREE.MeshStandardMaterial({color:p.col,roughness:.35,metalness:.1});
-    const base=new THREE.Mesh(new THREE.CylinderGeometry(.16,.2,.1,24),m);base.position.y=.05;const body=new THREE.Mesh(new THREE.ConeGeometry(.13,.36,20),m);body.position.y=.26;
-    const head=new THREE.Mesh(new THREE.SphereGeometry(.1,16,12),m);head.position.y=.46;[base,body,head].forEach(o=>{o.castShadow=true;t.add(o);});
-    const sp=ocaEmojiSprite(AVATARS[p.av].e);sp.position.y=.85;t.add(sp);const q=ocaCellPos(0,i);t.position.set(q.x,.11,q.z);OCA.group.add(t);OCA.tokens.push(t);});
+  pl.forEach((p,i)=>{const t=new THREE.Group();const m=new THREE.MeshStandardMaterial({color:p.col,roughness:.35,metalness:.1,emissive:p.col,emissiveIntensity:.35});
+    let R=null;try{R=buildAvatar(p.av,OCA.net&&!p.human?NET.oppAvc||null:undefined);}catch(_){R=null;}
+    if(R){const ring=new THREE.Mesh(new THREE.TorusGeometry(.17,.035,8,26),m);ring.rotation.x=Math.PI/2;ring.position.y=.03;t.add(ring);R.g.scale.setScalar(.15);R.g.position.set(0,0,0);R.g.rotation.set(0,0,0);R.g.traverse(o=>{if(o.isMesh)o.castShadow=true;});t.add(R.g);t.userData.R=R;}
+    else{const base=new THREE.Mesh(new THREE.CylinderGeometry(.16,.2,.1,24),m);base.position.y=.05;const body=new THREE.Mesh(new THREE.ConeGeometry(.13,.36,20),m);body.position.y=.26;
+      const head=new THREE.Mesh(new THREE.SphereGeometry(.1,16,12),m);head.position.y=.46;[base,body,head].forEach(o=>{o.castShadow=true;t.add(o);});}
+    const sp=ocaEmojiSprite(AVATARS[p.av].e);sp.position.y=.8;t.add(sp);t.userData.sp=sp;const q=ocaCellPos(0,i);t.position.set(q.x,.11,q.z);OCA.group.add(t);OCA.tokens.push(t);});
   placeAvatars();CAM.view='top';setCamSide('w',true);ocaMsg('¡Que empiece el viaje a Júpiter! 🪐');ocaRender();OCA.gap=true;setTimeout(()=>{OCA.gap=false;ocaTurn();},800);if(OCA.net&&NET.room)netPublish();}
 function ocaMsg(t){const m=$('ocaMsg');if(m)m.innerHTML=t;}
 function ocaTurn(){const st=OCA.st;if(!st||st.phase!=='play')return;const p=st.pl[st.cur];
   if(p.skip>0){p.skip--;ocaMsg(`${AVATARS[p.av].e} <b>${esc(p.name)}</b> pierde este turno${p.skip?` (le faltan ${p.skip})`:''}`);ocaRender();OCA.gap=true;setTimeout(()=>{OCA.gap=false;ocaNext();},1300);return;}
   ocaRender();if(!p.human){if(OCA.net){ocaMsg(`${AVATARS[p.av].e} Turno de <b>${esc(p.name)}</b>…`);ocaPump();return;}mood('b','think',900);setTimeout(()=>ocaRoll(),1000);}else ocaMsg(`${AVATARS[p.av].e} ${p.name==='Tú'?'<b>Tu turno</b>':'Turno de <b>'+esc(p.name)+'</b>'}: ¡tira el dado!`);}
 function ocaNext(){const st=OCA.st;st.cur=(st.cur+1)%st.pl.length;ocaTurn();}
-async function ocaRoll(vf){const st=OCA.st;if(OCA.busy||!st||st.phase!=='play')return;const p=st.pl[st.cur],k=st.cur;if(OCA.net&&!vf&&(!p.human||OCA.gap))return;OCA.busy=true;ocaRender();const v=vf||1+Math.floor(Math.random()*6);st.turns++;
+async function ocaRoll(vf){const st=OCA.st;if(OCA.busy||!st||st.phase!=='play')return;const p=st.pl[st.cur],k=st.cur;if(OCA.net&&!vf&&(!p.human||OCA.gap))return;OCA.busy=true;ocaRender();const v=vf||1+Math.floor(Math.random()*6);st.turns++;if(immActive())setTimeout(()=>immDice(v,p),650);
   if(OCA.net&&!vf){OCA.mine.push(v);OCA.cnt[k]++;netPublish();}
   const D=OCA.dice;const sx=3.2+Math.random(),sz=(Math.random()-.5)*3;const r0=[Math.random()*6,Math.random()*6,Math.random()*6];const rf=DICE_ROT[v];
   if(cfg.sound){noise(.25,.25);}
@@ -2367,8 +2391,8 @@ async function ocaRoll(vf){const st=OCA.st;if(OCA.busy||!st||st.phase!=='play')r
     if(!p.human)mood('b',good?'happy':'sad',1300);voiceSide(p.human&&!local0()?'w':'b',good?'happy':'sad');}
   OCA.busy=false;OCA.gap=true;ocaRender();setTimeout(()=>{OCA.gap=false;again?ocaTurn():ocaNext();},txt?1500:600);}
 async function ocaWalk(k,from,to,bounceAt){const T=OCA.tokens[k];const path=[];if(bounceAt!==null){for(let i=from+1;i<=bounceAt;i++)path.push(i);for(let i=bounceAt-1;i>=to;i--)path.push(i);}else for(let i=from+1;i<=to;i++)path.push(i);
-  for(const i of path){const a={x:T.position.x,z:T.position.z},b=ocaCellPos(i,k);tone(500+i*6,.04,'triangle',.05);
-    await tween(170,t=>T.position.set(a.x+(b.x-a.x)*t,.11+Math.sin(Math.PI*t)*.35,a.z+(b.z-a.z)*t),eio);}}
+  for(const i of path){const a={x:T.position.x,z:T.position.z},b=ocaCellPos(i,k);tone(500+i*6,.04,'triangle',.05);const dx=b.x-a.x,dz=b.z-a.z;if(Math.abs(dx)+Math.abs(dz)>.01)T.rotation.y=Math.atan2(dx,dz);const im=immActive();
+    await tween(im?300:170,t=>{T.position.set(a.x+(b.x-a.x)*t,.11+Math.sin(Math.PI*t)*(im?.42:.35),a.z+(b.z-a.z)*t);const R=T.userData.R;if(R){const q=Math.sin(Math.PI*t);R.g.scale.set(.15*(1-q*.08),.15*(1+q*.12),.15*(1-q*.08));}},eio);if(im)try{noise(.03,.05);}catch(_){}}}
 async function ocaJump(k,to){const T=OCA.tokens[k];const a={x:T.position.x,z:T.position.z},b=ocaCellPos(to,k);sWhoosh();
   await tween(700,t=>{T.position.set(a.x+(b.x-a.x)*t,.11+Math.sin(Math.PI*t)*2,a.z+(b.z-a.z)*t);T.rotation.y=t*Math.PI*2;},eio);T.rotation.y=0;tween(300,k=>{const q=1+Math.sin(k*Math.PI)*.25*(1-k);T.scale.set(q,1/q,q);}).then(()=>T.scale.set(1,1,1));burst(b.x,b.z);}
 function local0(){return cfg.mode==='pvp'&&!OCA.net;}
@@ -2379,7 +2403,7 @@ function ocaWin(k){const st=OCA.st,p=st.pl[k];if(st.phase==='over')return;st.pha
 function ocaRender(){const st=OCA.st;if(!st||!ocaLike())return;const p=st.pl[st.cur];
   $('ocaPl').innerHTML=st.pl.map((q,i)=>`<div class="opl${i===st.cur&&st.phase==='play'?' on':''}" style="--pc:#${q.col.toString(16).padStart(6,'0')}">${AVATARS[q.av].e} ${esc(q.name)} <b>${q.pos}</b>${q.skip?` ⏸${q.skip}`:''}</div>`).join('');
   $('ocaAct').innerHTML=st.phase==='over'?`<button class="btn pri" id="ocaAgain">${GAME==='snakes'?'🐍':'🪿'} Otra partida</button>`:p.human&&!OCA.busy?`<button class="btn pri big" id="ocaRollB">🎲 Tirar dado</button>`:`<span class="wait">${OCA.busy?'🎲 …':'⏳ Turno de '+esc(p.name)+'…'}</span>`;
-  const bb=(id,f)=>{const e=$(id);if(e)e.onclick=f;};bb('ocaRollB',()=>ocaRoll());bb('ocaAgain',()=>{$('endModal').classList.remove('show');ocaStart();});renderHUD();}
+  const bb=(id,f)=>{const e=$(id);if(e)e.onclick=f;};bb('ocaRollB',()=>ocaRoll());bb('ocaAgain',()=>{$('endModal').classList.remove('show');ocaStart();});immBarRender();renderHUD();}
 function ocaHUD(){const st=OCA.st;const p=st&&st.pl[st.cur];const ic=GAME==='snakes'?'🐍':'🪿';$('status').innerHTML=!st?(GAME==='snakes'?'🐍 Serpientes y escaleras':'🪿 Juego de la Oca'):st.phase==='over'?ic+' Fin del juego':(p.name==='Tú'?ic+' Tu turno':ic+' Turno de '+esc(p.name));
   $('rivalChip').innerHTML=st?st.pl.map(q=>AVATARS[q.av].e+(q.name==='Tú'?' Tú':st.pl.length===2?' '+esc(q.name):'')).join(' vs '):'2 a 4 jugadores';
   $('caps').innerHTML=`<small style="letter-spacing:0;font-size:11px;opacity:.85">${GAME==='snakes'?'Llega exacto a la 100 · 🪜 subes · 🐍 bajas · 6 = tiras otra vez':'Llega exacto a la 63 · 🪿 oca = brincas y tiras otra vez'}</small>`;$('clocks').style.display='none';}
@@ -2571,7 +2595,7 @@ function recordOther(game,res,n){if(recorded)return;if(res==='w')setTimeout(()=>
   ST.games.unshift(g);h2hAdd(g);chipSettle(g);ST.games=ST.games.slice(0,30);saveST();}
 function setBoardVisible(v){for(const t of tiles)t.visible=v;frame.visible=v;for(const l of labels)l.visible=v;hintGroup.visible=v;if(neonEdges)neonEdges.visible=v;
   for(const g of pieceObjs.values())g.visible=v;}
-function switchGame(g,silent){if(!GAMES_INFO[g])g='chess';const was=GAME;if(DIST.on&&!DIST.sw)DIST.on=false;
+function switchGame(g,silent){if(g==='oca')g='snakes';document.body.classList.remove('imm');if(!GAMES_INFO[g])g='chess';const was=GAME;if(DIST.on&&!DIST.sw)DIST.on=false;
   if(was!==g){if(was==='loteria')lotStop();ocaShowGroups(g);}
   GAME=g;cfg.game=g;save();const info=GI();const ov=!!info.ov;
   CQ.on=g==='conquian';for(const id of['cq','dmo','ocaUI','lot'])$(id).classList.toggle('show',info.ov===id);
