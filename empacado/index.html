@@ -151,8 +151,6 @@ footer{text-align:center;padding:24px 16px 32px;color:var(--mute);font-size:14px
   <section>
     <form class="panel" id="f" novalidate>
       <h2 id="ftitle">Nuevo delivery</h2>
-      <label for="del">Delivery</label>
-      <input id="del" inputmode="numeric" autocomplete="off" placeholder="Ej. 80012345">
       <label for="destBtn">Destino</label>
       <div class="dpick">
         <button type="button" class="dbtn" id="destBtn" aria-haspopup="true" aria-expanded="false"></button>
@@ -165,6 +163,8 @@ footer{text-align:center;padding:24px 16px 32px;color:var(--mute);font-size:14px
           </div>
         </div>
       </div>
+      <label for="del">Delivery</label>
+      <input id="del" inputmode="numeric" autocomplete="off" placeholder="Ej. 80012345">
       <label>Envío</label>
       <div class="seg" id="via"><button type="button" data-v="A" aria-pressed="true">Aéreo</button><button type="button" data-v="M" aria-pressed="false">Marítimo</button></div>
       <div id="unitWrap"><label>Medidas en</label>
@@ -261,6 +261,7 @@ const FLAGS = {
   CO:['Colombia', `<rect width="30" height="10" fill="#FCD116"/><rect y="10" width="30" height="5" fill="#003893"/><rect y="15" width="30" height="5" fill="#CE1126"/>`],
   CL:['Chile', `<rect width="30" height="20" fill="#fff"/><rect y="10" width="30" height="10" fill="#D52B1E"/><rect width="10" height="10" fill="#0039A6"/><path d="M5 2.4l.9 2.7h2.8l-2.3 1.7.9 2.7L5 7.8l-2.3 1.7.9-2.7-2.3-1.7h2.8z" fill="#fff"/>`],
   NZ:['Nueva Zelanda', `<rect width="30" height="20" fill="#012169"/><path d="M0 0l15 10M15 0L0 10" stroke="#fff" stroke-width="2"/><path d="M0 0l15 10M15 0L0 10" stroke="#C8102E" stroke-width=".8"/><path d="M7.5 0v10M0 5h15" stroke="#fff" stroke-width="3"/><path d="M7.5 0v10M0 5h15" stroke="#C8102E" stroke-width="1.6"/>` + [[22,5],[19.5,10],[25,9.5],[22,16]].map(([x,y])=>`<g transform="translate(${x} ${y})"><path d="M0-1.4l.4 1H1.4l-.8.6.3 1L0 .6l-.9.6.3-1-.8-.6H-.4z" fill="#C8102E" stroke="#fff" stroke-width=".25"/></g>`).join('')],
+  TR:['Turquía', `<rect width="30" height="20" fill="#E30A17"/><circle cx="11" cy="10" r="5" fill="#fff"/><circle cx="12.25" cy="10" r="4" fill="#E30A17"/><path d="M15.6 10l3.9-1.27-2.41 3.32V7.95l2.41 3.32z" fill="#fff"/>`],
   SG:['Singapur', `<rect width="30" height="10" fill="#EF3340"/><rect y="10" width="30" height="10" fill="#fff"/><circle cx="7" cy="5" r="3.3" fill="#fff"/><circle cx="8.2" cy="5" r="3.1" fill="#EF3340"/>`]
 };
 const flag = (c, lg) => `<svg class="flag${lg?' lg':''}" viewBox="0 0 30 20" role="img" aria-label="${esc(FLAGS[c]?.[0]||c)}" preserveAspectRatio="none">${FLAGS[c]?.[1]||'<rect width="30" height="20" fill="#888"/>'}</svg>`;
@@ -277,6 +278,7 @@ const modelOf = id => S.models.find(m=>m.id===id);
 if (!S.seed2) { if (!modelOf('181102639-03')) S.models.push({id:'181102639-03', desc:'', l:30, w:21, h:24, u:'in', pc:3, pat:''}); S.seed2 = 1; }
 if (!S.seedHK) { if (!S.dest.includes('HK')) S.dest.push('HK'); S.seedHK = 1; }
 if (!S.seedFlags2) { ['JP','FR','CN','SE','MX','CO','BR','DE','KR','HK','CL','GB','NZ'].forEach(c=>{ if (!S.dest.includes(c)) S.dest.push(c); }); S.seedFlags2 = 1; }
+if (!S.seedTR) { if (!S.dest.includes('TR')) S.dest.push('TR'); S.seedTR = 1; }
 if (!S.seed3) { if (!modelOf('181102676')) S.models.push({id:'181102676', desc:'', l:32, w:18, h:19, u:'in', pc:2, pat:''}); S.seed3 = 1; }
 const mTxt = id => { const m = modelOf(id); return id ? id + (m?.desc ? ' ('+m.desc+')' : '') : ''; };
 const conv = (v,from,to) => from===to ? v : Math.round((to==='in' ? v/2.54 : v*2.54)*10)/10;
@@ -399,8 +401,8 @@ function renderList(){
     <div class="edge"></div><div class="in">
       <div class="lhead">
         ${selMode?`<label class="pick"><input type="checkbox" data-sel="${r.id}" ${sel.has(r.id)?'checked':''} aria-label="Seleccionar delivery ${esc(r.del)}"></label>`:''}
-        <span class="big">${esc(r.del)}</span>
         <span class="who">${flag(r.dest,1)}${esc(dname(r.dest))}</span>
+        <span class="big">${esc(r.del)}</span>
         <span class="via">${r.via==='M'?'Marítimo':'Aéreo'}</span>
         <button type="button" class="chip s${r.st}" data-act="st" data-id="${r.id}" title="Cambiar estatus">${ST[r.st]}</button>
       </div>
@@ -497,12 +499,12 @@ $('undo').onclick = () => { if (!lastDel) return; S.rows.splice(lastDel.i,0,last
 function toast(m){ $('tmsg').textContent = m; $('undo').hidden = true; $('toast').classList.add('on'); clearTimeout(window._tt); window._tt = setTimeout(()=>$('toast').classList.remove('on'), 4000); }
 
 /* ---------- exportar ---------- */
-const COLS = ['Delivery','Destino','Envío','Pallets','Total cajas','Medidas de caja','Peso total kg','Andén','Caja/Contenedor','Estatus'];
-const rowVals = r => [r.del, dname(r.dest), r.via==='M'?'Marítimo':'Aéreo', (r.pals||[]).length, totC(r), sizes(r).join(' / '), true?(totKg(r)!=null?fmt(totKg(r)):'Pendiente'):'', dockTxt(r.dock), r.cont||'', ST[r.st]];
+const COLS = ['Destino','Delivery','Envío','Pallets','Total cajas','Medidas de caja','Peso total kg','Andén','Caja/Contenedor','Estatus'];
+const rowVals = r => [dname(r.dest), r.del, r.via==='M'?'Marítimo':'Aéreo', (r.pals||[]).length, totC(r), sizes(r).join(' / '), true?(totKg(r)!=null?fmt(totKg(r)):'Pendiente'):'', dockTxt(r.dock), r.cont||'', ST[r.st]];
 function table(sep){
   const q = v => sep===',' && /[",\n]/.test(String(v)) ? '"'+String(v).replace(/"/g,'""')+'"' : String(v);
-  const H = ['Delivery','Destino','Envío','Pallet','Cajas','Modelo de caja','Largo','Ancho','Alto','Unidad','Pallet largo','Pallet ancho','Pallet alto','Peso pallet kg','Andén','Caja/Contenedor','Estatus','Registrado'];
-  const B = S.rows.flatMap(r => (r.pals||[]).flatMap((p,i) => p.items.map((it,j) => [r.del, dname(r.dest), r.via==='M'?'Marítimo':'Aéreo', 'P'+(i+1), it.c, mTxt(it.m), it.l, it.w, it.h, U(r), ...(j===0 ? (P=>[fmt(hToU(P.L,U(r))), fmt(hToU(P.W,U(r))), fmt(hToU(P.total,U(r)))])(pack(p.items,U(r))) : ['','','']), j===0&&true&&p.kg?p.kg:'', dockTxt(r.dock), r.cont||'', ST[r.st], new Date(r.ts).toLocaleString('es-MX')])));
+  const H = ['Destino','Delivery','Envío','Pallet','Cajas','Modelo de caja','Largo','Ancho','Alto','Unidad','Pallet largo','Pallet ancho','Pallet alto','Peso pallet kg','Andén','Caja/Contenedor','Estatus','Registrado'];
+  const B = S.rows.flatMap(r => (r.pals||[]).flatMap((p,i) => p.items.map((it,j) => [dname(r.dest), r.del, r.via==='M'?'Marítimo':'Aéreo', 'P'+(i+1), it.c, mTxt(it.m), it.l, it.w, it.h, U(r), ...(j===0 ? (P=>[fmt(hToU(P.L,U(r))), fmt(hToU(P.W,U(r))), fmt(hToU(P.total,U(r)))])(pack(p.items,U(r))) : ['','','']), j===0&&true&&p.kg?p.kg:'', dockTxt(r.dock), r.cont||'', ST[r.st], new Date(r.ts).toLocaleString('es-MX')])));
   return [H, ...B].map(a=>a.map(q).join(sep)).join('\n');
 }
 async function getDl(){ try { return window.claude?.use ? await claude.use('downloads') : null; } catch(e) { return null; } }
@@ -540,7 +542,7 @@ function reportHtml(rows, one, TH={}){
   let h = `<h1>${one?'Reporte de delivery '+esc(rows[0].del):'Reporte de empacado'}</h1><p>Generado ${esc(new Date().toLocaleString('es-MX'))}</p>`;
   for (const r of rows) {
     const ra = true;
-    h += `<div class="blk"><h2>${flag(r.dest)} Delivery ${esc(r.del)} · ${esc(dname(r.dest))}</h2>
+    h += `<div class="blk"><h2>${flag(r.dest)} ${esc(dname(r.dest))} · Delivery ${esc(r.del)}</h2>
       <p>${r.via==='M'?'Marítimo':'Aéreo'} · ${r.dock?'Andén '+esc(r.dock):'Sin andén'} · Contenedor ${esc(r.cont||'—')} · ${esc(ST[r.st])}</p>
       <table><thead><tr><th>Pallet</th><th>Cajas</th><th>Medidas de caja</th><th>Pallet largo × ancho × alto</th><th>Peso kg</th></tr></thead><tbody>
       ${palRowsOf(r).map(x=>`<tr><td>${esc(x[0])}</td><td>${esc(x[1])}</td><td>${esc(x[2])}</td><td>${esc(x[4])}</td><td>${ra?esc(x[3]):(x[0]?'N/A':'')}</td></tr>`).join('')}
@@ -571,7 +573,7 @@ async function printReport(rows, btn){
       const ra = true, body = palRowsOf(r).map(x=>[x[0], x[1], x[2], x[4], ra ? x[3] : (x[0]?'N/A':'')]);
       if (y > H - 50) { doc.addPage(); y = 16; }
       const im = imgs[r.dest]; let x = M; if (im) { doc.addImage(im,'PNG', M, y-3.6, 6, 4); x = M + 8; }
-      doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(`Delivery ${r.del}  ·  ${dname(r.dest)}`, x, y);
+      doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(`${dname(r.dest)}  ·  Delivery ${r.del}`, x, y);
       doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(70);
       doc.text(`${r.via==='M'?'Marítimo':'Aéreo'}   ·   ${r.dock?'Andén '+r.dock:'Sin andén'}   ·   Contenedor ${r.cont||'—'}   ·   ${ST[r.st]}`, M, y+5); doc.setTextColor(0);
       doc.autoTable({startY:y+7.5, margin:{left:M, right:M, bottom:16}, theme:'grid', styles:{cellPadding:1.4, fontSize:8.5, lineColor:[200,200,200]},
@@ -759,7 +761,7 @@ $('vtabs').addEventListener('click', e => { const b = e.target.closest('[data-vp
 
 let mv = null, mr = null, mp = 0;
 function openViz(r){
-  mr = r; mp = 0; $('vmodal').hidden = false; $('vmTitle').textContent = `Delivery ${r.del} · ${dname(r.dest)}`;
+  mr = r; mp = 0; $('vmodal').hidden = false; $('vmTitle').textContent = `${dname(r.dest)} · Delivery ${r.del}`;
   if (!mv) mv = new Viewer($('v3modal')); else mv.size();
   showMp(); $('vmClose').focus();
 }
