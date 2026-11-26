@@ -291,8 +291,8 @@ const nf = n => (+n||0).toLocaleString('es-MX');
 const dims = (it,u) => `${fmt(it.l)}×${fmt(it.w)}×${fmt(it.h)}${u?' '+u:''}`;
 const pc = p => (p.items||[]).reduce((a,it)=>a+(+it.c||0),0);
 const totC = r => (r.pals||[]).reduce((a,p)=>a+pc(p),0);
-const totKg = r => r.via==='A' ? (r.pals||[]).reduce((a,p)=>a+(+p.kg||0),0) || null : null;
-const kgPend = r => r.via==='A' && (r.pals||[]).some(p=>!p.kg);
+const totKg = r => (r.pals||[]).reduce((a,p)=>a+(+p.kg||0),0) || null;
+const kgPend = r => (r.pals||[]).some(p=>!p.kg);
 const U = r => r.u || 'cm';
 const hToU = (cm,u) => u==='in' ? cm/2.54 : cm;
 const sizes = r => [...new Set((r.pals||[]).flatMap(p=>p.items.map(it=>dims(it,U(r)))))];
@@ -330,7 +330,7 @@ function renderDests(){
   [...$('via').children].forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===via));
   [...$('unit').children].forEach(b=>b.setAttribute('aria-pressed', b.dataset.u===unit));
   document.querySelectorAll('#pals [data-k=l],#pals [data-k=w],#pals [data-k=h]').forEach(i=>i.setAttribute('aria-label', {l:'Largo',w:'Ancho',h:'Alto'}[i.dataset.k]+' '+unit));
-  document.querySelectorAll('.kgOnly').forEach(el=>el.hidden = via!=='A');
+  document.querySelectorAll('.kgOnly').forEach(el=>el.hidden = false);
 }
 function renderDraft(){
   $('pals').innerHTML = draft.map((p,pi)=>`
@@ -407,14 +407,14 @@ function renderList(){
       <div class="specs">
         <div><small>Pallets</small><b>${(r.pals||[]).length}</b></div>
         <div><small>Total cajas</small><b>${nf(totC(r))}</b></div>
-        ${r.via==='A'?`<div><small>Peso total</small><b>${kgPend(r)&&!totKg(r)?'Pendiente':kgf(totKg(r))}</b>${kgPend(r)&&totKg(r)?'<small class="warn">faltan pesos</small>':''}</div>`:''}
+        ${true?`<div><small>Peso total</small><b>${kgPend(r)&&!totKg(r)?'Pendiente':kgf(totKg(r))}</b>${kgPend(r)&&totKg(r)?'<small class="warn">faltan pesos</small>':''}</div>`:''}
         <div><small>Andén</small><b>${esc(dockTxt(r.dock))}</b></div>
         <div><small>Caja / contenedor</small><b>${esc(r.cont||'—')}</b></div>
       </div>
-      <ul class="pline">${(r.pals||[]).map((p,i)=>`<li><b>P${i+1}</b> ${p.items.map(it=>`${nf(it.c)} cajas ${it.m?'modelo '+mTxt(it.m)+', ':'de '}${dims(it,U(r))}`).map(esc).join(' + ')} · pallet ${palDim(p,U(r))}${r.via==='A'?(p.kg?` · <b>${kgf(p.kg)}</b>`:' · <span class="warn">sin peso</span>'):''}</li>`).join('')}</ul>
+      <ul class="pline">${(r.pals||[]).map((p,i)=>`<li><b>P${i+1}</b> ${p.items.map(it=>`${nf(it.c)} cajas ${it.m?'modelo '+mTxt(it.m)+', ':'de '}${dims(it,U(r))}`).map(esc).join(' + ')} · pallet ${palDim(p,U(r))}${true?(p.kg?` · <b>${kgf(p.kg)}</b>`:' · <span class="warn">sin peso</span>'):''}</li>`).join('')}</ul>
       ${openW===r.id?`<div class="wedit">${(r.pals||[]).map((p,i)=>`<label>P${i+1} (kg)<input inputmode="decimal" data-w="${i}" value="${esc(p.kg??'')}" placeholder="Peso"></label>`).join('')}<button type="button" class="pri" data-act="wsave" data-id="${r.id}" style="margin:0">Guardar pesos</button></div>`:''}
       <div class="lfoot"><span>Registrado ${esc(fdate(r.ts))}</span><span class="sp"></span>
-        ${r.via==='A'?`<button type="button" class="ghost${kgPend(r)?' hot':''}" data-act="w" data-id="${r.id}">Pesos</button>`:''}
+        ${true?`<button type="button" class="ghost${kgPend(r)?' hot':''}" data-act="w" data-id="${r.id}">Pesos</button>`:''}
         <button type="button" class="ghost" data-act="viz" data-id="${r.id}">Ver 3D</button>
         <button type="button" class="ghost" data-act="pr" data-id="${r.id}">Imprimir</button>
         <button type="button" class="ghost" data-act="ed" data-id="${r.id}">Editar</button>
@@ -498,11 +498,11 @@ function toast(m){ $('tmsg').textContent = m; $('undo').hidden = true; $('toast'
 
 /* ---------- exportar ---------- */
 const COLS = ['Delivery','Destino','Envío','Pallets','Total cajas','Medidas de caja','Peso total kg','Andén','Caja/Contenedor','Estatus'];
-const rowVals = r => [r.del, dname(r.dest), r.via==='M'?'Marítimo':'Aéreo', (r.pals||[]).length, totC(r), sizes(r).join(' / '), r.via==='A'?(totKg(r)!=null?fmt(totKg(r)):'Pendiente'):'', dockTxt(r.dock), r.cont||'', ST[r.st]];
+const rowVals = r => [r.del, dname(r.dest), r.via==='M'?'Marítimo':'Aéreo', (r.pals||[]).length, totC(r), sizes(r).join(' / '), true?(totKg(r)!=null?fmt(totKg(r)):'Pendiente'):'', dockTxt(r.dock), r.cont||'', ST[r.st]];
 function table(sep){
   const q = v => sep===',' && /[",\n]/.test(String(v)) ? '"'+String(v).replace(/"/g,'""')+'"' : String(v);
   const H = ['Delivery','Destino','Envío','Pallet','Cajas','Modelo de caja','Largo','Ancho','Alto','Unidad','Pallet largo','Pallet ancho','Pallet alto','Peso pallet kg','Andén','Caja/Contenedor','Estatus','Registrado'];
-  const B = S.rows.flatMap(r => (r.pals||[]).flatMap((p,i) => p.items.map((it,j) => [r.del, dname(r.dest), r.via==='M'?'Marítimo':'Aéreo', 'P'+(i+1), it.c, mTxt(it.m), it.l, it.w, it.h, U(r), ...(j===0 ? (P=>[fmt(hToU(P.L,U(r))), fmt(hToU(P.W,U(r))), fmt(hToU(P.total,U(r)))])(pack(p.items,U(r))) : ['','','']), j===0&&r.via==='A'&&p.kg?p.kg:'', dockTxt(r.dock), r.cont||'', ST[r.st], new Date(r.ts).toLocaleString('es-MX')])));
+  const B = S.rows.flatMap(r => (r.pals||[]).flatMap((p,i) => p.items.map((it,j) => [r.del, dname(r.dest), r.via==='M'?'Marítimo':'Aéreo', 'P'+(i+1), it.c, mTxt(it.m), it.l, it.w, it.h, U(r), ...(j===0 ? (P=>[fmt(hToU(P.L,U(r))), fmt(hToU(P.W,U(r))), fmt(hToU(P.total,U(r)))])(pack(p.items,U(r))) : ['','','']), j===0&&true&&p.kg?p.kg:'', dockTxt(r.dock), r.cont||'', ST[r.st], new Date(r.ts).toLocaleString('es-MX')])));
   return [H, ...B].map(a=>a.map(q).join(sep)).join('\n');
 }
 async function getDl(){ try { return window.claude?.use ? await claude.use('downloads') : null; } catch(e) { return null; } }
@@ -517,7 +517,7 @@ $('copy').onclick = async () => { try { await navigator.clipboard.writeText(tabl
 /* ---------- imprimir ---------- */
 function loadJs(src){ return new Promise((ok,no)=>{ const s=document.createElement('script'); s.src=src; s.onload=ok; s.onerror=no; document.head.appendChild(s); }); }
 function flagPng(c){ return new Promise(ok=>{ const im=new Image(); im.onload=()=>{ const cv=document.createElement('canvas'); cv.width=120; cv.height=80; cv.getContext('2d').drawImage(im,0,0,120,80); try{ok(cv.toDataURL('image/png'))}catch(e){ok(null)} }; im.onerror=()=>ok(null); im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20" width="120" height="80" preserveAspectRatio="none">${FLAGS[c]?.[1]||'<rect width="30" height="20" fill="#888"/>'}</svg>`); }); }
-const palRowsOf = r => (r.pals||[]).flatMap((p,i)=>p.items.map((it,j)=>[j===0?'P'+(i+1):'', nf(it.c), (it.m?it.m+' · ':'')+dims(it,U(r)), r.via==='A'&&j===0?(p.kg?fmt(p.kg):'Pendiente'):'', j===0?palDim(p,U(r)):'']));
+const palRowsOf = r => (r.pals||[]).flatMap((p,i)=>p.items.map((it,j)=>[j===0?'P'+(i+1):'', nf(it.c), (it.m?it.m+' · ':'')+dims(it,U(r)), true&&j===0?(p.kg?fmt(p.kg):'Pendiente'):'', j===0?palDim(p,U(r)):'']));
 const kgTxt = r => !totKg(r) ? 'Pendiente' : fmt(totKg(r)) + (kgPend(r) ? ' (faltan pesos)' : '');
 let tv = null;
 async function thumbs(rows){
@@ -536,10 +536,10 @@ async function thumbs(rows){
   return out;
 }
 function reportHtml(rows, one, TH={}){
-  const air = rows.some(r=>r.via==='A');
+  const air = true;
   let h = `<h1>${one?'Reporte de delivery '+esc(rows[0].del):'Reporte de empacado'}</h1><p>Generado ${esc(new Date().toLocaleString('es-MX'))}</p>`;
   for (const r of rows) {
-    const ra = r.via==='A';
+    const ra = true;
     h += `<div class="blk"><h2>${flag(r.dest)} Delivery ${esc(r.del)} · ${esc(dname(r.dest))}</h2>
       <p>${r.via==='M'?'Marítimo':'Aéreo'} · ${r.dock?'Andén '+esc(r.dock):'Sin andén'} · Contenedor ${esc(r.cont||'—')} · ${esc(ST[r.st])}</p>
       <table><thead><tr><th>Pallet</th><th>Cajas</th><th>Medidas de caja</th><th>Pallet largo × ancho × alto</th><th>Peso kg</th></tr></thead><tbody>
@@ -568,7 +568,7 @@ async function printReport(rows, btn){
     doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(90); doc.text('Generado '+new Date().toLocaleString('es-MX'), M, 20.5); doc.setTextColor(0);
     let y = 27;
     for (const r of rows) {
-      const ra = r.via==='A', body = palRowsOf(r).map(x=>[x[0], x[1], x[2], x[4], ra ? x[3] : (x[0]?'N/A':'')]);
+      const ra = true, body = palRowsOf(r).map(x=>[x[0], x[1], x[2], x[4], ra ? x[3] : (x[0]?'N/A':'')]);
       if (y > H - 50) { doc.addPage(); y = 16; }
       const im = imgs[r.dest]; let x = M; if (im) { doc.addImage(im,'PNG', M, y-3.6, 6, 4); x = M + 8; }
       doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(`Delivery ${r.del}  ·  ${dname(r.dest)}`, x, y);
@@ -766,7 +766,7 @@ function openViz(r){
 function showMp(){
   $('vmTabs').innerHTML = mr.pals.map((p,i)=>`<button type="button" aria-pressed="${i===mp}" data-vp="${i}">P${i+1}</button>`).join('');
   const p = mr.pals[mp];
-  mv.set(p.items, U(mr)).then(P => { if (P) $('vmInfo').textContent = vinfo(P, p.items, U(mr)) + (mr.via==='A' ? ` · peso ${p.kg?kgf(p.kg):'pendiente'}` : ''); });
+  mv.set(p.items, U(mr)).then(P => { if (P) $('vmInfo').textContent = vinfo(P, p.items, U(mr)) + (true ? ` · peso ${p.kg?kgf(p.kg):'pendiente'}` : ''); });
 }
 $('vmTabs').addEventListener('click', e => { const b = e.target.closest('[data-vp]'); if (b) { mp = +b.dataset.vp; showMp(); } });
 $('vmClose').onclick = () => { $('vmodal').hidden = true; };
@@ -775,12 +775,12 @@ addEventListener('keydown', e => { if (e.key==='Escape' && !$('vmodal').hidden) 
 document.querySelectorAll('[data-zoom]').forEach(b => b.onclick = () => { const v = b.closest('#vmodal') ? mv : fv; v?.zoom(+b.dataset.zoom); });
 
 /* ---------- pesar pallets en fila ---------- */
-const pendList = () => S.rows.filter(r=>r.via==='A').flatMap(r=>(r.pals||[]).map((p,i)=>({r,p,i})).filter(x=>!x.p.kg));
+const pendList = () => S.rows.flatMap(r=>(r.pals||[]).map((p,i)=>({r,p,i})).filter(x=>!x.p.kg));
 function wCount(){ const n = pendList().length; $('wBtn').textContent = n ? `Pesar pallets (${n})` : 'Pesar pallets'; }
 let wDirty = false;
 $('wBtn').onclick = () => {
   const L = pendList();
-  $('wList').innerHTML = L.length ? L.map(({r,p,i},k)=>`<div class="wrow"><div class="wd">${flag(r.dest)}<b>${esc(r.del)}</b>P${i+1} de ${(r.pals||[]).length}<small>${nf(pc(p))} cajas · ${esc(palDim(p,U(r)))}</small></div><input inputmode="decimal" placeholder="kg" aria-label="Peso kg delivery ${esc(r.del)} pallet ${i+1}" data-r="${r.id}" data-i="${i}" data-k="${k}"><span class="ok" aria-hidden="true"></span></div>`).join('') : '<p class="hint" style="padding:16px 0">No hay pallets aéreos pendientes de peso.</p>';
+  $('wList').innerHTML = L.length ? L.map(({r,p,i},k)=>`<div class="wrow"><div class="wd">${flag(r.dest)}<b>${esc(r.del)}</b>P${i+1} de ${(r.pals||[]).length}<small>${nf(pc(p))} cajas · ${esc(palDim(p,U(r)))}</small></div><input inputmode="decimal" placeholder="kg" aria-label="Peso kg delivery ${esc(r.del)} pallet ${i+1}" data-r="${r.id}" data-i="${i}" data-k="${k}"><span class="ok" aria-hidden="true"></span></div>`).join('') : '<p class="hint" style="padding:16px 0">No hay pallets pendientes de peso.</p>';
   $('wmodal').hidden = false; wDirty = false;
   $('wList').querySelector('input')?.focus();
 };
