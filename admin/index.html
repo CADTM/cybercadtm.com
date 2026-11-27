@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#04050c">
+<title>cybercadtm · Panel</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304050c'/%3E%3Cpath d='M32 9 55 32 32 55 9 32Z' fill='none' stroke='%2300f0ff' stroke-width='5'/%3E%3Cpath d='M32 22 42 32 32 42 22 32Z' fill='%23ff2bd6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#04050c;--p1:#0b0e1c;--p2:#121630;--ln:rgba(255,255,255,.09);--cy:#00f0ff;--mg:#ff2bd6;--lm:#c6ff3d;--am:#ffb020;--rd:#ff4d6a;--tx:#e8f1ff;--mu:#8592b0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Chakra Petch',system-ui,sans-serif;min-height:100vh;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(0,240,255,.06) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,rgba(0,240,255,.06) 1px,transparent 1px) 0 0/48px 48px;pointer-events:none;-webkit-mask:radial-gradient(ellipse at 50% 0,#000 20%,transparent 70%);mask:radial-gradient(ellipse at 50% 0,#000 20%,transparent 70%)}
+.mono{font-family:'JetBrains Mono',monospace}
+button,input,textarea,select{font:inherit;color:inherit}
+.hide{display:none!important}
+.btn{border:1px solid var(--cy);background:rgba(0,240,255,.08);color:var(--tx);padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:600;letter-spacing:.04em;transition:.15s}
+.btn:hover{background:rgba(0,240,255,.2)}
+.btn.pri{background:var(--cy);color:#001014}.btn.pri:hover{box-shadow:0 0 20px rgba(0,240,255,.5)}
+.btn.mg{border-color:var(--mg);background:rgba(255,43,214,.12)}.btn.mg:hover{background:rgba(255,43,214,.25)}
+.btn.rd{border-color:var(--rd);background:rgba(255,77,106,.1);color:#ffb3c0}
+.btn.gh{border-color:var(--ln);background:transparent;color:var(--mu)}
+.btn:disabled{opacity:.4;cursor:default}
+label{display:block;font-size:11px;letter-spacing:.16em;color:var(--mu);text-transform:uppercase;margin:14px 0 6px}
+input[type=text],input[type=password],input[type=url],textarea,select{width:100%;background:#070913;border:1px solid var(--ln);border-radius:10px;padding:11px 12px;outline:none;transition:border-color .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--cy)}
+textarea{min-height:90px;resize:vertical;line-height:1.45}
+small.help{display:block;color:var(--mu);font-size:12px;margin-top:6px;line-height:1.4}
+
+/* LOGIN */
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;position:relative}
+.lbox{width:100%;max-width:400px;background:linear-gradient(180deg,rgba(18,22,48,.92),rgba(8,10,22,.95));border:1px solid rgba(0,240,255,.2);border-radius:20px;padding:28px 24px;box-shadow:0 30px 80px -30px rgba(0,240,255,.35)}
+.lbox .lg{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.12em;margin-bottom:6px}
+.lbox .lg i{width:12px;height:12px;background:var(--cy);transform:rotate(45deg);box-shadow:0 0 12px var(--cy)}
+.lbox h1{font-size:26px;margin:10px 0 4px}
+.lbox p{color:var(--mu);font-size:14px;line-height:1.45}
+.pin{display:flex;gap:10px;justify-content:center;margin:22px 0 8px}
+.pin i{width:16px;height:16px;border-radius:50%;border:2px solid var(--cy);transition:.15s}
+.pin i.on{background:var(--cy);box-shadow:0 0 10px var(--cy)}
+.pin.err{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.pad button{height:58px;border-radius:14px;border:1px solid var(--ln);background:rgba(255,255,255,.03);font-size:22px;font-weight:600;cursor:pointer;transition:.12s}
+.pad button:active{background:rgba(0,240,255,.2);transform:scale(.96)}
+.msg{min-height:20px;margin-top:12px;font-size:13px;color:var(--am);text-align:center}
+.msg.ok{color:var(--lm)}
+.lnk{background:none;border:0;color:var(--mu);font-size:12px;text-decoration:underline;cursor:pointer;margin-top:14px;display:block;margin-left:auto;margin-right:auto}
+details.how{margin-top:14px;border:1px solid var(--ln);border-radius:12px;padding:10px 12px;font-size:13px;color:#b9c4dc}
+details.how summary{cursor:pointer;color:var(--cy)}
+details.how ol{margin:8px 0 0 18px;line-height:1.6}
+details.how b{color:var(--tx)}
+
+/* APP */
+header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px clamp(12px,3vw,28px);background:rgba(4,5,12,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--ln)}
+header.top .lg{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:.1em}
+header.top .lg i{width:10px;height:10px;background:var(--cy);transform:rotate(45deg);box-shadow:0 0 10px var(--cy)}
+header.top .lg small{color:var(--mg);font-size:11px;letter-spacing:.2em}
+header.top .sp{flex:1}
+.dirty{font-size:11px;letter-spacing:.12em;color:var(--am);display:none}
+.dirty.on{display:inline}
+header.top .btn{padding:8px 12px;font-size:13px}
+@media(max-width:640px){header.top .tx{display:none}}
+nav.tabs{display:flex;gap:6px;padding:12px clamp(12px,3vw,28px) 0;max-width:980px;margin:0 auto}
+nav.tabs button{border:1px solid var(--ln);background:transparent;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--mu);font-size:13px;letter-spacing:.08em}
+nav.tabs button.on{background:var(--cy);color:#001014;border-color:var(--cy)}
+main{max-width:980px;margin:0 auto;padding:14px clamp(12px,3vw,28px) 100px}
+.bar{display:flex;gap:10px;align-items:center;margin:6px 0 14px;flex-wrap:wrap}
+.bar p{color:var(--mu);font-size:13px;flex:1;min-width:200px}
+.list{display:flex;flex-direction:column;gap:8px}
+.it{display:grid;grid-template-columns:auto 14px 1fr auto;gap:12px;align-items:center;background:var(--p1);border:1px solid var(--ln);border-radius:14px;padding:10px 12px;transition:border-color .2s,opacity .2s}
+.it:hover{border-color:rgba(0,240,255,.35)}
+.it.off{opacity:.45}
+.it .mv{display:flex;flex-direction:column;gap:2px}
+.it .mv button{width:28px;height:22px;border:1px solid var(--ln);background:transparent;border-radius:6px;cursor:pointer;color:var(--mu);font-size:11px;line-height:1}
+.it .mv button:hover{color:var(--tx);border-color:var(--cy)}
+.it .dot{width:14px;height:14px;border-radius:50%;box-shadow:0 0 10px currentColor}
+.it .nm{min-width:0}
+.it .nm b{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it .nm small{color:var(--mu);font-size:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{font-size:9px;letter-spacing:.14em;padding:2px 6px;border-radius:4px;border:1px solid;text-transform:uppercase}
+.tag.ed{color:var(--am)}.tag.nw{color:var(--lm)}.tag.hd{color:var(--rd)}
+.it .ac{display:flex;gap:6px}
+.it .ac button{height:34px;min-width:34px;padding:0 10px;border-radius:9px;border:1px solid var(--ln);background:rgba(255,255,255,.03);cursor:pointer;font-size:14px}
+.it .ac button:hover{border-color:var(--cy)}
+.card{background:var(--p1);border:1px solid var(--ln);border-radius:16px;padding:6px 18px 18px;margin-bottom:14px}
+.card h3{font-size:15px;letter-spacing:.06em;margin-top:14px;color:var(--cy)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.row2{grid-template-columns:1fr}}
+
+/* MODAL */
+.ov{position:fixed;inset:0;background:rgba(2,3,8,.75);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.ov.on{opacity:1;pointer-events:auto}
+.sheet{width:100%;max-width:640px;max-height:92vh;overflow:auto;background:linear-gradient(180deg,#10142c,#080a17);border:1px solid rgba(0,240,255,.25);border-radius:20px 20px 0 0;padding:20px 20px 24px;transform:translateY(30px);transition:transform .25s}
+.ov.on .sheet{transform:none}
+@media(min-width:700px){.ov{align-items:center}.sheet{border-radius:20px}}
+.sheet h2{font-size:20px;display:flex;align-items:center;gap:10px}
+.sheet .acts{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+.sheet .acts .l{margin-right:auto}
+.colors{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.colors button{width:30px;height:30px;border-radius:50%;border:2px solid transparent;cursor:pointer}
+.colors button.on{border-color:#fff;box-shadow:0 0 12px currentColor}
+.colors input[type=color]{width:36px;height:32px;border:0;background:none;padding:0;cursor:pointer}
+.chk{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:14px;cursor:pointer}
+.chk input{width:18px;height:18px;accent-color:var(--cy)}
+.chg{font-size:13px;color:#c9d3ea;line-height:1.7;max-height:240px;overflow:auto;background:#070913;border:1px solid var(--ln);border-radius:10px;padding:10px 12px;margin-top:10px}
+.prog{height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;margin-top:14px}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cy),var(--mg));transition:width .4s}
+.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,120px);background:#0d1124;border:1px solid var(--cy);border-radius:12px;padding:10px 16px;font-size:14px;z-index:60;transition:transform .3s;max-width:90vw}
+.toast.on{transform:translate(-50%,0)}
+footer{text-align:center;color:var(--mu);font-size:11px;letter-spacing:.2em;padding:30px 0}
+footer b{color:var(--cy)}
+</style>
+</head>
+<body>
+
+<!-- ======== LOGIN ======== -->
+<section class="login" id="vLogin">
+  <div class="lbox">
+    <div class="lg mono"><i></i>cybercadtm <span style="color:var(--mg)">PANEL</span></div>
+
+    <div id="lSetup" class="hide">
+      <h1>Configura tu acceso</h1>
+      <p>Se hace una sola vez en cada dispositivo. Tu llave de GitHub se guarda <b>cifrada con tu PIN</b> solo en este navegador.</p>
+      <label>Llave de GitHub (token)</label>
+      <input type="password" id="sToken" autocomplete="off" placeholder="github_pat_…">
+      <details class="how"><summary>¿Cómo saco mi llave?</summary>
+        <ol>
+          <li>En GitHub: tu foto → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>.</li>
+          <li>Nombre: <b>panel cybercadtm</b>. Vencimiento: el que prefieras (90 días está bien).</li>
+          <li><b>Repository access</b> → <b>Only select repositories</b> → <b>cybercadtm.com</b>.</li>
+          <li><b>Permissions</b> → <b>Contents</b> → <b>Read and write</b>. Nada más.</li>
+          <li><b>Generate token</b>, cópialo y pégalo aquí.</li>
+        </ol>
+      </details>
+      <div class="row2">
+        <div><label>PIN (4 a 8 números)</label><input type="password" id="sPin" inputmode="numeric" maxlength="8" autocomplete="new-password"></div>
+        <div><label>Repite el PIN</label><input type="password" id="sPin2" inputmode="numeric" maxlength="8" autocomplete="new-password"></div>
+      </div>
+      <button class="btn pri" id="sGo" style="width:100%;margin-top:18px">Verificar y entrar</button>
+      <div class="msg" id="sMsg"></div>
+    </div>
+
+    <div id="lPin" class="hide">
+      <h1>Hola de nuevo 👋</h1>
+      <p>Escribe tu PIN para entrar al panel.</p>
+      <div class="pin" id="pinDots"></div>
+      <div class="pad" id="pad"></div>
+      <div class="msg" id="pMsg"></div>
+      <button class="lnk" id="forget">Olvidé mi PIN (vuelvo a poner mi llave)</button>
+    </div>
+  </div>
+</section>
+
+<!-- ======== EDITOR ======== -->
+<section id="vApp" class="hide">
+  <header class="top">
+    <div class="lg mono"><i></i>cybercadtm <small>PANEL</small></div>
+    <span class="dirty mono" id="dirty">● SIN PUBLICAR</span>
+    <span class="sp"></span>
+    <button class="btn gh" id="bPrev" title="Ver cómo queda">👁 <span class="tx">Vista previa</span></button>
+    <button class="btn pri" id="bPub" title="Subir los cambios a tu página">🚀 <span class="tx">Publicar</span></button>
+    <button class="btn gh" id="bLock" title="Bloquear">🔒</button>
+  </header>
+  <nav class="tabs"><button class="on" data-t="apps">Apps</button><button data-t="inicio">Inicio</button><button data-t="redes">Redes</button></nav>
+  <main>
+    <div data-v="apps">
+      <div class="bar"><p>Ordena con ↑↓, oculta con 👁 y toca ✏️ para cambiar textos, enlaces y colores. Los cambios se guardan aquí hasta que des <b>Publicar</b>.</p><button class="btn mg" id="bAdd">＋ Agregar app</button></div>
+      <div class="list" id="list"></div>
+    </div>
+    <div data-v="inicio" class="hide">
+      <div class="card">
+        <h3>Portada</h3>
+        <label>Línea de arriba</label><input type="text" id="iKicker" maxlength="80">
+        <label>Presentación</label><textarea id="iLead" maxlength="400"></textarea>
+        <small class="help">Texto simple (sin negritas).</small>
+        <label>"Construyendo:" (una frase por renglón)</label><textarea id="iTyped" maxlength="600"></textarea>
+        <div class="bar" style="margin-top:14px"><span style="flex:1"></span><button class="btn gh" id="iReset">Restaurar original</button></div>
+      </div>
+    </div>
+    <div data-v="redes" class="hide">
+      <div class="card" id="redes"></div>
+    </div>
+  </main>
+  <footer class="mono">Panel personal de <b>@cybercadtm</b> · no se enlaza desde la página</footer>
+</section>
+
+<!-- editar app -->
+<div class="ov" id="ovEdit"><div class="sheet">
+  <h2 id="eTitle">Editar app</h2>
+  <div class="row2">
+    <div><label>Nombre</label><input type="text" id="eN" maxlength="40"></div>
+    <div><label>Subtítulo</label><input type="text" id="eS" maxlength="50"></div>
+  </div>
+  <div class="row2">
+    <div><label>Categoría</label><select id="eCat"><option value="juegos">Juegos</option><option value="almacen">Almacén</option><option value="vida">Vida diaria</option><option value="lab">Lab</option></select></div>
+    <div id="eIconW"><label>Ícono (emoji)</label><input type="text" id="eIcon" maxlength="4" placeholder="🚀"></div>
+  </div>
+  <label>Enlace "Abrir app"</label><input type="url" id="eUrl" placeholder="https://… (vacío = Enlace pronto)">
+  <label>Descripción</label><textarea id="eD" maxlength="420"></textarea>
+  <label>Etiquetas (separadas por coma)</label><input type="text" id="eT" maxlength="80" placeholder="3D, Física">
+  <label>Color</label><div class="colors" id="eCol"></div>
+  <label class="chk"><input type="checkbox" id="eWide"> Tarjeta ancha (ocupa 2 columnas)</label>
+  <label class="chk"><input type="checkbox" id="eHide"> Ocultar de la página</label>
+  <div class="acts">
+    <button class="btn rd l" id="eDel">🗑 Eliminar</button>
+    <button class="btn gh l" id="eReset">↺ Restaurar original</button>
+    <button class="btn gh" id="eCancel">Cancelar</button>
+    <button class="btn pri" id="eSave">Guardar</button>
+  </div>
+</div></div>
+
+<!-- publicar -->
+<div class="ov" id="ovPub"><div class="sheet">
+  <h2>🚀 Publicar en cybercadtm.com</h2>
+  <div class="chg mono" id="pChanges"></div>
+  <label>Nota del cambio</label><input type="text" id="pNote" maxlength="80" placeholder="Actualizo textos y enlaces">
+  <div class="prog"><i id="pBar"></i></div>
+  <div class="msg" id="pStat"></div>
+  <div class="acts"><button class="btn gh" id="pCancel">Cancelar</button><button class="btn pri" id="pGo">Publicar ahora</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+const OWNER='CADTM',REPO='cybercadtm.com',FILE='index.html',BRANCH='main';
+const K_AUTH='cyb-admin-auth-v1',K_DRAFT='cyb-admin-draft',K_TRY='cyb-admin-tries';
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+function toast(t,ms=2600){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),ms)}
+
+/* ---------- cifrado de la llave con el PIN (AES-GCM + PBKDF2) ---------- */
+const enc=new TextEncoder(),dec=new TextDecoder();
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u))),unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function keyFrom(pin,salt){const base=await crypto.subtle.importKey('raw',enc.encode(pin),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function seal(token,pin){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));const k=await keyFrom(pin,salt);const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},k,enc.encode(token));return JSON.stringify({s:b64(salt),i:b64(iv),c:b64(ct)})}
+async function unseal(blob,pin){const o=JSON.parse(blob);const k=await keyFrom(pin,unb64(o.s));const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(o.i)},k,unb64(o.c));return dec.decode(pt)}
+
+/* ---------- GitHub ---------- */
+let TOKEN=null;
+async function gh(path,opt={}){const r=await fetch('https://api.github.com'+path,Object.assign({},opt,{headers:Object.assign({'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},opt.headers||{})}));let j=null;try{j=await r.json()}catch(e){}if(!r.ok){const e=new Error((j&&j.message)||('HTTP '+r.status));e.status=r.status;throw e}return j}
+async function checkToken(t){TOKEN=t;const j=await gh(`/repos/${OWNER}/${REPO}`);if(!j.permissions||!j.permissions.push)throw new Error('La llave no tiene permiso de escritura en '+REPO);return true}
+const utf8ToB64=s=>{const b=enc.encode(s);let o='';for(let i=0;i<b.length;i+=0x8000)o+=String.fromCharCode.apply(null,b.subarray(i,i+0x8000));return btoa(o)};
+const b64ToUtf8=s=>dec.decode(unb64(s.replace(/\s/g,'')));
+
+/* ---------- LOGIN ---------- */
+let pinBuf='';
+function showLogin(){$('#vApp').classList.add('hide');$('#vLogin').classList.remove('hide');const has=!!LS.get(K_AUTH);$('#lSetup').classList.toggle('hide',has);$('#lPin').classList.toggle('hide',!has);pinBuf='';drawPin();if(!has)setTimeout(()=>$('#sToken').focus(),50)}
+function drawPin(){const n=Math.max(4,pinBuf.length);$('#pinDots').innerHTML=Array.from({length:n},(_,i)=>`<i class="${i<pinBuf.length?'on':''}"></i>`).join('')}
+$('#pad').innerHTML=['1','2','3','4','5','6','7','8','9','⌫','0','✓'].map(k=>`<button data-k="${k}">${k}</button>`).join('');
+$('#pad').onclick=e=>{const b=e.target.closest('button');if(!b)return;press(b.dataset.k)};
+addEventListener('keydown',e=>{if($('#lPin').classList.contains('hide')||$('#vLogin').classList.contains('hide'))return;if(/^\d$/.test(e.key))press(e.key);else if(e.key==='Backspace')press('⌫');else if(e.key==='Enter')press('✓')});
+function press(k){if(k==='⌫')pinBuf=pinBuf.slice(0,-1);else if(k==='✓')tryPin();else if(pinBuf.length<8)pinBuf+=k;drawPin()}
+async function tryPin(){if(pinBuf.length<4)return;$('#pMsg').textContent='Verificando…';$('#pMsg').className='msg';
+  try{const t=await unseal(LS.get(K_AUTH),pinBuf);LS.del(K_TRY);await checkToken(t);enterApp()}
+  catch(e){
+    if(e.name==='OperationError'){const n=(+LS.get(K_TRY)||0)+1;LS.set(K_TRY,n);
+      if(n>=5){LS.del(K_AUTH);LS.del(K_TRY);toast('5 intentos fallidos: borré la llave de este dispositivo.',4000);showLogin();return}
+      $('#pMsg').textContent=`PIN incorrecto (${5-n} intentos restantes)`;$('#pinDots').classList.remove('err');void $('#pinDots').offsetWidth;$('#pinDots').classList.add('err')}
+    else if(e.status===401){$('#pMsg').textContent='Tu llave de GitHub venció o fue revocada. Vuelve a configurarla.';LS.del(K_AUTH)}
+    else $('#pMsg').textContent='No pude conectar con GitHub: '+e.message;
+    TOKEN=null}
+  pinBuf='';drawPin()}
+$('#forget').onclick=()=>{if(!confirmBox('¿Borrar la llave guardada en este dispositivo? Tendrás que pegarla de nuevo.'))return;LS.del(K_AUTH);LS.del(K_TRY);showLogin()};
+function confirmBox(t){try{return window.confirm(t)}catch(e){return true}}
+$('#sGo').onclick=async()=>{const t=$('#sToken').value.trim(),p=$('#sPin').value,p2=$('#sPin2').value,m=$('#sMsg');m.className='msg';
+  if(!/^(github_pat_|ghp_)[A-Za-z0-9_]{20,}$/.test(t)){m.textContent='Esa no parece una llave de GitHub (empieza con github_pat_).';return}
+  if(!/^\d{4,8}$/.test(p)){m.textContent='El PIN debe tener de 4 a 8 números.';return}
+  if(p!==p2){m.textContent='Los dos PIN no coinciden.';return}
+  m.textContent='Verificando con GitHub…';$('#sGo').disabled=true;
+  try{await checkToken(t);LS.set(K_AUTH,await seal(t,p));$('#sToken').value=$('#sPin').value=$('#sPin2').value='';m.className='msg ok';m.textContent='¡Listo!';enterApp()}
+  catch(e){m.textContent=e.status===401?'GitHub dice que la llave no es válida.':(e.status===404?'La llave no tiene acceso al repo cybercadtm.com.':e.message);TOKEN=null}
+  $('#sGo').disabled=false};
+
+/* bloqueo automático tras 15 min sin uso */
+let idleT;function bumpIdle(){clearTimeout(idleT);idleT=setTimeout(()=>{if(TOKEN){lock();toast('Panel bloqueado por inactividad')}},15*60*1000)}
+['pointerdown','keydown'].forEach(ev=>addEventListener(ev,bumpIdle,{passive:true}));
+function lock(){TOKEN=null;showLogin()}
+$('#bLock').onclick=lock;
+
+/* ---------- DATOS ---------- */
+let BASE=[],BASE_INICIO={},BASE_REDES={},DRAFT=null,PUBLISHED={};
+const PALETTE=['#00f0ff','#ff2bd6','#c6ff3d','#ffb020','#a66bff','#ff3c5a','#3cffb4','#ffb36b','#3c8cff','#e8f1ff'];
+const CATN={juegos:'Juegos',almacen:'Almacén',vida:'Vida diaria',lab:'Lab'};
+function parseSite(html){
+  const m=html.match(/const APPS=\[([\s\S]*?)\n\];/);if(!m)throw new Error('No encontré la lista de apps en index.html');
+  const body=m[1].replace(/,\s*f:\s*demo\w+/g,'');
+  const apps=new Function('"use strict";return ['+body+'];')();
+  const sm=html.match(/\/\*SITIO\*\/([\s\S]*?)\/\*FIN-SITIO\*\//);let site={};try{site=sm?JSON.parse(sm[1]||'{}'):{}}catch(e){site={}}
+  const kick=(html.match(/id="siteKicker">([^<]*)</)||[])[1]||'';
+  const lead=((html.match(/id="siteLead">([\s\S]*?)<\/p>/)||[])[1]||'').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+  const tw=(html.match(/:\['juegos 3D'[^\]]*\]/)||[''])[0];let typed=[];try{typed=new Function('return '+tw.slice(1))()}catch(e){}
+  const redes={};for(const r of html.matchAll(/\{n:'(\w+)',h:'([^']*)',c:'[^']*',url:'([^']*)'/g))redes[r[1]]={h:r[2],url:r[3]};
+  return {apps,site,inicio:{kicker:kick,lead,escribe:typed},redes};
+}
+async function loadLive(){
+  const j=await gh(`/repos/${OWNER}/${REPO}/contents/${FILE}?ref=${BRANCH}`);
+  const html=b64ToUtf8(j.content);return {html,sha:j.sha,parsed:parseSite(html)};
+}
+function emptyDraft(){return{apps:{},nuevas:[],orden:[],inicio:{},redes:{}}}
+function saveDraft(){LS.set(K_DRAFT,JSON.stringify(DRAFT));$('#dirty').classList.toggle('on',JSON.stringify(clean(DRAFT))!==JSON.stringify(clean(PUBLISHED)))}
+function clean(d){d=JSON.parse(JSON.stringify(d||{}));for(const k of Object.keys(d.apps||{}))if(!Object.keys(d.apps[k]).length)delete d.apps[k];return d}
+
+async function enterApp(){
+  $('#vLogin').classList.add('hide');$('#vApp').classList.remove('hide');bumpIdle();
+  $('#list').innerHTML='<p style="color:var(--mu)">Cargando tu página…</p>';
+  try{const L=await loadLive();BASE=L.parsed.apps;BASE_INICIO=L.parsed.inicio;BASE_REDES=L.parsed.redes;PUBLISHED=Object.assign(emptyDraft(),L.parsed.site);
+    let d=null;try{d=JSON.parse(LS.get(K_DRAFT)||'null')}catch(e){}
+    DRAFT=Object.assign(emptyDraft(),d||JSON.parse(JSON.stringify(PUBLISHED)));
+    renderAll();saveDraft();
+    if(d&&JSON.stringify(clean(d))!==JSON.stringify(clean(PUBLISHED)))toast('Tienes cambios guardados sin publicar.');
+  }catch(e){$('#list').innerHTML=`<p style="color:var(--rd)">No pude leer tu página: ${esc(e.message)}</p>`}
+}
+
+/* ---------- LISTA DE APPS ---------- */
+function merged(){
+  let list=BASE.map(a=>Object.assign({},a,DRAFT.apps[a.id]||{},{_base:1,_ed:!!(DRAFT.apps[a.id]&&Object.keys(DRAFT.apps[a.id]).length)}));
+  for(const n of DRAFT.nuevas)list.push(Object.assign({cat:'lab',ac:'#00f0ff',t:[]},n,{_new:1}));
+  if(DRAFT.orden.length){const pos=id=>{const k=DRAFT.orden.indexOf(id);return k<0?1e3:k};list=list.map((a,i)=>[a,i]).sort((A,B)=>(pos(A[0].id)-pos(B[0].id))||(A[1]-B[1])).map(x=>x[0])}
+  return list;
+}
+function renderAll(){renderList();renderInicio();renderRedes()}
+function renderList(){
+  const L=merged();
+  $('#list').innerHTML=L.map((a,i)=>`<div class="it ${a.oculta?'off':''}" data-id="${esc(a.id)}">
+    <div class="mv"><button data-a="up" ${i?'':'disabled'} aria-label="Subir">▲</button><button data-a="down" ${i<L.length-1?'':'disabled'} aria-label="Bajar">▼</button></div>
+    <span class="dot" style="background:${esc(a.ac)};color:${esc(a.ac)}"></span>
+    <div class="nm"><b>${a.icon?esc(a.icon)+' ':''}${esc(a.n)}</b><small>${esc(a.s||'')} · ${esc(CATN[a.cat]||a.cat)}${a._ed?' <span class="tag ed">editada</span>':''}${a._new?' <span class="tag nw">nueva</span>':''}${a.oculta?' <span class="tag hd">oculta</span>':''}${a.url?'':' · sin enlace'}</small></div>
+    <div class="ac"><button data-a="vis" title="${a.oculta?'Mostrar':'Ocultar'}">${a.oculta?'🙈':'👁'}</button><button data-a="edit" title="Editar">✏️</button></div></div>`).join('');
+}
+$('#list').onclick=e=>{const b=e.target.closest('button');if(!b)return;const id=b.closest('.it').dataset.id,a=b.dataset.a;
+  if(a==='edit')return openEdit(id);
+  if(a==='vis'){const cur=merged().find(x=>x.id===id);setField(id,'oculta',!cur.oculta);renderList();saveDraft();return}
+  if(a==='up'||a==='down'){const ids=merged().map(x=>x.id);const i=ids.indexOf(id),j=a==='up'?i-1:i+1;if(j<0||j>=ids.length)return;[ids[i],ids[j]]=[ids[j],ids[i]];DRAFT.orden=ids;renderList();saveDraft()}};
+function setField(id,k,v){const nw=DRAFT.nuevas.find(n=>n.id===id);if(nw){if(v===false||v==='')delete nw[k];else nw[k]=v;return}
+  const base=BASE.find(b=>b.id===id);const o=DRAFT.apps[id]=DRAFT.apps[id]||{};
+  const norm=(key,x)=>key==='wide'?(x?1:0):key==='oculta'?!!x:(x==null?'':x);
+  if(JSON.stringify(norm(k,base[k]))===JSON.stringify(norm(k,v)))delete o[k];else o[k]=v;if(!Object.keys(o).length)delete DRAFT.apps[id]}
+
+/* ---------- EDITOR DE UNA APP ---------- */
+let EID=null,ECOL='#00f0ff';
+function drawColors(){$('#eCol').innerHTML=PALETTE.map(c=>`<button data-c="${c}" class="${c.toLowerCase()===ECOL.toLowerCase()?'on':''}" style="background:${c};color:${c}" aria-label="${c}"></button>`).join('')+`<input type="color" id="eColC" value="${/^#[0-9a-f]{6}$/i.test(ECOL)?ECOL:'#00f0ff'}" title="Otro color">`;
+  $('#eColC').oninput=e=>{ECOL=e.target.value;drawColors()}}
+$('#eCol').onclick=e=>{const b=e.target.closest('button[data-c]');if(b){ECOL=b.dataset.c;drawColors()}};
+function openEdit(id){
+  const nueva=id==null;EID=id;const a=nueva?{id:'',n:'',s:'',cat:'lab',ac:'#00f0ff',url:'',d:'',t:[],icon:'🚀'}:merged().find(x=>x.id===id);
+  $('#eTitle').textContent=nueva?'Nueva app':'Editar · '+a.n;
+  $('#eN').value=a.n||'';$('#eS').value=a.s||'';$('#eCat').value=a.cat||'lab';$('#eUrl').value=a.url||'';$('#eD').value=a.d||'';$('#eT').value=(a.t||[]).join(', ');$('#eIcon').value=a.icon||'';
+  $('#eWide').checked=!!a.wide;$('#eHide').checked=!!a.oculta;ECOL=a.ac||'#00f0ff';drawColors();
+  const isNew=nueva||!!a._new;$('#eIconW').classList.toggle('hide',!isNew);$('#eDel').classList.toggle('hide',!(a._new));$('#eReset').classList.toggle('hide',isNew||!a._ed);
+  $('#ovEdit').classList.add('on');setTimeout(()=>$('#eN').focus(),60);
+}
+function closeEdit(){$('#ovEdit').classList.remove('on')}
+$('#eCancel').onclick=closeEdit;$('#ovEdit').onclick=e=>{if(e.target.id==='ovEdit')closeEdit()};
+$('#eSave').onclick=()=>{
+  const v={n:$('#eN').value.trim(),s:$('#eS').value.trim(),cat:$('#eCat').value,url:$('#eUrl').value.trim(),d:$('#eD').value.trim(),t:$('#eT').value.split(',').map(x=>x.trim()).filter(Boolean).slice(0,5),ac:ECOL,wide:$('#eWide').checked?1:0,oculta:$('#eHide').checked};
+  if(!v.n){toast('Ponle nombre a la app');return}
+  if(v.url&&!/^(https:\/\/|\/)/.test(v.url)){toast('El enlace debe empezar con https://');return}
+  if(EID==null){let id=v.n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'app';while(BASE.some(b=>b.id===id)||DRAFT.nuevas.some(n=>n.id===id))id+='-2';
+    const n={id,n:v.n,s:v.s,cat:v.cat,url:v.url,d:v.d,t:v.t,ac:v.ac,icon:$('#eIcon').value.trim()||'✦'};if(v.wide)n.wide=1;if(v.oculta)n.oculta=true;DRAFT.nuevas.push(n);toast('App agregada al final de la lista')}
+  else{const nw=DRAFT.nuevas.find(n=>n.id===EID);if(nw){Object.assign(nw,v,{icon:$('#eIcon').value.trim()||'✦'});if(!v.wide)delete nw.wide;if(!v.oculta)delete nw.oculta}
+    else for(const k of Object.keys(v))setField(EID,k,v[k])}
+  saveDraft();renderList();closeEdit()};
+$('#eReset').onclick=()=>{delete DRAFT.apps[EID];saveDraft();renderList();closeEdit();toast('Restaurada como estaba')};
+$('#eDel').onclick=()=>{if(!confirmBox('¿Eliminar esta app de tu página?'))return;DRAFT.nuevas=DRAFT.nuevas.filter(n=>n.id!==EID);DRAFT.orden=DRAFT.orden.filter(x=>x!==EID);saveDraft();renderList();closeEdit()};
+$('#bAdd').onclick=()=>openEdit(null);
+
+/* ---------- INICIO ---------- */
+function renderInicio(){const I=Object.assign({},BASE_INICIO,DRAFT.inicio);$('#iKicker').value=I.kicker||'';$('#iLead').value=I.lead||'';$('#iTyped').value=(I.escribe||[]).join('\n')}
+function syncInicio(){const k=$('#iKicker').value.trim(),l=$('#iLead').value.trim(),t=$('#iTyped').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,10);const I={};
+  if(k&&k!==BASE_INICIO.kicker)I.kicker=k;if(l&&l!==BASE_INICIO.lead)I.lead=l;if(t.length&&JSON.stringify(t)!==JSON.stringify(BASE_INICIO.escribe))I.escribe=t;DRAFT.inicio=I;saveDraft()}
+['#iKicker','#iLead','#iTyped'].forEach(s=>$(s).addEventListener('input',syncInicio));
+$('#iReset').onclick=()=>{DRAFT.inicio={};renderInicio();saveDraft()};
+
+/* ---------- REDES ---------- */
+function renderRedes(){$('#redes').innerHTML='<h3>Tus redes</h3><small class="help">Deja el enlace vacío para que salga "próximamente".</small>'+Object.keys(BASE_REDES).map(n=>{const r=Object.assign({},BASE_REDES[n],DRAFT.redes[n]||{});return `<div class="row2"><div><label>${esc(n)} · enlace</label><input type="url" data-r="${esc(n)}" data-k="url" value="${esc(r.url)}" placeholder="https://…"></div><div><label>${esc(n)} · usuario</label><input type="text" data-r="${esc(n)}" data-k="h" value="${esc(r.h)}" maxlength="40"></div></div>`}).join('')}
+$('#redes').addEventListener('input',e=>{const i=e.target.closest('input[data-r]');if(!i)return;const n=i.dataset.r,k=i.dataset.k,v=i.value.trim();const o=DRAFT.redes[n]=DRAFT.redes[n]||{};if(v===BASE_REDES[n][k])delete o[k];else o[k]=v;if(!Object.keys(o).length)delete DRAFT.redes[n];saveDraft()});
+
+/* ---------- PESTAÑAS ---------- */
+$$('nav.tabs button').forEach(b=>b.onclick=()=>{$$('nav.tabs button').forEach(x=>x.classList.toggle('on',x===b));$$('main>[data-v]').forEach(v=>v.classList.toggle('hide',v.dataset.v!==b.dataset.t))});
+
+/* ---------- VISTA PREVIA ---------- */
+$('#bPrev').onclick=()=>{LS.set(K_DRAFT,JSON.stringify(DRAFT));location.href='../?preview=1'};
+
+/* ---------- PUBLICAR ---------- */
+function describe(){const out=[];const pub=clean(PUBLISHED),dr=clean(DRAFT);
+  for(const a of merged()){const was=(pub.apps||{})[a.id],now=(dr.apps||{})[a.id];if(JSON.stringify(was||{})!==JSON.stringify(now||{}))out.push('✏️ '+a.n+(now&&now.oculta?' (oculta)':''))}
+  const pn=(pub.nuevas||[]).map(n=>n.id),dn=(dr.nuevas||[]).map(n=>n.id);dn.filter(x=>!pn.includes(x)).forEach(id=>out.push('＋ Nueva: '+dr.nuevas.find(n=>n.id===id).n));pn.filter(x=>!dn.includes(x)).forEach(id=>out.push('🗑 Quitada: '+pub.nuevas.find(n=>n.id===id).n));
+  for(const n of dr.nuevas||[]){const o=(pub.nuevas||[]).find(x=>x.id===n.id);if(o&&JSON.stringify(o)!==JSON.stringify(n))out.push('✏️ '+n.n)}
+  if(JSON.stringify(pub.orden||[])!==JSON.stringify(dr.orden||[]))out.push('↕ Nuevo orden de apps');
+  if(JSON.stringify(pub.inicio||{})!==JSON.stringify(dr.inicio||{}))out.push('🏠 Textos del inicio');
+  if(JSON.stringify(pub.redes||{})!==JSON.stringify(dr.redes||{}))out.push('🔗 Redes');
+  return out}
+$('#bPub').onclick=()=>{const d=describe();$('#pChanges').innerHTML=d.length?d.map(esc).join('<br>'):'No hay cambios nuevos.';$('#pGo').disabled=!d.length;$('#pStat').textContent='';$('#pStat').className='msg';$('#pBar').style.width='0';$('#ovPub').classList.add('on')};
+$('#pCancel').onclick=()=>$('#ovPub').classList.remove('on');
+$('#pGo').onclick=async()=>{
+  const st=$('#pStat'),bar=$('#pBar');$('#pGo').disabled=true;st.className='msg';
+  const data=clean(DRAFT);const block='/*SITIO*/'+JSON.stringify(data).replace(/<\//g,'<\\/').replace(/\*\//g,'*\\/')+'/*FIN-SITIO*/';
+  for(let intento=0;intento<2;intento++){
+    try{st.textContent='Leyendo la versión actual…';bar.style.width='25%';
+      const L=await loadLive();if(!/\/\*SITIO\*\/[\s\S]*?\/\*FIN-SITIO\*\//.test(L.html))throw new Error('Tu index.html no tiene el bloque del panel.');
+      const html=L.html.replace(/\/\*SITIO\*\/[\s\S]*?\/\*FIN-SITIO\*\//,()=>block);
+      st.textContent='Subiendo a GitHub…';bar.style.width='65%';
+      const note=$('#pNote').value.trim()||'Actualizo mi página';
+      const r=await gh(`/repos/${OWNER}/${REPO}/contents/${FILE}`,{method:'PUT',body:JSON.stringify({message:'Panel: '+note,content:utf8ToB64(html),sha:L.sha,branch:BRANCH})});
+      bar.style.width='100%';PUBLISHED=JSON.parse(JSON.stringify(data));saveDraft();
+      st.className='msg ok';st.innerHTML=`¡Publicado! Se ve en cybercadtm.com en 1–2 minutos. <a href="${esc(r.commit&&r.commit.html_url||'#')}" target="_blank" rel="noopener" style="color:var(--cy)">ver cambio</a>`;
+      $('#pCancel').textContent='Cerrar';return}
+    catch(e){if(e.status===409&&intento===0)continue;st.textContent=e.status===401?'Tu llave venció: bloquea y vuelve a configurarla.':'No se pudo publicar: '+e.message;bar.style.width='0';$('#pGo').disabled=false;return}}
+};
+
+showLogin();
+</script>
+</body>
+</html>
