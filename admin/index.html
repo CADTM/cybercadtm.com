@@ -104,13 +104,32 @@ main{max-width:980px;margin:0 auto;padding:14px clamp(12px,3vw,28px) 100px}
 .colors button{width:30px;height:30px;border-radius:50%;border:2px solid transparent;cursor:pointer}
 .colors button.on{border-color:#fff;box-shadow:0 0 12px currentColor}
 .colors input[type=color]{width:36px;height:32px;border:0;background:none;padding:0;cursor:pointer}
-.chk{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:14px;cursor:pointer}
+.chk{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:14px;cursor:pointer;text-transform:none;letter-spacing:0;color:var(--tx)}
+.prow>span:first-child{flex:1;min-width:0}.seg{flex:none}
 .chk input{width:18px;height:18px;accent-color:var(--cy)}
 .chg{font-size:13px;color:#c9d3ea;line-height:1.7;max-height:240px;overflow:auto;background:#070913;border:1px solid var(--ln);border-radius:10px;padding:10px 12px;margin-top:10px}
 .prog{height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;margin-top:14px}
 .prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cy),var(--mg));transition:width .4s}
 .toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,120px);background:#0d1124;border:1px solid var(--cy);border-radius:12px;padding:10px 16px;font-size:14px;z-index:60;transition:transform .3s;max-width:90vw}
 .toast.on{transform:translate(-50%,0)}
+/* taller */
+.seg{display:inline-flex;border:1px solid var(--ln);border-radius:9px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:6px 10px;font-size:12px;cursor:pointer;color:var(--mu)}
+.seg button.on[data-v="ok"]{background:rgba(198,255,61,.18);color:var(--lm)}
+.seg button.on[data-v="atencion"]{background:rgba(255,176,32,.2);color:var(--am)}
+.seg button.on[data-v="danado"]{background:rgba(255,77,106,.2);color:#ff9fb0}
+.prow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--ln);font-size:14px}
+.prow:first-of-type{border-top:0}
+.gas{display:flex;gap:6px;margin-top:4px}
+.gas button{flex:1;height:34px;border-radius:7px;border:1px solid var(--ln);background:#070913;cursor:pointer}
+.gas button.on{background:var(--tx)}
+.gas button.on:first-child{background:var(--rd)}
+.log{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.log .e{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:#070913;border:1px solid var(--ln);border-radius:10px;padding:8px 10px;font-size:13px}
+.log .e small{color:var(--mu)}
+.log .e button{border:1px solid var(--ln);background:transparent;border-radius:8px;height:30px;width:30px;cursor:pointer}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:560px){.row3{grid-template-columns:1fr 1fr}}
 footer{text-align:center;color:var(--mu);font-size:11px;letter-spacing:.2em;padding:30px 0}
 footer b{color:var(--cy)}
 </style>
@@ -165,7 +184,7 @@ footer b{color:var(--cy)}
     <button class="btn pri" id="bPub" title="Subir los cambios a tu página">🚀 <span class="tx">Publicar</span></button>
     <button class="btn gh" id="bLock" title="Bloquear">🔒</button>
   </header>
-  <nav class="tabs"><button class="on" data-t="apps">Apps</button><button data-t="inicio">Inicio</button><button data-t="redes">Redes</button></nav>
+  <nav class="tabs"><button class="on" data-t="apps">Apps</button><button data-t="inicio">Inicio</button><button data-t="redes">Redes</button><button data-t="taller">🏍 Taller</button></nav>
   <main>
     <div data-v="apps">
       <div class="bar"><p>Ordena con ↑↓, oculta con 👁 y toca ✏️ para cambiar textos, enlaces y colores. Los cambios se guardan aquí hasta que des <b>Publicar</b>.</p><button class="btn mg" id="bAdd">＋ Agregar app</button></div>
@@ -180,6 +199,28 @@ footer b{color:var(--cy)}
         <label>"Construyendo:" (una frase por renglón)</label><textarea id="iTyped" maxlength="600"></textarea>
         <div class="bar" style="margin-top:14px"><span style="flex:1"></span><button class="btn gh" id="iReset">Restaurar original</button></div>
       </div>
+    </div>
+    <div data-v="taller" class="hide">
+      <div class="bar"><p>Datos de tu moto en <b>cybercadtm.com/taller</b>. Cámbialos aquí y dale <b>Publicar</b>.</p><a class="btn gh" href="../taller/?preview=1" id="tPrev">👁 Ver taller</a></div>
+      <div class="card">
+        <h3>Tablero</h3>
+        <div class="row2"><div><label>Odómetro (km)</label><input type="text" inputmode="numeric" id="tKm"></div><div><label>Servicio cada (km)</label><input type="text" inputmode="numeric" id="tIv"></div></div>
+        <label>Gasolina (barras)</label><div class="gas" id="tGas"></div>
+      </div>
+      <div class="card">
+        <h3>Estado de las piezas</h3><small class="help">Lo que marques aquí sale con punto amarillo o rojo (y luz roja si está dañada) en tu moto 3D.</small>
+        <div id="tParts" style="margin-top:8px"></div>
+      </div>
+      <div class="card">
+        <h3>Bitácora</h3>
+        <div class="row3"><div><label>Fecha</label><input type="text" id="bF" placeholder="2026-11-27"></div><div><label>Km</label><input type="text" inputmode="numeric" id="bK"></div><div><label>Costo ($)</label><input type="text" inputmode="decimal" id="bC"></div></div>
+        <label>¿Qué se hizo?</label><input type="text" id="bQ" maxlength="140" placeholder="Cambio de aceite y filtro">
+        <label>Dónde (opcional)</label><input type="text" id="bL" maxlength="80" placeholder="Centro de servicio, en casa…">
+        <label class="chk"><input type="checkbox" id="bS"> Fue el servicio completo (reinicia el conteo de km)</label>
+        <div class="bar" style="margin-top:10px"><span style="flex:1"></span><button class="btn mg" id="bAddLog">＋ Agregar a la bitácora</button></div>
+        <div class="log" id="tLog"></div>
+      </div>
+      <div class="card"><h3>Notas</h3><textarea id="tNotas" maxlength="1000" placeholder="Pendientes, recordatorios…"></textarea></div>
     </div>
     <div data-v="redes" class="hide">
       <div class="card" id="redes"></div>
@@ -303,7 +344,8 @@ async function loadLive(){
   const html=b64ToUtf8(j.content);return {html,sha:j.sha,parsed:parseSite(html)};
 }
 function emptyDraft(){return{apps:{},nuevas:[],orden:[],inicio:{},redes:{}}}
-function saveDraft(){LS.set(K_DRAFT,JSON.stringify(DRAFT));$('#dirty').classList.toggle('on',JSON.stringify(clean(DRAFT))!==JSON.stringify(clean(PUBLISHED)))}
+function siteChanged(){return JSON.stringify(clean(DRAFT))!==JSON.stringify(clean(PUBLISHED))}
+function saveDraft(){LS.set(K_DRAFT,JSON.stringify(DRAFT));$('#dirty').classList.toggle('on',siteChanged()||(typeof tallerChanged==='function'&&tallerChanged()))}
 function clean(d){d=JSON.parse(JSON.stringify(d||{}));for(const k of Object.keys(d.apps||{}))if(!Object.keys(d.apps[k]).length)delete d.apps[k];return d}
 
 async function enterApp(){
@@ -312,7 +354,7 @@ async function enterApp(){
   try{const L=await loadLive();BASE=L.parsed.apps;BASE_INICIO=L.parsed.inicio;BASE_REDES=L.parsed.redes;PUBLISHED=Object.assign(emptyDraft(),L.parsed.site);
     let d=null;try{d=JSON.parse(LS.get(K_DRAFT)||'null')}catch(e){}
     DRAFT=Object.assign(emptyDraft(),d||JSON.parse(JSON.stringify(PUBLISHED)));
-    renderAll();saveDraft();
+    renderAll();try{await loadTaller()}catch(e){toast('No pude cargar los datos del taller: '+e.message)}saveDraft();
     if(d&&JSON.stringify(clean(d))!==JSON.stringify(clean(PUBLISHED)))toast('Tienes cambios guardados sin publicar.');
   }catch(e){$('#list').innerHTML=`<p style="color:var(--rd)">No pude leer tu página: ${esc(e.message)}</p>`}
 }
@@ -381,6 +423,41 @@ $('#iReset').onclick=()=>{DRAFT.inicio={};renderInicio();saveDraft()};
 function renderRedes(){$('#redes').innerHTML='<h3>Tus redes</h3><small class="help">Deja el enlace vacío para que salga "próximamente".</small>'+Object.keys(BASE_REDES).map(n=>{const r=Object.assign({},BASE_REDES[n],DRAFT.redes[n]||{});return `<div class="row2"><div><label>${esc(n)} · enlace</label><input type="url" data-r="${esc(n)}" data-k="url" value="${esc(r.url)}" placeholder="https://…"></div><div><label>${esc(n)} · usuario</label><input type="text" data-r="${esc(n)}" data-k="h" value="${esc(r.h)}" maxlength="40"></div></div>`}).join('')}
 $('#redes').addEventListener('input',e=>{const i=e.target.closest('input[data-r]');if(!i)return;const n=i.dataset.r,k=i.dataset.k,v=i.value.trim();const o=DRAFT.redes[n]=DRAFT.redes[n]||{};if(v===BASE_REDES[n][k])delete o[k];else o[k]=v;if(!Object.keys(o).length)delete DRAFT.redes[n];saveDraft()});
 
+
+/* ---------- TALLER (cybercadtm.com/taller) ---------- */
+const T_FILE='taller/datos.js',K_TDRAFT='cyb-admin-taller-draft';
+let PIEZAS=[],T_PUB=null,TD=null;
+const hoy=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const num=v=>{const n=Number(String(v).replace(/[^0-9.]/g,''));return isFinite(n)?n:0};
+async function loadTaller(){
+  try{const j=await gh(`/repos/${OWNER}/${REPO}/contents/${T_FILE}?ref=${BRANCH}`);const t=b64ToUtf8(j.content);const m=t.match(/window\.TALLER_DATOS=([\s\S]*);\s*$/);T_PUB=m?JSON.parse(m[1]):{}}
+  catch(e){if(e.status===404)T_PUB=null;else throw e}
+  try{PIEZAS=await (await fetch('../taller/piezas.json',{cache:'no-store'})).json()}catch(e){PIEZAS=[]}
+  let d=null;try{d=JSON.parse(LS.get(K_TDRAFT)||'null')}catch(e){}
+  TD=Object.assign({km:0,intervalo:3000,gasolina:5,estados:{},bitacora:[],notas:''},d||JSON.parse(JSON.stringify(T_PUB||{})));
+  renderTaller();
+}
+function saveT(){LS.set(K_TDRAFT,JSON.stringify(TD));saveDraft()}
+function tallerChanged(){if(!TD||!T_PUB)return false;const a=Object.assign({},TD),b=Object.assign({},T_PUB);delete a.fecha;delete b.fecha;return JSON.stringify(a)!==JSON.stringify(b)}
+function renderTaller(){
+  if(!TD)return;$('#tKm').value=TD.km||'';$('#tIv').value=TD.intervalo||3000;$('#tNotas').value=TD.notas||'';
+  $('#tGas').innerHTML=[1,2,3,4,5].map(i=>`<button data-g="${i}" class="${i<=TD.gasolina?'on':''}" aria-label="${i} barras"></button>`).join('');
+  $('#tParts').innerHTML=PIEZAS.length?PIEZAS.map(p=>{const st=TD.estados[p.id]||'ok';return `<div class="prow"><span>${esc(p.n)}. ${esc(p.nombre)}</span><span class="seg" data-p="${esc(p.id)}">${[['ok','Bien'],['atencion','Atención'],['danado','Dañada']].map(([v,l])=>`<button data-v="${v}" class="${st===v?'on':''}">${l}</button>`).join('')}</span></div>`}).join(''):'<small class="help">No pude cargar la lista de piezas.</small>';
+  const L=(TD.bitacora||[]).map((e,i)=>[e,i]).sort((A,B)=>(+B[0].km||0)-(+A[0].km||0)||String(B[0].fecha).localeCompare(String(A[0].fecha)));
+  $('#tLog').innerHTML=L.length?L.map(([e,i])=>`<div class="e"><div>${e.servicio?'🔧 ':''}<b>${esc(e.que)}</b><br><small>${esc(e.fecha)} · ${e.km?Number(e.km).toLocaleString('es-MX')+' km':'sin km'}${e.costo?' · $'+Number(e.costo).toLocaleString('es-MX'):''}${e.lugar?' · '+esc(e.lugar):''}</small></div><button data-del="${i}" title="Quitar">🗑</button></div>`).join(''):'<small class="help">Todavía no hay registros.</small>';
+  if(!$('#bF').value)$('#bF').value=hoy();if(!$('#bK').value&&TD.km)$('#bK').value=TD.km;
+}
+$('#tKm').addEventListener('input',()=>{TD.km=num($('#tKm').value);saveT()});
+$('#tIv').addEventListener('input',()=>{TD.intervalo=num($('#tIv').value)||3000;saveT()});
+$('#tNotas').addEventListener('input',()=>{TD.notas=$('#tNotas').value;saveT()});
+$('#tGas').onclick=e=>{const b=e.target.closest('button[data-g]');if(!b)return;const g=+b.dataset.g;TD.gasolina=(TD.gasolina===g?g-1:g);saveT();renderTaller()};
+$('#tParts').onclick=e=>{const b=e.target.closest('button[data-v]');if(!b)return;const id=b.closest('.seg').dataset.p;if(b.dataset.v==='ok')delete TD.estados[id];else TD.estados[id]=b.dataset.v;saveT();renderTaller()};
+$('#bAddLog').onclick=()=>{const q=$('#bQ').value.trim();if(!q){toast('Escribe qué se hizo');return}
+  const e={fecha:$('#bF').value.trim()||hoy(),km:num($('#bK').value)||0,que:q,costo:num($('#bC').value)||0};const l=$('#bL').value.trim();if(l)e.lugar=l;if($('#bS').checked)e.servicio=true;
+  TD.bitacora=(TD.bitacora||[]).concat([e]);if(e.km>TD.km)TD.km=e.km;$('#bQ').value=$('#bC').value=$('#bL').value='';$('#bS').checked=false;saveT();renderTaller();toast('Agregado a la bitácora')};
+$('#tLog').onclick=e=>{const b=e.target.closest('button[data-del]');if(!b)return;if(!confirmBox('¿Quitar este registro?'))return;TD.bitacora.splice(+b.dataset.del,1);saveT();renderTaller()};
+$('#tPrev').addEventListener('click',()=>LS.set(K_TDRAFT,JSON.stringify(TD)));
+
 /* ---------- PESTAÑAS ---------- */
 $$('nav.tabs button').forEach(b=>b.onclick=()=>{$$('nav.tabs button').forEach(x=>x.classList.toggle('on',x===b));$$('main>[data-v]').forEach(v=>v.classList.toggle('hide',v.dataset.v!==b.dataset.t))});
 
@@ -395,23 +472,34 @@ function describe(){const out=[];const pub=clean(PUBLISHED),dr=clean(DRAFT);
   if(JSON.stringify(pub.orden||[])!==JSON.stringify(dr.orden||[]))out.push('↕ Nuevo orden de apps');
   if(JSON.stringify(pub.inicio||{})!==JSON.stringify(dr.inicio||{}))out.push('🏠 Textos del inicio');
   if(JSON.stringify(pub.redes||{})!==JSON.stringify(dr.redes||{}))out.push('🔗 Redes');
+  if(tallerChanged())out.push('🏍 Datos del taller (km, piezas, bitácora)');
   return out}
 $('#bPub').onclick=()=>{const d=describe();$('#pChanges').innerHTML=d.length?d.map(esc).join('<br>'):'No hay cambios nuevos.';$('#pGo').disabled=!d.length;$('#pStat').textContent='';$('#pStat').className='msg';$('#pBar').style.width='0';$('#ovPub').classList.add('on')};
 $('#pCancel').onclick=()=>$('#ovPub').classList.remove('on');
 $('#pGo').onclick=async()=>{
-  const st=$('#pStat'),bar=$('#pBar');$('#pGo').disabled=true;st.className='msg';
-  const data=clean(DRAFT);const block='/*SITIO*/'+JSON.stringify(data).replace(/<\//g,'<\\/').replace(/\*\//g,'*\\/')+'/*FIN-SITIO*/';
-  for(let intento=0;intento<2;intento++){
-    try{st.textContent='Leyendo la versión actual…';bar.style.width='25%';
-      const L=await loadLive();if(!/\/\*SITIO\*\/[\s\S]*?\/\*FIN-SITIO\*\//.test(L.html))throw new Error('Tu index.html no tiene el bloque del panel.');
-      const html=L.html.replace(/\/\*SITIO\*\/[\s\S]*?\/\*FIN-SITIO\*\//,()=>block);
-      st.textContent='Subiendo a GitHub…';bar.style.width='65%';
-      const note=$('#pNote').value.trim()||'Actualizo mi página';
-      const r=await gh(`/repos/${OWNER}/${REPO}/contents/${FILE}`,{method:'PUT',body:JSON.stringify({message:'Panel: '+note,content:utf8ToB64(html),sha:L.sha,branch:BRANCH})});
-      bar.style.width='100%';PUBLISHED=JSON.parse(JSON.stringify(data));saveDraft();
-      st.className='msg ok';st.innerHTML=`¡Publicado! Se ve en cybercadtm.com en 1–2 minutos. <a href="${esc(r.commit&&r.commit.html_url||'#')}" target="_blank" rel="noopener" style="color:var(--cy)">ver cambio</a>`;
-      $('#pCancel').textContent='Cerrar';return}
-    catch(e){if(e.status===409&&intento===0)continue;st.textContent=e.status===401?'Tu llave venció: bloquea y vuelve a configurarla.':'No se pudo publicar: '+e.message;bar.style.width='0';$('#pGo').disabled=false;return}}
+  const st=$('#pStat'),bar=$('#pBar');$('#pGo').disabled=true;st.className='msg';const note=$('#pNote').value.trim()||'Actualizo mi página';let link='#';
+  try{
+    if(siteChanged()){
+      const data=clean(DRAFT);const block='/*SITIO*/'+JSON.stringify(data).replace(/<\//g,'<\\/').replace(/\*\//g,'*\\/')+'/*FIN-SITIO*/';
+      for(let intento=0;intento<2;intento++){
+        try{st.textContent='Subiendo tu página…';bar.style.width='30%';
+          const L=await loadLive();if(!/\/\*SITIO\*\/[\s\S]*?\/\*FIN-SITIO\*\//.test(L.html))throw new Error('Tu index.html no tiene el bloque del panel.');
+          const html=L.html.replace(/\/\*SITIO\*\/[\s\S]*?\/\*FIN-SITIO\*\//,()=>block);
+          const r=await gh(`/repos/${OWNER}/${REPO}/contents/${FILE}`,{method:'PUT',body:JSON.stringify({message:'Panel: '+note,content:utf8ToB64(html),sha:L.sha,branch:BRANCH})});
+          link=(r.commit&&r.commit.html_url)||link;PUBLISHED=JSON.parse(JSON.stringify(data));break}
+        catch(e){if(e.status===409&&intento===0)continue;throw e}}
+    }
+    if(tallerChanged()){
+      st.textContent='Subiendo los datos del taller…';bar.style.width='70%';
+      const d=JSON.parse(JSON.stringify(TD));d.fecha=new Date().toLocaleDateString('es-MX');
+      const body='window.TALLER_DATOS='+JSON.stringify(d).replace(/<\//g,'<\\/')+';\n';
+      let sha;try{sha=(await gh(`/repos/${OWNER}/${REPO}/contents/${T_FILE}?ref=${BRANCH}`)).sha}catch(e){if(e.status!==404)throw e}
+      const r=await gh(`/repos/${OWNER}/${REPO}/contents/${T_FILE}`,{method:'PUT',body:JSON.stringify(Object.assign({message:'Panel (taller): '+note,content:utf8ToB64(body),branch:BRANCH},sha?{sha}:{}))});
+      link=(r.commit&&r.commit.html_url)||link;T_PUB=JSON.parse(JSON.stringify(d));TD.fecha=d.fecha;saveT();
+    }
+    bar.style.width='100%';saveDraft();st.className='msg ok';
+    st.innerHTML=`¡Publicado! Se ve en 1–2 minutos. <a href="${esc(link)}" target="_blank" rel="noopener" style="color:var(--cy)">ver cambio</a>`;$('#pCancel').textContent='Cerrar';
+  }catch(e){st.textContent=e.status===401?'Tu llave venció: bloquea y vuelve a configurarla.':'No se pudo publicar: '+e.message;bar.style.width='0';$('#pGo').disabled=false}
 };
 
 showLogin();
