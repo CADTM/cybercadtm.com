@@ -1207,6 +1207,36 @@ function demoCalcTarimas(st,card){
   });
 }
 
+
+// CONTROL DE EMPACADO — paletizado virtual: 2 en paralelo + 1 atravesada, pesos por caja
+function demoEmpacado(st,card){
+  st.innerHTML=`<canvas></canvas><div class="hud tl mono"><b class="ed">INDIA</b><br>DLV <b class="dn">80012345</b></div><div class="hud tr mono">CAJAS <b class="ec">0</b><br><b class="ek">0</b> KG</div><div class="hud bl mono ei">PALLET 48×40 IN</div>`;
+  const cv=$('canvas',st),D=['INDIA','HONG KONG','TURQUÍA','JAPÓN','CHILE'];
+  // base: 2 cajas en paralelo (32×18) + 1 atravesada (18×32); medidas en pulgadas
+  const SL=[[0,0,32,18],[0,18,32,18],[32,0,18,32]],H=36;
+  let bx=[],t=0,kg=0,phase=0,hold=0;
+  function reset(){bx=[];kg=0;phase=0;hold=0;$('.ed',st).textContent=pick(D);$('.dn',st).textContent=String(80000000+(Math.random()*99999|0));$('.ec',st).textContent=0;$('.ek',st).textContent=0;$('.ei',st).textContent='PALLET 48×40 IN'}
+  function add(){if(bx.length>=6){phase=1;return}const i=bx.length,s=SL[i%3],ly=i/3|0,w=+(38+Math.random()*4).toFixed(1);
+    bx.push({x:s[0]-25,z:s[1]-20,w:s[2],d:s[3],y:ly*H,yy:ly*H+90,c:['#c99e62','#b5864f','#d8b47c'][i%3]});kg+=w;
+    $('.ec',st).textContent=bx.length;$('.ek',st).textContent=kg.toFixed(1);
+    if(bx.length===6)$('.ei',st).textContent='✓ LISTO · 50 × 40 × 77.7 IN'}
+  st.onclick=()=>{if(phase)reset();else add()};
+  every(card,750,()=>{if(phase){if(++hold>4)reset()}else add()});
+  addLoop(card,(dt)=>{t+=dt;const {x,w,h}=fit(cv);x.clearRect(0,0,w,h);
+    const k=Math.min(w/150,h/150),ox=w/2,oy=h*.68,c30=.866,s30=.5;
+    const P=(X,Y,Z)=>[ox+(X-Z)*c30*k,oy+(X+Z)*s30*k-Y*k];
+    const poly=(pts,f)=>{x.beginPath();pts.forEach((q,i)=>i?x.lineTo(q[0],q[1]):x.moveTo(q[0],q[1]));x.closePath();x.fillStyle=f;x.fill();x.strokeStyle='rgba(0,0,0,.35)';x.lineWidth=1;x.stroke()};
+    const box=(X,Y,Z,W,Hh,Dd,col)=>{const a=P(X,Y+Hh,Z),b=P(X+W,Y+Hh,Z),c=P(X+W,Y+Hh,Z+Dd),d=P(X,Y+Hh,Z+Dd),e=P(X+W,Y,Z),f=P(X+W,Y,Z+Dd),g=P(X,Y,Z+Dd);
+      poly([d,c,f,g],shade(col,-.18));poly([b,c,f,e],shade(col,-.32));poly([a,b,c,d],shade(col,.12))};
+    // tarima
+    box(-24,-6,-20,48,6,40,'#a9804c');
+    for(const z of [-20,-1.5,17])box(-24,-6,z,48,1.2,3,'#7c5a32');
+    [...bx].sort((p,q)=>(p.y-q.y)||((p.x+p.z)-(q.x+q.z))).forEach(b=>{b.yy+=(b.y-b.yy)*Math.min(1,dt*8);box(b.x,b.yy,b.z,b.w,H-1,b.d,b.c);
+      const m=P(b.x+b.w/2,b.yy+H*.55,b.z+b.d);x.fillStyle='rgba(30,45,110,.8)';x.font=`600 ${Math.max(7,9*k/1.3)|0}px JetBrains Mono,monospace`;x.textAlign='center';x.fillText('↑↑',m[0],m[1])});
+  });
+  reset();
+}
+
 /* ============ CATÁLOGO ============ */
 // Para enlazar cada app, pon su dirección en "url" (ej. 'https://tarima.cybercadtm.com').
 const APPS=[
@@ -1216,6 +1246,7 @@ const APPS=[
   {id:'orbita',n:'Órbita Júpiter',s:'Bubble shooter 3D',cat:'juegos',ac:'#ffb36b',url:'https://orbita.cybercadtm.com',d:'Dispara planetas desde la órbita de Júpiter y junta 3 del mismo color. Ahora con personajes como Fel, probador de apariencia y profesiones.',t:['Personajes','Física'],f:demoOrbita},
   {id:'monitor',n:'Monitor de Contenedores',s:'Patio de andenes',cat:'almacen',ac:'#00f0ff',wide:1,url:'https://cybercadtm.com/monitor/',d:'Procesos e inventario de contenedores en tiempo real: andenes D1–D14, patio, racks y zona de surtido.',t:['Tiempo real','Logística'],f:demoMonitor},
   {id:'calctarimas',n:'Calculadora de Tarimas',s:'Control de paletizado',cat:'almacen',ac:'#ffb020',url:'https://tarimas.cybercadtm.com',d:'Escanea número de parte y batch, cuenta cajas y piezas por tarima y agrupa por destino y delivery. Genera PDF y tickets térmicos, y funciona sin internet.',t:['Escáner','PDF','Instalable'],f:demoCalcTarimas},
+  {id:'empacado',n:'Control de Empacado',s:'Exportación por delivery',cat:'almacen',ac:'#ff6a13',url:'https://cybercadtm.com/empacado/',d:'Destino con bandera, pallets armados en 3D sobre base 48×40 con el acomodo real de cada modelo de caja, peso por caja y por pallet, andenes y reporte en hoja carta. Instalable y sin internet.',t:['3D','Pesos','Instalable'],f:demoEmpacado},
   {id:'tarima',n:'Tarima Perfecta',s:'Arcade 3D de paletizado',cat:'juegos',ac:'#ffb020',url:'https://tarima-perfecta.cybercadtm.com',d:'Acomoda cajas en una tarima de 48×40 con gravedad real, patrones de estiba y etiquetas hacia afuera. Haz clic para soltar más rápido.',t:['3D','Gravedad real'],f:demoTarima},
   {id:'dojo',n:'Dojo de Entrenamiento',s:'Pelea 1 vs 1',cat:'juegos',ac:'#00f0ff',url:'',d:'Fel entrena contra el saco en el almacén. Usa J · K · L o los botones para armar combos.',t:['Combos','Animación'],f:demoDojo},
   {id:'cripta',n:'La Cripta Flotante',s:'Arena isométrica online',cat:'juegos',ac:'#a66bff',url:'',d:'Peleas en una arena flotante que mezcla 2D y 3D, entre Smash Bros y Ragnarok. Haz clic para moverte y atrapa al espectro.',t:['Isométrico','Online'],f:demoCripta},
