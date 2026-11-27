@@ -177,7 +177,7 @@ footer{text-align:center;padding:24px 16px 32px;color:var(--mute);font-size:14px
       <button type="button" class="ghost" id="addModelBtn">+ Nuevo modelo de caja</button>
       <div class="add" id="addModel">
         <input id="mn" placeholder="Número de modelo (ej. 181102675)" aria-label="Número de modelo" style="flex:1 1 60%">
-        <input id="md" placeholder="Descripción (ej. Finish Good)" aria-label="Descripción" style="flex:1 1 30%">
+        <input id="md" placeholder="Descripción (opcional)" aria-label="Descripción" style="flex:1 1 30%">
         <div class="row" style="flex:1 1 100%">
           <input id="ml" inputmode="decimal" placeholder="Largo" aria-label="Largo">
           <input id="mw" inputmode="decimal" placeholder="Ancho" aria-label="Ancho">
@@ -231,7 +231,7 @@ footer{text-align:center;padding:24px 16px 32px;color:var(--mute);font-size:14px
 <div class="bulk" id="bulk" hidden><b id="bCount">0 seleccionados</b><button type="button" id="bAll">Todos</button><select id="bSt" aria-label="Cambiar estatus"><option value="">Estatus…</option><option value="0">Empacando</option><option value="1">Listo</option><option value="2">Cargado</option></select><select id="bDock" aria-label="Cambiar andén"></select><button type="button" class="pri" id="bApply" style="width:auto;margin:0">Aplicar</button><button type="button" id="bCancel">Cancelar</button></div>
 <div class="toast" id="toast"><span id="tmsg"></span><button type="button" id="undo">Deshacer</button></div>
 <div id="print" aria-hidden="true"></div>
-<script type="application/json" id="state">{"dest":["IN","HK","JP","FR","CN","SE","MX","CO","BR","DE","KR","CL","GB","NZ"],"rows":[],"models":[{"id":"181102675","desc":"Finish Good","l":32,"w":18,"h":36,"u":"in","pc":3},{"id":"181102639-03","desc":"Finish Good","l":30,"w":21,"h":24,"u":"in","pc":3,"pat":""},{"id":"181102676","desc":"Finish Good","l":32,"w":18,"h":19,"u":"in","pc":2,"pat":""}],"lastU":"in","seed2":1,"seedHK":1,"seed3":1,"seedFlags2":1}</script>
+<script type="application/json" id="state">{"dest":["IN","HK","JP","FR","CN","SE","MX","CO","BR","DE","KR","CL","GB","NZ"],"rows":[],"models":[{"id":"181102675","desc":"","l":32,"w":18,"h":36,"u":"in","pc":3},{"id":"181102639-03","desc":"","l":30,"w":21,"h":24,"u":"in","pc":3,"pat":""},{"id":"181102676","desc":"","l":32,"w":18,"h":19,"u":"in","pc":2,"pat":""}],"lastU":"in","seed2":1,"seedHK":1,"seed3":1,"seedFlags2":1}</script>
 <script>
 {
 const TPL = document.documentElement.outerHTML;
@@ -280,6 +280,7 @@ const modelOf = id => S.models.find(m=>m.id===id);
 if (!S.seed2) { if (!modelOf('181102639-03')) S.models.push({id:'181102639-03', desc:'', l:30, w:21, h:24, u:'in', pc:3, pat:''}); S.seed2 = 1; }
 if (!S.seedHK) { if (!S.dest.includes('HK')) S.dest.push('HK'); S.seedHK = 1; }
 if (!S.seedFlags2) { ['JP','FR','CN','SE','MX','CO','BR','DE','KR','HK','CL','GB','NZ'].forEach(c=>{ if (!S.dest.includes(c)) S.dest.push(c); }); S.seedFlags2 = 1; }
+if (!S.noFG) { S.models.forEach(m=>{ if (m.desc==='Finish Good') m.desc=''; }); S.noFG = 1; }
 if (!S.seedTR) { if (!S.dest.includes('TR')) S.dest.push('TR'); S.seedTR = 1; }
 if (!S.seed3) { if (!modelOf('181102676')) S.models.push({id:'181102676', desc:'', l:32, w:18, h:19, u:'in', pc:2, pat:''}); S.seed3 = 1; }
 const mTxt = id => { const m = modelOf(id); return id ? id + (m?.desc ? ' ('+m.desc+')' : '') : ''; };
