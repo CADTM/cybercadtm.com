@@ -80,7 +80,7 @@ body.imm .hud.top,body.imm #caps{opacity:.55}
 #bmJoy{display:none;position:absolute;left:18px;bottom:6px;width:136px;height:136px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.08),rgba(255,255,255,.16));border:2px solid rgba(255,255,255,.25);pointer-events:auto;touch-action:none}
 #bmKnob{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#ffcc4d 45%,#e08a1f);box-shadow:0 4px 12px rgba(0,0,0,.5);pointer-events:none}
 #bmBombB{position:absolute;right:22px;bottom:18px;width:104px;height:104px;border-radius:50%;font-size:46px;border:3px solid rgba(255,255,255,.35);background:radial-gradient(circle at 35% 30%,#ff8a5c,#e0304a 55%,#8a1020);box-shadow:0 6px 18px rgba(0,0,0,.5);pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none}
-#bmBombB:active{transform:scale(.92)}#bmDet{display:none;position:absolute;right:136px;bottom:30px;width:78px;height:78px;border-radius:50%;font-size:28px;line-height:1;border:3px solid rgba(255,255,255,.35);background:radial-gradient(circle at 35% 30%,#ff9ad0,#ff3a8a 55%,#8a1050);color:#fff;pointer-events:auto;touch-action:none}#bmDet small{display:block;font-size:11px;font-weight:800}
+#bmBombB:active{transform:scale(.92)}#bmFPB{position:fixed;z-index:7;top:96px;right:10px;width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:rgba(20,24,48,.75);color:#fff;font-size:22px;display:none}#bmMini{position:fixed;z-index:6;top:192px;right:10px;width:118px;height:104px;border-radius:10px;border:2px solid rgba(255,255,255,.3);display:none;pointer-events:none;image-rendering:pixelated}#bmFPC{display:none;position:absolute;left:12px;bottom:4px;width:170px;height:140px;pointer-events:none}#bmFPC button{position:absolute;width:56px;height:56px;border-radius:14px;border:2px solid rgba(255,255,255,.3);background:rgba(20,24,48,.72);color:#fff;font-size:24px;pointer-events:auto;touch-action:none}#bmFPC button:active{background:rgba(80,110,255,.8)}#bmFPC [data-t='1']{left:0;top:42px}#bmFPC #bmFwd{left:57px;top:0;height:76px}#bmFPC [data-t='-1']{left:114px;top:42px}#bmFPC [data-t='2']{left:57px;top:82px;height:50px;font-size:18px}#bmDet{display:none;position:absolute;right:136px;bottom:30px;width:78px;height:78px;border-radius:50%;font-size:28px;line-height:1;border:3px solid rgba(255,255,255,.35);background:radial-gradient(circle at 35% 30%,#ff9ad0,#ff3a8a 55%,#8a1050);color:#fff;pointer-events:auto;touch-action:none}#bmDet small{display:block;font-size:11px;font-weight:800}
 #talkInd{position:fixed;z-index:9;left:50%;top:34%;transform:translate(-50%,-50%);background:rgba(20,10,30,.9);border:2px solid #e0304a;border-radius:18px;padding:12px 18px;font-weight:800;display:none;text-align:center}
 .tray{position:fixed;z-index:7;bottom:calc(138px + env(safe-area-inset-bottom));display:none;flex-wrap:wrap;gap:6px;max-width:300px;padding:8px;border-radius:18px;
   background:rgba(12,18,38,.92);border:1px solid rgba(255,255,255,.16);box-shadow:0 10px 30px rgba(0,0,0,.5)}
@@ -249,7 +249,7 @@ body.cqmode #rxTray,body.cqmode #flagTray{bottom:auto;top:148px}
 <div class="pbar" id="rpBar"><span id="rpLbl"></span><button id="rpStart">⏮</button><button id="rpPlay">⏸</button><button id="rpStep">⏭</button><button id="rpExit">✖ Salir</button></div>
 <div id="cq"><div id="cqOpp"></div><div id="cqMid"></div><div id="cqMsg"></div><div id="cqMine"></div><div id="cqAct"></div><div id="cqHand"></div></div>
 <div class="ovl" id="dmo"><div id="dmoOpp"></div><div id="dmoTable"></div><div class="msg" id="dmoMsg"></div><div class="act" id="dmoAct"></div><div id="dmoHand"></div></div>
-<div id="bmBan"></div><div class="ovl" id="bmUI"><div class="msg" id="bmMsg"></div><div class="act" id="bmAct"></div></div><div id="bmTop"></div><div id="bmPad"><div id="bmJoy"><div id="bmKnob"></div></div><button id="bmBombB">💣</button><button id="bmDet">🎯<small>¡Boom!</small></button></div>
+<div id="bmBan"></div><div class="ovl" id="bmUI"><div class="msg" id="bmMsg"></div><div class="act" id="bmAct"></div></div><div id="bmTop"></div><button id="bmFPB" title="Primera persona">👁️</button><canvas id="bmMini" width="170" height="150"></canvas><div id="bmPad"><div id="bmJoy"><div id="bmKnob"></div></div><button id="bmBombB">💣</button><button id="bmDet">🎯<small>¡Boom!</small></button><div id="bmFPC"><button data-t="1">◀</button><button id="bmFwd">▲</button><button data-t="-1">▶</button><button data-t="2">▼</button></div></div>
 <div class="ovl" id="ocaUI"><div id="ocaPl"></div><div class="msg" id="ocaMsg"></div><div class="act" id="ocaAct"></div><div id="immBar"></div></div><div id="immDice"></div>
 <div class="ovl" id="lot"><div id="lotOpp"></div><div id="lotCur"></div><div class="msg" id="lotMsg"></div><div id="lotBoard"></div><div class="act" id="lotAct"></div></div>
 <div class="tray" id="rxTray"></div>
@@ -1773,7 +1773,7 @@ function bmStart(seed,lv,coop){if(coop==null)coop=BM.net?(NET.role==='host'?cfg.
   if(L.shrink){const ring=[];let x0=0,y0=0,x1=W-1,y1=H-1;while(x0<=x1&&y0<=y1&&ring.length<110){for(let c=x0;c<=x1;c++)ring.push([c,y0]);for(let r=y0+1;r<=y1;r++)ring.push([x1,r]);for(let c=x1-1;c>=x0;c--)ring.push([c,y1]);for(let r=y1-1;r>y0;r--)ring.push([x0,r]);x0++;y0++;x1--;y1--;}
     ring.slice(0,110).forEach(([c,r],k)=>hz.push({t:55+k*.75,c,r,kind:'wall'}));}
   hz.sort((a,b)=>a.t-b.t);
-  BM.st={grid,hid,pu:new Map(),crates,pl,bombs:[],flames:[],fx:[],warn:[],hz,phase:'play',t0:performance.now(),time:0,res:null};BM.mine=[];BM.picked=[];BM.kicks=[];BM.dets=[];BM.seenK=new Set();BM.seenD=new Set();BM.seenB=new Set();BM.dead=false;
+  BM.st={grid,hid,pu:new Map(),crates,pl,bombs:[],flames:[],fx:[],warn:[],hz,phase:'play',t0:performance.now(),time:0,res:null};BM.fpDir=null;BM.mine=[];BM.picked=[];BM.kicks=[];BM.dets=[];BM.seenK=new Set();BM.seenD=new Set();BM.seenB=new Set();BM.dead=false;
   const C=BM.cam;C.intro=1.8;C.roll=.35;C.zoom=1.9;C.focus=null;if(BM.g)BM.g.visible=GAME==='bomb';
   bmBanner(BM.coop?`💑 Equipo · Nivel ${BM.lv+1}`:`Nivel ${BM.lv+1}`,`${L.e} ${L.n}`);bmMsg('👆 Toca a dónde quieres ir · tócate a ti (o 💣) para poner bomba<br>'+(BM.coop?'💑 Fel y Júpiter juntos: sus bombas no los lastiman. ¡Acaben con los Bots!<br>':'')+(L.vents?'🌋 Cuidado con los volcanes: hacen erupción':L.meteors?'☄️ ¡Caen meteoritos! Fíjate en el círculo rojo':L.shrink?'💫 A los 50 s la arena se empieza a cerrar':L.spd>3.6?'❄️ Hielo: todos van más rápido y las mechas son cortas':'💣 Rompe cajas, junta poderes y atrapa a tus rivales'));
   bmRender();if(BM.net&&NET.room)netPublish();try{voiceSide('b','hi');}catch(_){}{const s0=BM.st;setTimeout(()=>{if(BM.st===s0&&s0.phase==='play')bmMsg('');},6000);}}
@@ -1861,7 +1861,10 @@ function bmMark(c,r,ok){const w=bmW(c,r);if(!BM.mark){BM.mark=new THREE.Mesh(new
   if(BM.mark.parent!==BM.dyn)BM.dyn.add(BM.mark);BM.mark.material.color.set(ok?0x58d68d:0xff5a5f);BM.mark.position.set(w.x,.05,w.z);BM.mark.userData.t0=performance.now();BM.mark.visible=true;}
 function bmFollow(p){const nx=p.path&&p.path[0];if(!nx)return[0,0];if(!bmCellFree(nx[0],nx[1],p)){p.path=[];return[0,0];}if(Math.abs(p.x-nx[0])<.05&&Math.abs(p.y-nx[1])<.05){p.x=nx[0];p.y=nx[1];p.path.shift();return bmFollow(p);}
   if(Math.abs(nx[0]-p.x)>.05){if(Math.abs(p.y-Math.round(p.y))>.04)return[0,Math.sign(Math.round(p.y)-p.y)];return[Math.sign(nx[0]-p.x),0];}if(Math.abs(p.x-Math.round(p.x))>.04)return[Math.sign(Math.round(p.x)-p.x),0];return[0,Math.sign(nx[1]-p.y)];}
-function bmInput(){const k=BM.keys;let dx=(k.ArrowRight||k.d?1:0)-(k.ArrowLeft||k.a?1:0),dy=(k.ArrowDown||k.s?1:0)-(k.ArrowUp||k.w?1:0);
+function bmInput(){const k=BM.keys;if(bmFPOn()&&BM.fpDir!=null){const me=BM.st.pl.find(p=>p.human);const f=(k.ArrowUp||k.w||BM.fpFwd)?1:(k.ArrowDown||k.s)?-1:0;
+    if(f){me.path=[];const d=BMDIR[BM.fpDir];return[d[0]*f,d[1]*f];}
+    if(me.path&&me.path[0]){const n=me.path[0];const ddx=n[0]-Math.round(me.x),ddy=n[1]-Math.round(me.y);if(!!ddx!==!!ddy){const i=bmDirIdx(ddx,ddy);if(i>=0)BM.fpDir=i;}}return bmFollow(me);}
+  let dx=(k.ArrowRight||k.d?1:0)-(k.ArrowLeft||k.a?1:0),dy=(k.ArrowDown||k.s?1:0)-(k.ArrowUp||k.w?1:0);
   const j=BM.joy;if(Math.hypot(j.x,j.y)>.3){if(Math.abs(j.x)>Math.abs(j.y)){dx=Math.sign(j.x);dy=0;}else{dy=Math.sign(j.y);dx=0;}}if(dx&&dy)dy=0;
   const me=BM.st&&BM.st.pl.find(p=>p.human);if(dx||dy){if(me)me.path=[];return[dx,dy];}return me?bmFollow(me):[0,0];}
 function bmTick(dt){const st=BM.st;if(!st||GAME!=='bomb')return;const play=st.phase==='play';const now=performance.now();
@@ -1914,7 +1917,36 @@ function bmRender(){const st=BM.st;const top=$('bmTop'),act=$('bmAct');if(!top)r
   const b=$('bmAgain');if(b)b.onclick=()=>{$('endModal').classList.remove('show');bmStart(null,BM.lv);};const nb=$('bmNext');if(nb)nb.onclick=()=>{$('endModal').classList.remove('show');cfg.bmLv=BM.lv+1;save();bmLvSel();bmStart(null,BM.lv+1);};renderHUD();}
 function bmHUD(){const st=BM.st;const L=BMLV[BM.lv];$('status').innerHTML=!st?'💣 Bombas':st.phase==='over'?'💣 Fin de la ronda':`💣 Nivel ${BM.lv+1} · ${L.e}`;$('rivalChip').innerHTML=st?st.pl.map(p=>AVATARS[p.av].e).join(' vs '):'Arena explosiva';
   $('caps').innerHTML=`<small>${st?L.n+' · ':''}${BM.coop?'equipo vs bots':'último en pie gana'}</small>`;}
-function bmCam(dt){const C=BM.cam,st=BM.st;const vf=camera.fov*Math.PI/180,hf=2*Math.atan(Math.tan(vf/2)*camera.aspect);
+const BMDIR=[[0,1],[1,0],[0,-1],[-1,0]];
+function bmDirIdx(dx,dy){return BMDIR.findIndex(d=>d[0]===Math.sign(dx)&&d[1]===Math.sign(dy));}
+function bmFPOn(){const st=BM.st;if(!BM.fp||!st||st.phase==='intro')return false;const me=st.pl.find(p=>p.human);return !!(me&&me.alive&&!(BM.cam.intro>1.4));}
+function bmTurn(k){if(BM.fpDir==null)return;BM.fpDir=(BM.fpDir+k+4)%4;const me=BM.st&&BM.st.pl.find(p=>p.human);if(me){me.path=[];me.face=Math.atan2(BMDIR[BM.fpDir][0],BMDIR[BM.fpDir][1]);}try{navigator.vibrate&&navigator.vibrate(8);}catch(_){}}
+function bmSetFP(v){BM.fp=!!v;cfg.bmFP=BM.fp;save();$('bmFPB').textContent=BM.fp?'🗺️':'👁️';$('bmFPB').title=BM.fp?'Vista desde arriba':'Primera persona';
+  if(BM.fp)toast('👁️ Primera persona: ▲ avanza, ◀ ▶ giran, ▼ media vuelta · el mapa chico te cuida la espalda');}
+function bmMini(){const st=BM.st,cv2=$('bmMini');if(!cv2||!st)return;const W=BM.W,H=BM.H,z=cv2.width/W;const g=cv2.getContext('2d');g.clearRect(0,0,cv2.width,cv2.height);
+  g.fillStyle='rgba(10,14,30,.78)';g.fillRect(0,0,cv2.width,cv2.height);
+  for(let r=0;r<H;r++)for(let c=0;c<W;c++){const v=st.grid[bmIdx(c,r)];if(v){g.fillStyle=v===2?'#a8743c':'#5a6378';g.fillRect(c*z+.5,r*z+.5,z-1,z-1);}}
+  g.fillStyle='rgba(255,140,40,.85)';for(const f of st.flames)for(const[c,r]of f.cells)g.fillRect(c*z,r*z,z,z);
+  for(const pu of st.pu.values()){}
+  for(const b of st.bombs){g.fillStyle=b.rc?'#ff3a8a':'#111';g.beginPath();g.arc((b.fx!=null&&b.slide?b.fx:b.c)*z+z/2,(b.fy!=null&&b.slide?b.fy:b.r)*z+z/2,z*.36,0,7);g.fill();g.strokeStyle='#fff';g.lineWidth=1;g.stroke();}
+  for(const p of st.pl){if(!p.alive)continue;g.fillStyle='#'+p.col.toString(16).padStart(6,'0');const x=p.x*z+z/2,y=p.y*z+z/2;
+    if(p.human&&BM.fpDir!=null){const d=BMDIR[BM.fpDir];g.save();g.translate(x,y);g.rotate(Math.atan2(d[1],d[0]));g.beginPath();g.moveTo(z*.6,0);g.lineTo(-z*.4,z*.4);g.lineTo(-z*.4,-z*.4);g.closePath();g.fill();g.strokeStyle='#fff';g.lineWidth=1.5;g.stroke();g.restore();}
+    else{g.beginPath();g.arc(x,y,z*.38,0,7);g.fill();if(BM.coop&&p.team!=='A'){g.strokeStyle='#fff';g.lineWidth=1;g.stroke();}}}}
+function bmCamFP(dt,me){const C=BM.cam;if(BM.fpDir==null){const cx=(BM.W-1)/2,cy=(BM.H-1)/2;const dx=cx-me.x,dy=cy-me.y;BM.fpDir=Math.abs(dx)>Math.abs(dy)?bmDirIdx(dx,0):bmDirIdx(0,dy);BM.fpYaw=Math.atan2(BMDIR[BM.fpDir][0],BMDIR[BM.fpDir][1]);}
+  const tg=Math.atan2(BMDIR[BM.fpDir][0],BMDIR[BM.fpDir][1]);let d=tg-BM.fpYaw;d=Math.atan2(Math.sin(d),Math.cos(d));BM.fpYaw+=d*Math.min(1,dt*9);
+  const w=bmW(me.x,me.y);const fx=Math.sin(BM.fpYaw),fz=Math.cos(BM.fpYaw);const t=performance.now()/1000;const bob=me.moving?Math.sin(t*15)*.018:0;
+  const eye=new THREE.Vector3(w.x-fx*.14,.4+bob,w.z-fz*.14);
+  if(C.shake>0){eye.x+=(Math.random()-.5)*C.shake*.4;eye.y+=(Math.random()-.5)*C.shake*.3;eye.z+=(Math.random()-.5)*C.shake*.4;C.shake=Math.max(0,C.shake-dt*.9);}
+  C.roll+=(C.rollT-C.roll)*Math.min(1,dt*3);if(Math.abs(C.rollT)>.001)C.rollT*=Math.pow(.2,dt);
+  const look=new THREE.Vector3(eye.x+fx*2,.28+bob*.5,eye.z+fz*2);C.p.copy(eye);C.t.copy(look);camera.position.copy(eye);
+  camera.up.set(Math.cos(BM.fpYaw)*Math.sin(C.roll)*-1,Math.cos(C.roll),Math.sin(BM.fpYaw)*Math.sin(C.roll));camera.lookAt(look);camera.up.set(0,1,0);
+  if((BM.miniT=(BM.miniT||0)+dt)>.08){BM.miniT=0;bmMini();}}
+function bmCam(dt){const C0=BM.st;const fpOn=bmFPOn();const meP=C0&&C0.pl.find(p=>p.human);
+  if(fpOn!==!!BM.fpApplied){BM.fpApplied=fpOn;if(fpOn){camera.fov=camera.aspect<.8?78:66;camera.near=.03;}else{camera.near=.1;resize();}camera.updateProjectionMatrix();$('bmMini').style.display=fpOn?'block':'none';$('bmFPC').style.display=fpOn?'flex':'none';}
+  if(meP&&meP.mesh&&meP.alive)meP.mesh.visible=!fpOn;
+  if(fpOn){bmCamFP(dt,meP);return;}
+  bmCamTop(dt);}
+function bmCamTop(dt){const C=BM.cam,st=BM.st;const vf=camera.fov*Math.PI/180,hf=2*Math.atan(Math.tan(vf/2)*camera.aspect);
   const span=Math.min(BM.W*BM.S+.9,9.6*BM.S);const base=(span/2)/Math.tan(hf/2);const ang=.98;
   C.zoom+=(C.zoomT-C.zoom)*Math.min(1,dt*(C.intro>0?1.6:4));C.roll+=(C.rollT-C.roll)*Math.min(1,dt*3);if(Math.abs(C.rollT)>.001&&!BM.dead&&!C.orbit)C.rollT*=Math.pow(.2,dt);
   if(C.intro>0){C.intro-=dt;if(C.intro<=0){C.zoomT=1;C.rollT=0;}else if(C.intro<1.4){C.zoomT=1;C.rollT=0;}}
@@ -1946,10 +1978,14 @@ function bmNetSync(){if(!BM.net)return;const P=NET.opp;if(!NET.oppHere||!P||P.ga
   const up=e=>{if(e.pointerId!==pid)return;pid=null;knob.style.transform='';BM.joy={x:0,y:0};};pad.addEventListener('pointerup',up);pad.addEventListener('pointercancel',up);
   $('bmBombB').addEventListener('pointerdown',e=>{e.preventDefault();const st=BM.st;if(!st)return;const me=st.pl.find(p=>p.human);if(me)bmPlace(me);});
   addEventListener('keydown',e=>{if(GAME!=='bomb'||!BM.st)return;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();const k=e.key.length===1?e.key.toLowerCase():e.key;
+    if(bmFPOn()&&['ArrowLeft','ArrowRight','a','d'].includes(k)){if(!e.repeat)bmTurn(k==='ArrowLeft'||k==='a'?1:-1);return;}
     if(k===' '||k==='x'){const me=BM.st.pl.find(p=>p.human);if(me&&!e.repeat)bmPlace(me);}else BM.keys[k]=true;});
   addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;BM.keys[k]=false;});
   $('bmLv').onchange=e=>{cfg.bmLv=+e.target.value;save();};$('bmMode').onchange=e=>{cfg.bmMode=e.target.value;save();};
-  $('bmDet').addEventListener('pointerdown',e=>{e.preventDefault();bmDetonate();});})();
+  $('bmDet').addEventListener('pointerdown',e=>{e.preventDefault();bmDetonate();});
+  document.querySelectorAll('#bmFPC [data-t]').forEach(b=>b.addEventListener('pointerdown',e=>{e.preventDefault();bmTurn(+b.dataset.t);}));
+  const fw=$('bmFwd');fw.addEventListener('pointerdown',e=>{e.preventDefault();try{fw.setPointerCapture(e.pointerId);}catch(_){}BM.fpFwd=true;});for(const ev of['pointerup','pointercancel','lostpointercapture'])fw.addEventListener(ev,()=>{BM.fpFwd=false;});
+  $('bmFPB').addEventListener('click',()=>bmSetFP(!BM.fp));BM.fp=!!cfg.bmFP;$('bmFPB').textContent=BM.fp?'🗺️':'👁️';})();
 
 const TURN={was:false};
 function myTurnNow(){try{if(!NET.active&&!(typeof DIST!=='undefined'&&DIST.on))return false;
@@ -2896,7 +2932,7 @@ const HELP={
  loteria:['🎴 Lotería',`<ul><li>El gritón canta cartas al azar.</li><li>Si la carta está en tu tabla, <b>tócala</b> para ponerle un frijolito (o activa "Marcar solo").</li>
   <li>Cuando completes la figura (tabla llena, línea o 4 esquinas), grita <b>¡LOTERÍA!</b> antes que los demás.</li></ul><p>🌐 En línea, el que crea la sala es el gritón y pueden entrar varios amigos.</p>`]};
 HELP.oca[1]+='<p>🌐 También en línea: cada quien tira el dado desde su teléfono.</p>';
-HELP.bomb=['💣 Bombas','<p>Arena explosiva: muévete con el control de la izquierda y pon bombas con el botón 💣.</p><ul><li>La bomba explota en cruz a los 2 segundos y rompe las cajas de madera (los pilares no se rompen).</li><li>Dentro de algunas cajas hay poderes: <b>💣</b> una bomba más, <b>🔥</b> explosión más larga, <b>👟</b> más velocidad.</li><li>Si te toca una explosión, ¡quedas fuera! Gana el último en pie.</li><li>Poderes especiales: <b>🛡️</b> escudo que aguanta una explosión, <b>🦶</b> patada (camina contra una bomba y sale rodando) y <b>🎯</b> control remoto (tus bombas explotan cuando tocas ¡Boom!).</li><li>💑 Modo equipo: Fel y Júpiter juntos contra los Bots; sus bombas no los lastiman. Sin internet, la IA hace de tu pareja.</li><li>Toca la casilla a la que quieres ir y tu avatar camina solo. Tócate a ti mismo o el botón 💣 para poner bomba.</li><li>Truco: pon la bomba y escóndete en una esquina.</li></ul><p>🏁 5 niveles: Base Júpiter, Volcanes de Ío (erupciones), Hielo de Europa (todo más rápido), Tormenta roja (meteoritos) y Anillos de Saturno (la arena se cierra). Gana un nivel para desbloquear el siguiente.</p><p>Contra la IA o 🌐 en línea 1 vs 1. En computadora: flechas o WASD y espacio.</p>'];
+HELP.bomb=['💣 Bombas','<p>Arena explosiva: muévete con el control de la izquierda y pon bombas con el botón 💣.</p><ul><li>La bomba explota en cruz a los 2 segundos y rompe las cajas de madera (los pilares no se rompen).</li><li>Dentro de algunas cajas hay poderes: <b>💣</b> una bomba más, <b>🔥</b> explosión más larga, <b>👟</b> más velocidad.</li><li>Si te toca una explosión, ¡quedas fuera! Gana el último en pie.</li><li>Poderes especiales: <b>🛡️</b> escudo que aguanta una explosión, <b>🦶</b> patada (camina contra una bomba y sale rodando) y <b>🎯</b> control remoto (tus bombas explotan cuando tocas ¡Boom!).</li><li>👁️ Botón de ojo: juega en primera persona, como si estuvieras dentro del laberinto (▲ avanza, ◀ ▶ giran). El mapa chico te muestra dónde están todos.</li><li>💑 Modo equipo: Fel y Júpiter juntos contra los Bots; sus bombas no los lastiman. Sin internet, la IA hace de tu pareja.</li><li>Toca la casilla a la que quieres ir y tu avatar camina solo. Tócate a ti mismo o el botón 💣 para poner bomba.</li><li>Truco: pon la bomba y escóndete en una esquina.</li></ul><p>🏁 5 niveles: Base Júpiter, Volcanes de Ío (erupciones), Hielo de Europa (todo más rápido), Tormenta roja (meteoritos) y Anillos de Saturno (la arena se cierra). Gana un nivel para desbloquear el siguiente.</p><p>Contra la IA o 🌐 en línea 1 vs 1. En computadora: flechas o WASD y espacio.</p>'];
 HELP.snakes=['🐍 Serpientes y escaleras','<p>Tira el dado y avanza por el tablero del 1 al 100. Gana quien llegue <b>exacto</b> a la 100 (si te pasas, rebotas).</p><ul><li>🪜 Si caes al pie de una <b>escalera</b>, subes hasta arriba.</li><li>🐍 Si caes en la cabeza de una <b>serpiente</b>, bajas hasta su cola.</li><li>🎲 Si sacas <b>6</b>, tiras otra vez.</li></ul><p>2 a 4 jugadores contra la IA, en el mismo teléfono o 🌐 en línea.</p>'];
 function showHelp(g){const h=HELP[g||GAME]||HELP.chess;$('helpTitle').textContent=h[0];$('helpBody').innerHTML=h[1];$('helpModal').classList.add('show');$('flagTray').classList.remove('show');}
 /* ---- Conquián en línea (el anfitrión reparte y valida) ---- */
@@ -2959,7 +2995,7 @@ function setBoardVisible(v){for(const t of tiles)t.visible=v;frame.visible=v;for
 function switchGame(g,silent){if(g==='oca')g='snakes';document.body.classList.remove('imm');if(!GAMES_INFO[g])g='chess';const was=GAME;if(DIST.on&&!DIST.sw)DIST.on=false;
   if(was!==g){if(was==='loteria')lotStop();ocaShowGroups(g);}
   GAME=g;cfg.game=g;save();const info=GI();const ov=!!info.ov;
-  CQ.on=g==='conquian';for(const id of['cq','dmo','ocaUI','lot','bmUI'])$(id).classList.toggle('show',info.ov===id);if(BM.g)BM.g.visible=g==='bomb';$('bmTop').style.display=g==='bomb'?'flex':'none';if(g!=='bomb')$('bmPad').style.display='none';
+  CQ.on=g==='conquian';for(const id of['cq','dmo','ocaUI','lot','bmUI'])$(id).classList.toggle('show',info.ov===id);if(BM.g)BM.g.visible=g==='bomb';$('bmTop').style.display=g==='bomb'?'flex':'none';$('bmFPB').style.display=g==='bomb'?'block':'none';if(g!=='bomb'){$('bmMini').style.display='none';if(BM.fpApplied){BM.fpApplied=false;camera.near=.1;resize();}}if(g!=='bomb')$('bmPad').style.display='none';
   document.body.classList.toggle('cqmode',ov);setBoardVisible(!ov);ocaShowGroups(g);
   if(!ocaLike(g)&&CAM.view==='top'&&ocaLike(was)){CAM.view='fp';CAM.dirty=true;}
   document.querySelectorAll('#gsel button').forEach(b=>b.classList.toggle('on',b.dataset.g===g));
